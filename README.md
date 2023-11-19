@@ -9,3 +9,4 @@
 - 機械学習帳: https://chokkan.github.io/mlnote/index.html
 - ネット競馬: https://db.netkeiba.com/?pid=horse_top
 - スピード指数: http://www.rightniks.ne.jp/index.php?action=whatspidx_contents&name=sikumi
+- git研修: https://mixi-developers.mixi.co.jp/23-technical-training-20a6f610140c

@@ -11,6 +11,7 @@ def name2id(name):
         # 他にも必要な文字列と対応するIDを追加
         "ブレイディヴェーグ": 2020103242,
         "イクイノックス": 2019105219,
+        "ジェラルディーナ": 2018105081,
     }
     # nameが登録されているか確認し、登録されていれば対応するIDを返す
     if name in name_to_id_mapping:
@@ -66,18 +67,23 @@ def scrape_grades(url):
             data.append(row_data)
     return data
 
-id = name2id("ブレイディヴェーグ")
-# id = name2id("イクイノックス")
-url = f"https://db.netkeiba.com/horse/result/{id}"
+name = "ジェラルディーナ"
+id = name2id(name)
+if id:
+    url = f"https://db.netkeiba.com/horse/result/{id}"
+else:
+    # エラー終了
+    exit()
 
 # スクレイピング
 grades_data = scrape_grades(url)
 
-# 結果を表示
+# 結果
 if grades_data:
+    # 一部を標準出力
     for row in grades_data:
         print(row[0:10:2])
-# csv出力
-with open('web_data.csv', mode='wt', newline='') as f:
-   csv_writer = csv.writer(f)
-   csv_writer.writerows(grades_data) 
+    # csv出力
+    with open(f"{id}.csv", mode='wt', newline='') as f:
+        csv_writer = csv.writer(f)
+        csv_writer.writerows(grades_data) 

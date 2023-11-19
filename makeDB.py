@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 # import chardet
+import csv
 
 ###
 def name2id(name):
@@ -76,3 +77,7 @@ grades_data = scrape_grades(url)
 if grades_data:
     for row in grades_data:
         print(row[0:10:2])
+# csv出力
+with open('web_data.csv', mode='wt', newline='') as f:
+   csv_writer = csv.writer(f)
+   csv_writer.writerows(grades_data) 

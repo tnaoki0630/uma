@@ -112,7 +112,6 @@ grades_data = scrape_grades(url)
 
 # 結果
 if grades_data:
-    print("Error at scrape_grades")
     # 一部を標準出力
     for row in grades_data:
         print(row[0:10:2])
@@ -120,3 +119,7 @@ if grades_data:
     with open(f"{id}.csv", mode='wt', newline='') as f:
         csv_writer = csv.writer(f)
         csv_writer.writerows(grades_data) 
+else:
+    # エラー終了
+    print("Error at scrape_grades")
+    exit()

@@ -182,6 +182,7 @@ if grades_data:
     vec_time = np.transpose(data[:, 17]) # タイム
     print(vec_dist)
     print(vec_time)
+    ## 重回帰に拡張すること考えると、ix_(col,row)使った方がいいかも
 else:
     # エラー終了
     print("Error at scrape_grades")

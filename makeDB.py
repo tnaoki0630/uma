@@ -194,25 +194,22 @@ else:
     exit()
 
 ## スクレイピング
-grades_data = scrape_grades(url)
+grades_data = np.array(scrape_grades(url))
 if grades_data:
     ## csv出力
     # with open(f"{id}.csv", mode='wt', newline='') as f:
     #     csv_writer = csv.writer(f)
     #     csv_writer.writerows(grades_data)
-
-    ## Numpy配列に変換
-    data = np.array(grades_data)
 else:
     # エラー終了
     print("Error at scrape_grades")
     exit()
 
 ## データベクトルの準備
-row, col = np.shape(data)
+row, col = np.shape(grades_data)
 vec_id = id*np.ones(row, np.uint8) # うまID
-vec_dist = extract_integer(data[:, 14]) # 距離
-vec_time = strtime2fltsec(data[:, 17]) # タイム
+vec_dist = extract_integer(grades_data[:, 14]) # 距離
+vec_time = strtime2fltsec(grades_data[:, 17]) # タイム
 print(vec_id)
 print(vec_dist)
 print(vec_time)

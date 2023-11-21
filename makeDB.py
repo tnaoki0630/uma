@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import numpy as np
+import re
 ###
 def name2id(name):
     # 事前に登録された文字列とIDの対応を定義
@@ -134,7 +135,7 @@ def scrape_grades(url):
 
     # 成績表のデータを取得（この例では表のデータがtableタグ内にあると仮定）
     table = soup.find('table')
-    
+
     # テーブルが見つからない場合
     if table is None:
         print("Table not found")
@@ -156,7 +157,33 @@ def scrape_grades(url):
             data.append(row_data)
     return data
 ###
+def extract_integer(arr):
+    result = []
+    for string in arr:
+        # 正規表現を使って%dの部分を抜き出す
+        match = re.search(r'(\d+)', string)
+        if match:
+            extracted_integer = int(match.group(1))
+            result.append(extracted_integer)
+        else:
+            # マッチしなかった場合の処理（例: エラーハンドリング）
+            result.append(None)  # または何か適切な処理を行う
+    return result
+###
+def strtime2fltsec(arr):
+    result = []
+    for time_str in arr:
+        # ":" で文字列を分割して分と秒に分ける
+        minutes, seconds = map(float, time_str.split(':'))
+        
+        # 分を秒に変換して合算
+        total_seconds = minutes * 60 + seconds
+        
+        result.append(total_seconds)
+    return result
+###
 
+## うまの名前からURL作成
 name = "ブレイディヴェーグ"
 id = name2id(name)
 if id:
@@ -172,18 +199,20 @@ if grades_data:
     ## csv出力
     # with open(f"{id}.csv", mode='wt', newline='') as f:
     #     csv_writer = csv.writer(f)
-    #     csv_writer.writerows(grades_data) 
-    
+    #     csv_writer.writerows(grades_data)
+
     ## Numpy配列に変換
     data = np.array(grades_data)
-    
-    ## 1次元ベクトルに変換
-    vec_dist = np.transpose(data[:, 14]) # 距離
-    vec_time = np.transpose(data[:, 17]) # タイム
-    print(vec_dist)
-    print(vec_time)
-    ## 重回帰に拡張すること考えると、ix_(col,row)使った方がいいかも
 else:
     # エラー終了
     print("Error at scrape_grades")
     exit()
+
+## データベクトルの準備
+row, col = np.shape(data)
+vec_id = id*np.ones(row, np.uint8) # うまID
+vec_dist = extract_integer(data[:, 14]) # 距離
+vec_time = strtime2fltsec(data[:, 17]) # タイム
+print(vec_id)
+print(vec_dist)
+print(vec_time)

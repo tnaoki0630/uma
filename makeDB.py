@@ -193,7 +193,7 @@ else:
     print("Error at name2id")
     exit()
 
-## スクレイピング
+## URL先の成績表をNumPy配列として取得
 grades_data = np.array(scrape_grades(url))
 if grades_data:
     ## csv出力
@@ -209,7 +209,13 @@ else:
 row, col = np.shape(grades_data)
 vec_id = id*np.ones(row, np.uint8) # うまID
 vec_dist = extract_integer(grades_data[:, 14]) # 距離
+vec_order = grades_data[:, 7] / grades_data[:, 6] # 枠番/馬数
 vec_time = strtime2fltsec(grades_data[:, 17]) # タイム
-print(vec_id)
 print(vec_dist)
+print(vec_order)
 print(vec_time)
+
+## 回帰モデルの構築
+# hat_Y = Regression(hat_X) として使いたい。ここの書き方は回帰モデル依存？
+# 線形回帰の場合に限定すると、hat_Y = np.dot(hat_X,W)と書けばいいのでWを求めればいい。
+# W = LinearRegression(X, Y)

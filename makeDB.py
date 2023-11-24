@@ -119,7 +119,7 @@ def name2id(name):
         # 登録されていない場合はNULL（ここではNone）を返す
         return None
 ###
-def scrape_grades(url):
+def scrape_grades(url, cols):
     # HTTP GETリクエストを送信してHTMLを取得
     response = requests.get(url)
 
@@ -153,10 +153,11 @@ def scrape_grades(url):
         # cells = row.find_all(['th', 'td'])    ## テーブルの先頭を読み込みたいとき
         cells = row.find_all('td')              ## テーブルの先頭が不要なとき
         row_data = [cell.get_text(strip=True) for cell in cells]
-
         # 空の行は無視する
         if row_data:
-            data.append(row_data)
+            # 使うデータが欠けていれば無視する
+            if all(row_data[col] for col in cols):
+                data.append(row_data)
     return data
 ###
 def extract_integer(arr):
@@ -198,23 +199,25 @@ def show_graph(X, Y, x, y, arr):
 ###
 
 ## うまの名前からURL作成
-name = "レッドモンレーヴ"
-id = name2id(name)
-if id:
-    url = f"https://db.netkeiba.com/horse/result/{id}"
+name = "セリフォス"
+ID = name2id(name)
+if ID:
+    url = f"https://db.netkeiba.com/horse/result/{ID}"
 else:
     ## エラー終了
     print("Error at name2id")
     exit()
 
 ## URL先の成績表をNumPy配列として取得
-grades_data = scrape_grades(url)
+required_data = 6, 7, 14, 17 # 頭数, 枠番, 距離, タイム
+grades_data = scrape_grades(url, required_data)
 if grades_data:
-    data = np.array(grades_data)
     ## csv出力
     # with open(f"{id}.csv", mode='wt', newline='') as f:
     #     csv_writer = csv.writer(f)
     #     csv_writer.writerows(grades_data)
+    ## NumPy配列に変換
+    data = np.array(grades_data)
 else:
     # エラー終了
     print("Error at scrape_grades")
@@ -222,13 +225,14 @@ else:
 
 ## データベクトルの準備
 row, col = np.shape(data)
-vec_id = id*np.ones(row, np.uint8) # うまID
+vec_id = ID*np.ones(row, np.uint8) # うまID
 vec_dist = extract_integer(data[:, 14]) # 距離
 vec_order = np.int32(data[:, 7]) / np.int32(data[:, 6]) # 枠番/馬数
 vec_time = strtime2fltsec(data[:, 17]) # タイム
-print(vec_order)
+print(vec_dist)
+# exit()
 ## 回帰に使うデータ
-X = vec_dist
+X = vec_order
 Y = vec_time
 
 ## 回帰モデルの構築
@@ -236,7 +240,9 @@ Y = vec_time
 # 線形回帰の場合に限定すると、hat_Y = np.dot(hat_X,W)と書けばいいのでWを求めればいい。
 W = Polynomial.fit(X, Y, 1)
 W.convert().coef
-x = np.linspace(1000, 2500, 100)
+# x = np.linspace(1000, 2500, 100)
+x = np.linspace(0, 1, 100)
 y_hat = W(x)
-label = "dist[m]", "time[s]"
+# label = "dist[m]", "time[s]"
+label = "order/horses[-]", "time[s]"
 show_graph(X, Y, x, y_hat, label)

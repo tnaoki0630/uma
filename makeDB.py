@@ -6,118 +6,51 @@ import re
 from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
 ###
-def name2id(name):
-    # 事前に登録された文字列とIDの対応を定義
-    name_to_id_mapping = {
-        "うま": 1,
-        # 他にも必要な文字列と対応するIDを追加
-        "ブレイディヴェーグ": 2020103242,
-        "ジェラルディーナ": 2018105081,
-        "ルージュエヴァイユ": 2019104831,
-        "ライラック": 2019103588,
-        "ハーパー": 2020103458,
-        "ディヴィーナ": 2018104947,
-        "サリエラ": 2019105207,
-        "アートハウス": 2019104074,
-        "マリアエレーナ": 2018100927,
-        "ゴールドエクリプス": 2019100824,
-        "ビッグリボン": 2018100427,
-        "シンリョクカ": 2020101608,
-        "イズジョーノキセキ": 2017102294,
-        "ククナ": 2018105008,
-        "ジャンタルマンタル": 2021107171,
-        "ドライスタウト": 2019101667,
-        "イクイノックス": 2019105219,
-        "ダノンキラウェア": 2021100171,
-        "ヤマニンウルス": 2020105599,
-        "カンティアーモ": 2021105860,
-        "ペリエール": 2020101874,
-        "セリフォス": 2019104462,
-        "ローゼライト": 2018102715,
-        "アルセナール": 2021105548,
-        "シュネルマイスター": 2018110007,
-        "レッドルゼル": 2016105188,
-        "ペースセッティング": 2020110007,
-        "フルレゾン": 2021104840,
-        "リバティアイランド": 2020103656,
-        "ナミュール": 2019105213,
-        "エルトンバローズ": 2020100680,
-        "ステラヴェローチェ": 2018104980,
-        "ソウルラッシュ": 2018100382,
-        "クイーンズウォーク": 2021105414,
-        "サトノダイヤモンド": 2013106101,
-        "ガイアメンテ": 2021105808,
-        "タガノビューティー": 2017101719,
-        "シルトホルン": 2020105424,
-        "ホウオウエミーズ": 2017104691,
-        "エヴァンジェリーナ": 2021105586,
-        "スターズオンアース": 2019104740,
-        "ウインピクシス": 2019100205,
-        "ノースザワールド": 2018100420,
-        "セキフウ": 2019102737,
-        "ダノンザキッド": 2018104963,
-        "ドウデュース": 2019105283,
-        "ウールデュボヌール": 2021104860,
-        "タイセイサムソン": 2018106428,
-        "マスクトディーヴァ": 2020103054,
-        "バードウォッチャー": 2021105375,
-        "アドミラルシップ": 2021102708,
-        "タイトルホルダー": 2018103559,
-        "ベルダーイメル": 2017101380,
-        "ナムラエイハブ": 2021102895,
-        "ファーヴェント": 2021104893,
-        "レッドモンレーヴ": 2019105496,
-        "コンドライト": 2021105351,
-        "ジャスティンカフェ": 2018104576,
-        "ジューンブレア": 2021110099,
-        "カレンルシェルブル": 2018104579,
-        "キタサンブラック": 2012102013,
-        "アケルナルスター": 2019105792,
-        "ナムラフッカー": 2021102510,
-        "カントル": 2016104632,
-        "クリノメガミエース": 2019102003,
-        "ヘリオス": 2016102370,
-        "エンヤラヴフェイス": 2021101737,
-        "ロードアヴニール": 2020100142,
-        "シュトラウス": 2021105744,
-        "ヴェラアズール": 2017105082,
-        "バビット": 2017103000,
-        "テーオーシリウス": 2018106834,
-        "ウインマクシマム": 2021106211,
-        "ヴィレム": 2021106738,
-        "フォルラニーニ": 2021105859,
-        "クリーンエア": 2021101651,
-        "ユニコーンライオン": 2016110103,
-        "ダンディズム": 2016102175,
-        "ソーヴァリアント": 2018104662,
-        "ダンテスヴュー": 2019106933,
-        "Continuous": 2020100002,
-        "メイショウサチダケ": 2021103210,
-        "アナザーリリック": 2018104914,
-        "ショウナンバシット": 2020103333,
-        "グリューネグリーン": 2020102194,
-        "エンリル": 2019103273,
-        "ディープボンド": 2017102170,
-        "ベルピット": 2020101205,
-        "ダノンスコーピオン": 2019103034,
-        "パンサラッサ": 2017106711,
-        "オオバンブルマイ": 2020104243,
-        "ラスール": 2019105205,
-        "エエヤン": 2020105295,
-        "イルーシヴパンサー": 2018105402,
-        "カナテープ": 2019105293,
-        "ウィープディライト": 2021105412,
-        "シンエンペラー": 2021110048,
-        "シャハザマーン": 2021105680,
-        "フォスターボンド": 2021105174,
-        "チェルヴィニア": 2021105643,
-    }
-    # nameが登録されているか確認し、登録されていれば対応するIDを返す
-    if name in name_to_id_mapping:
-        return name_to_id_mapping[name]
-    else:
-        # 登録されていない場合はNULL（ここではNone）を返す
+def scrape_hitchart(url_hitchart):
+    # HTTP GETリクエストを送信してHTMLを取得
+    response = requests.get(url_hitchart)
+
+    # エラーハンドリング
+    if response.status_code != 200:
+        print(f"Error: {response.status_code}")
         return None
+    
+    # エンコーディングを取得
+    # detected_encoding = chardet.detect(response.content)['encoding']
+    detected_encoding = 'EUC-JP'
+
+    # BeautifulSoupを使ってHTMLを解析
+    soup = BeautifulSoup(response.content, 'html.parser', from_encoding=detected_encoding)
+
+    # 成績表のデータを取得（この例では表のデータがtableタグ内にあると仮定）
+    table = soup.find('table')
+
+    # テーブルが見つからない場合
+    if table is None:
+        print("Table not found")
+        return None
+
+    # テーブルの各行を取得
+    rows = table.find_all('tr')
+
+    # 行ごとにデータを配列に追加
+    arr = []
+    for row in rows:
+        ## 各セルのデータを取得
+        cells = row.find_all('td')
+        # row_data = [cell.get_text(strip=True) for cell in cells]
+        ## <a> タグの href 属性の値を取得
+        for cell in cells:
+            ## 空の行は無視する
+            if cell:
+                anchor_tag = cell.find('a')
+                if anchor_tag:
+                    href_value = anchor_tag.get('href')
+                    # IDを抽出
+                    match = re.search(r'\d+', href_value)
+                    if match:
+                        arr.append(int(match.group()))
+    return arr
 ###
 def scrape_grades(url, cols):
     # HTTP GETリクエストを送信してHTMLを取得
@@ -164,10 +97,9 @@ def extract_integer(arr):
     result = []
     for string in arr:
         # 正規表現を使って%dの部分を抜き出す
-        match = re.search(r'(\d+)', string)
+        match = re.search(r'\d+', string)
         if match:
-            extracted_integer = int(match.group(1))
-            result.append(extracted_integer)
+            result.append(int(match.group()))
         else:
             # マッチしなかった場合の処理（例: エラーハンドリング）
             result.append(None)  # または何か適切な処理を行う
@@ -198,51 +130,45 @@ def show_graph(X, Y, x, y, arr):
     plt.show()
 ###
 
-## うまの名前からURL作成
-name = "セリフォス"
-ID = name2id(name)
-if ID:
-    url = f"https://db.netkeiba.com/horse/result/{ID}"
-else:
-    ## エラー終了
-    print("Error at name2id")
+## ヒットチャートのページから馬ごとのURLを取得
+ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
+if not all(ids):
+    print("Error at scrape_hitchart")
     exit()
 
-## URL先の成績表をNumPy配列として取得
+## N 位まで学習に使用
+N = 3
 required_data = 6, 7, 14, 17 # 頭数, 枠番, 距離, タイム
-grades_data = scrape_grades(url, required_data)
-if grades_data:
-    ## csv出力
-    # with open(f"{id}.csv", mode='wt', newline='') as f:
-    #     csv_writer = csv.writer(f)
-    #     csv_writer.writerows(grades_data)
-    ## NumPy配列に変換
-    data = np.array(grades_data)
-else:
-    # エラー終了
-    print("Error at scrape_grades")
-    exit()
+X = []
+Y = []
+for n in range(N):
+    url = f"https://db.netkeiba.com/horse/result/{ids[n]}"
+    ## URL先の成績表をNumPy配列として取得
+    grades_data = scrape_grades(url, required_data)
+    if grades_data:
+        data = np.array(grades_data)
+    else:
+        print("Error at scrape_grades")
+        exit()
 
-## データベクトルの準備
-row, col = np.shape(data)
-vec_id = ID*np.ones(row, np.uint8) # うまID
-vec_dist = extract_integer(data[:, 14]) # 距離
-vec_order = np.int32(data[:, 7]) / np.int32(data[:, 6]) # 枠番/馬数
-vec_time = strtime2fltsec(data[:, 17]) # タイム
-print(vec_dist)
-# exit()
-## 回帰に使うデータ
-X = vec_order
-Y = vec_time
+    ## データベクトルの準備
+    row, col = np.shape(data)
+    vec_id = ids[n]*np.ones(row, np.uint8) # うまID
+    vec_dist = extract_integer(data[:, 14]) # 距離
+    vec_order = np.int32(data[:, 7]) / np.int32(data[:, 6]) # 枠番/馬数
+    vec_time = strtime2fltsec(data[:, 17]) # タイム
+    # print(ids[n],vec_time[0:3])
+    X = np.append(X, vec_dist)
+    Y = np.append(Y, vec_time)
 
 ## 回帰モデルの構築
 # hat_Y = Regression(hat_X) として使いたい。ここの書き方は回帰モデル依存？
 # 線形回帰の場合に限定すると、hat_Y = np.dot(hat_X,W)と書けばいいのでWを求めればいい。
 W = Polynomial.fit(X, Y, 1)
 W.convert().coef
-# x = np.linspace(1000, 2500, 100)
-x = np.linspace(0, 1, 100)
+x = np.linspace(1000, 2500, 100)
+# x = np.linspace(0, 1, 100)
 y_hat = W(x)
-# label = "dist[m]", "time[s]"
-label = "order/horses[-]", "time[s]"
+label = "dist[m]", "time[s]"
+# label = "order/horses[-]", "time[s]"
 show_graph(X, Y, x, y_hat, label)

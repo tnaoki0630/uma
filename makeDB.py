@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import csv
 import numpy as np
 import re
+from numpy.polynomial import Polynomial
+import matplotlib.pyplot as plt
 ###
 def name2id(name):
     # 事前に登録された文字列とIDの対応を定義
@@ -182,9 +184,21 @@ def strtime2fltsec(arr):
         result.append(total_seconds)
     return result
 ###
+def show_graph(X, Y, x, y, arr):
+    fig, ax = plt.subplots(dpi=100)
+    ax.scatter(X, Y, marker='.')
+    ax.plot(x, y, 'tab:red')
+    ax.set_xlabel(arr[0])
+    ax.set_ylabel(arr[1])
+    # ax.set_title(arr[3])
+    # ax.set_xlim(0, 35)
+    # ax.set_ylim(-250, 2000)
+    ax.grid()
+    plt.show()
+###
 
 ## うまの名前からURL作成
-name = "ブレイディヴェーグ"
+name = "レッドモンレーヴ"
 id = name2id(name)
 if id:
     url = f"https://db.netkeiba.com/horse/result/{id}"
@@ -194,8 +208,9 @@ else:
     exit()
 
 ## URL先の成績表をNumPy配列として取得
-grades_data = np.array(scrape_grades(url))
+grades_data = scrape_grades(url)
 if grades_data:
+    data = np.array(grades_data)
     ## csv出力
     # with open(f"{id}.csv", mode='wt', newline='') as f:
     #     csv_writer = csv.writer(f)
@@ -206,16 +221,22 @@ else:
     exit()
 
 ## データベクトルの準備
-row, col = np.shape(grades_data)
+row, col = np.shape(data)
 vec_id = id*np.ones(row, np.uint8) # うまID
-vec_dist = extract_integer(grades_data[:, 14]) # 距離
-vec_order = grades_data[:, 7] / grades_data[:, 6] # 枠番/馬数
-vec_time = strtime2fltsec(grades_data[:, 17]) # タイム
-print(vec_dist)
+vec_dist = extract_integer(data[:, 14]) # 距離
+vec_order = np.int32(data[:, 7]) / np.int32(data[:, 6]) # 枠番/馬数
+vec_time = strtime2fltsec(data[:, 17]) # タイム
 print(vec_order)
-print(vec_time)
+## 回帰に使うデータ
+X = vec_dist
+Y = vec_time
 
 ## 回帰モデルの構築
 # hat_Y = Regression(hat_X) として使いたい。ここの書き方は回帰モデル依存？
 # 線形回帰の場合に限定すると、hat_Y = np.dot(hat_X,W)と書けばいいのでWを求めればいい。
-# W = LinearRegression(X, Y)
+W = Polynomial.fit(X, Y, 1)
+W.convert().coef
+x = np.linspace(1000, 2500, 100)
+y_hat = W(x)
+label = "dist[m]", "time[s]"
+show_graph(X, Y, x, y_hat, label)

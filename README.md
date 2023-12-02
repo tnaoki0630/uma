@@ -11,5 +11,6 @@
 - スピード指数: http://www.rightniks.ne.jp/index.php?action=whatspidx_contents&name=sikumi
 - git研修: https://mixi-developers.mixi.co.jp/23-technical-training-20a6f610140c
 - python早見帳: https://chokkan.github.io/python/index.html
+- ガウス過程回帰: https://www.ism.ac.jp/~daichi/lectures/H26-GaussianProcess/gp-lecture2-daichi.pdf
 ### 勉強ノート
 - Miro: https://miro.com/welcomeonboard/dXVVeUFrMzFoNW1PQWwyOEVVWjhZaU9pSnlYcFV1RlVpUkNmaWhkOTNxalphcHhKdmxwVTUxSHVHQW9NNm1QbHwzNDU4NzY0NTcwMzgwODY2NTMxfDI=?share_link_id=928920182370

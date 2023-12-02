@@ -23,33 +23,36 @@ def scrape_hitchart(url):
     soup = BeautifulSoup(response.content, 'html.parser', from_encoding=detected_encoding)
 
     # 成績表のデータを取得（この例では表のデータがtableタグ内にあると仮定）
-    table = soup.find('table')
+    tables = soup.find_all('table')
 
     # テーブルが見つからない場合
-    if table is None:
+    if not tables:
         print("Table not found")
         return None
 
-    # テーブルの各行を取得
-    rows = table.find_all('tr')
-
-    # 行ごとにデータを配列に追加
+    # initialize
     arr = []
-    for row in rows:
-        ## 各セルのデータを取得
-        cells = row.find_all('td')
-        #row_data = [cell.get_text(strip=True) for cell in cells]
-        ## <a> タグの href 属性の値を取得
-        for cell in cells:
-            ## 空の行は無視する
-            if cell:
-                anchor_tag = cell.find('a')
-                if anchor_tag:
-                    href_value = anchor_tag.get('href')
-                    # IDを抽出
-                    match = re.search(r'\d+', href_value)
-                    if match:
-                        arr.append(int(match.group()))
+    # loop for table
+    for table in tables:
+        # テーブルの各行を取得
+        rows = table.find_all('tr')
+
+        # 行ごとにデータを配列に追加
+        for row in rows:
+            ## 各セルのデータを取得
+            cells = row.find_all('td')
+            #row_data = [cell.get_text(strip=True) for cell in cells]
+            ## <a> タグの href 属性の値を取得
+            for cell in cells:
+                ## 空の行は無視する
+                if cell:
+                    anchor_tag = cell.find('a')
+                    if anchor_tag:
+                        href_value = anchor_tag.get('href')
+                        # IDを抽出
+                        match = re.search(r'\d+', href_value)
+                        if match:
+                            arr.append(int(match.group()))
     return arr
 ###
 def scrape_grades(url, cols):
@@ -191,7 +194,7 @@ if not all(ids):
     exit()
 
 ## N 位まで学習に使用
-N = 50
+N = 100
 required_data = 6, 7, 14, 17 # 頭数, 枠番, 距離, タイム
 data = extract_dataset(N, required_data)
 if data:

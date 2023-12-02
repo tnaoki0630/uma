@@ -14,7 +14,7 @@ def scrape_hitchart(url):
     if response.status_code != 200:
         print(f"Error: {response.status_code}")
         return None
-    
+
     # エンコーディングを取得
     # detected_encoding = chardet.detect(response.content)['encoding']
     detected_encoding = 'EUC-JP'
@@ -23,33 +23,36 @@ def scrape_hitchart(url):
     soup = BeautifulSoup(response.content, 'html.parser', from_encoding=detected_encoding)
 
     # 成績表のデータを取得（この例では表のデータがtableタグ内にあると仮定）
-    table = soup.find('table')
+    tables = soup.find_all('table')
 
     # テーブルが見つからない場合
-    if table is None:
+    if not tables:
         print("Table not found")
         return None
 
-    # テーブルの各行を取得
-    rows = table.find_all('tr')
-
-    # 行ごとにデータを配列に追加
+    # initialize
     arr = []
-    for row in rows:
-        ## 各セルのデータを取得
-        cells = row.find_all('td')
-        # row_data = [cell.get_text(strip=True) for cell in cells]
-        ## <a> タグの href 属性の値を取得
-        for cell in cells:
-            ## 空の行は無視する
-            if cell:
-                anchor_tag = cell.find('a')
-                if anchor_tag:
-                    href_value = anchor_tag.get('href')
-                    # IDを抽出
-                    match = re.search(r'\d+', href_value)
-                    if match:
-                        arr.append(int(match.group()))
+    # roop for tables
+    for table in tables:
+        # テーブルの各行を取得
+        rows = table.find_all('tr')
+
+        # 行ごとにデータを配列に追加
+        for row in rows:
+            ## 各セルのデータを取得
+            cells = row.find_all('td')
+            # row_data = [cell.get_text(strip=True) for cell in cells]
+            ## <a> タグの href 属性の値を取得
+            for cell in cells:
+                ## 空の行は無視する
+                if cell:
+                    anchor_tag = cell.find('a')
+                    if anchor_tag:
+                        href_value = anchor_tag.get('href')
+                        # IDを抽出
+                        match = re.search(r'\d+', href_value)
+                        if match:
+                            arr.append(int(match.group()))
     return arr
 ###
 def scrape_grades(url, cols):
@@ -110,10 +113,10 @@ def strtime2fltsec(arr):
     for time_str in arr:
         # ":" で文字列を分割して分と秒に分ける
         minutes, seconds = map(float, time_str.split(':'))
-        
+
         # 分を秒に変換して合算
         total_seconds = minutes * 60 + seconds
-        
+
         result.append(total_seconds)
     return result
 ###
@@ -147,8 +150,8 @@ def extract_dataset(N, req):
         Y = np.append(Y, vec_time)
     ## 正則化
     x0 = np.ones_like(x1)
-    # X = np.transpose(np.vstack((x0, x1, x2, x3)))
-    X = np.transpose(np.vstack((x0, x2))) # 単回帰
+    X = np.transpose(np.vstack((x0, x1, x2, x3)))
+    # X = np.transpose(np.vstack((x0, x2))) # 単回帰
     return X, Y
 ###
 def show_graph(X, Y, x, y, arr):
@@ -184,20 +187,22 @@ else:
 ## 回帰モデルの構築
 # hat_Y = Regression(hat_X) として使いたい。ここの書き方は回帰モデル依存？
 ## 単回帰
-W_P = Polynomial.fit(X_data[:,1], Y_data, 1)
-print(W_P.convert().coef)
+# W_P = Polynomial.fit(X_data[:,1], Y_data, 1)
+# print(W_P.convert().coef)
 ## 重回帰
 invXtX = np.linalg.inv(np.dot(X_data.T, X_data))
 W = np.dot(np.dot(invXtX, X_data.T), Y_data)
 print(W)
 
 ## 描画
-x1_hat = np.linspace(1000, 2500, 100)
+x1_hat = np.linspace(1, 3, 100)
+x2_hat = np.linspace(1000, 2500, 100)
+x3_hat = np.linspace(0, 1, 100)
 x0_hat = np.ones_like(x1_hat)
-X_hat = np.transpose(np.vstack((x0_hat, x1_hat)))
+X_hat = np.transpose(np.vstack((x0_hat, x1_hat, x2_hat, x3_hat)))
 # x_hat = np.linspace(0, 1, 100)
 # Y_hat = W_P(x1_hat)
 Y_hat = np.dot(X_hat, W)
 label = "dist[m]", "time[s]"
 # label = "order/horses[-]", "time[s]"
-show_graph(X_data[:,1], Y_data, x1_hat, Y_hat, label)
+show_graph(X_data[:,2], Y_data, x2_hat, Y_hat, label)

@@ -7,6 +7,7 @@ from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
 from makeCSV import scrape_hitchart, scrape_grades, extract_integer, strtime2fltsec, strdate2intdate, extract_dataset
 import argparse
+###
 def constructLR(X, Y):
     ## 単回帰
     # W_P = Polynomial.fit(X_data[:,1], Y_data, 1)
@@ -37,29 +38,47 @@ def getNN(X):
     return Y
 
 if __name__ == "__main__":
-    ## コマンド引数を取得
-    ### モデル選択
+    ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+    ## モデル選択
     parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR(default)\nMODEL = 1: GPR\nMODEL = 2: NN", default=0)
+    ## データ読み込み方式
+    parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="DATABASE = 0: html(default)\nDATABASE = 1: csv", default=0)
+    
+    ## 引数の取得
     args = parser.parse_args()
 
     print("start data collection")
-    ## ヒットチャートのページから馬ごとのURLを取得
-    ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
-    if not all(ids):
-        print("Error at scrape_hitchart")
-        exit()
-
-    ## N 位まで学習に使用
-    N = 3
+    N = 3 # 学習に使用するテーブルの数
     required_data = 6, 7, 14, 17 # 頭数, 枠番, 距離, タイム
-    data = extract_dataset(ids[:N-1], required_data)
-    if data:
-        X_data = data[0]
-        Y_data = data[1]
-    else:
-        print("Error at extract_dataset")
+    if args.database[0] == 0:
+        ## ヒットチャートのページから馬ごとのURLを取得
+        ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
+        if not all(ids):
+            print("Error at scrape_hitchart")
+            exit()
+
+        ## htmlを解析してデータ取得
+        data = extract_dataset(ids[:N-1], required_data)
+        if data:
+            X_data = data[0]
+            Y_data = data[1]
+        else:
+            print("Error at extract_dataset")
+            exit()
+    elif args.database[0] == 1:
+        ## 未実装なのでexit
+        print("Error:: csv reading is under development...")
         exit()
+        ## 事前取得したcsvからデータ取得
+        ### (下みたいな感じでhtmlの部分と同じように書けたらめっちゃラク。extract_datasetはhtmlも含んでしまってるので、コードの設計を変える必要がある。)
+        data = extract_dataset(ids[:N-1], required_data)
+        if data:
+            X_data = data[0]
+            Y_data = data[1]
+        else:
+            print("Error at extract_dataset")
+            exit()
     print("done.")
 
     ## 回帰モデルの構築

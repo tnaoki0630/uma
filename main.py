@@ -10,12 +10,46 @@ import argparse
 ###
 def constructLR(X, Y):
     ## 単回帰
-    # W_P = Polynomial.fit(X_data[:,1], Y_data, 1)
+    # W_P = Polynomial.fit(X[:,1], Y, 1)
     # print(W_P.convert().coef)
     ## 重回帰
-    invXtX = np.linalg.inv(np.dot(X_data.T, X_data))
-    W = np.dot(np.dot(invXtX, X_data.T), Y_data)
+    invXtX = np.linalg.inv(np.dot(X.T, X))
+    W = np.dot(np.dot(invXtX, X.T), Y)
     return W
+###
+def RBFkarnel(X1, X2, diag):
+    ## ハイパーパラメータの取得
+    theta = args.parameter
+    ## RBFカーネルの計算
+    diff = np.subtract.outer(X1, X2) # 1入力
+    Kmtrx = theta[0]*np.exp(-0.5*(diff/theta[1])**2)
+    if diag:
+        ## 対角成分に観測ノイズの補正を付与
+        shape = np.shape(X1)
+        Kmtrx = Kmtrx - theta[2]*np.eye(shape[0])
+    return Kmtrx
+###
+def constructGPR(X, Y):
+    K = RBFkarnel(X, X, True)
+    invK = np.linalg.inv(K)
+    # print(np.dot(K, invK)) # check
+    ## Yから平均を引いて正規化
+    delY = Y - np.mean(Y)
+    iKY = np.dot(invK, delY)
+    return invK, iKY
+###
+def getGPR(X_data, X_hat, invK, iKY):
+    k_hat = RBFkarnel(X_data, X_hat, False)
+    print(np.shape(k_hat))
+    mu = np.dot(k_hat.T, iKY)
+    K_hat = RBFkarnel(X_hat, X_hat, True)
+    khTiKkh = np.dot(k_hat.T, np.dot(invK, k_hat))
+    sgm = K_hat - khTiKkh
+    return mu, sgm
+###
+def getNN(X):
+    Y = X[:,0]
+    return Y
 ###
 def show_graph(X, Y, x, y, arr):
     fig, ax = plt.subplots(dpi=100)
@@ -29,21 +63,25 @@ def show_graph(X, Y, x, y, arr):
     ax.grid()
     plt.show()
 ###
-def getGPR(X):
-    Y = X[:,0]
-    return Y
-###
-def getNN(X):
-    Y = X[:,0]
-    return Y
+def showGPR_1D(X, Y, x, y_mean, y_var, arr):
+    fig, ax = plt.subplots(dpi=100)
+    ax.scatter(X, Y, marker='.')
+    ax.plot(x, y_mean, 'tab:red')
+    ax.fill_between(x, y_mean - y_var, y_mean + y_var, color='lightblue', alpha=0.5, label='Variance Range')
+    ax.set_xlabel(arr[0])
+    ax.set_ylabel(arr[1])
+    ax.grid()
+    plt.show()
 
 if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     ## モデル選択
-    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR(default)\nMODEL = 1: GPR\nMODEL = 2: NN", default=0)
+    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR(default)\nMODEL = 1: GPR\nMODEL = 2: NN", default=[0])
     ## データ読み込み方式
-    parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="DATABASE = 0: html(default)\nDATABASE = 1: csv", default=0)
+    parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="DATABASE = 0: html(default)\nDATABASE = 1: csv", default=[0])
+    ## ハイパーパラメータ
+    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="hyper-parameter for RBF karnel", default=[1, 100, 0.1])
     
     ## 引数の取得
     args = parser.parse_args()
@@ -71,7 +109,8 @@ if __name__ == "__main__":
         print("Error:: csv reading is under development...")
         exit()
         ## 事前取得したcsvからデータ取得
-        ### (下みたいな感じでhtmlの部分と同じように書けたらめっちゃラク。extract_datasetはhtmlも含んでしまってるので、コードの設計を変える必要がある。)
+        ### (下みたいな感じでhtmlを解析する時と同じように書けたらめっちゃラク。
+        ### extract_datasetはhtml解析も含んでしまってるので、コードの設計を変える必要がある。)
         data = extract_dataset(ids[:N-1], required_data)
         if data:
             X_data = data[0]
@@ -82,18 +121,15 @@ if __name__ == "__main__":
     print("done.")
 
     ## 回帰モデルの構築
+    print("start model construction")
     if args.model[0] == 0:
         ## 線形回帰
-        print("start model construction for LR")
         W = constructLR(X_data, Y_data)
     elif args.model[0] == 1:
         ## ガウス過程回帰
-        print("start model construction for GPR")
-        print("Error:: GPR is under development...")
-        exit()
+        invK, iKY = constructGPR(X_data, Y_data)
     elif args.model[0] == 2:
         ## ニューラルネット
-        print("start model construction for NN")
         print("Error:: NN is under development...")
         exit()
     print("done.")
@@ -101,15 +137,17 @@ if __name__ == "__main__":
     ## データ生成
     print("start data generation")
     x1_hat = np.linspace(1, 3, 100)
-    x2_hat = np.linspace(1000, 2500, 100)
+    x2_hat = np.linspace(1500, 2500, 30)
     x3_hat = np.linspace(0, 1, 100)
     x0_hat = np.ones_like(x1_hat)
-    X_hat = np.transpose(np.vstack((x0_hat, x2_hat)))
+    # X_hat = np.transpose(np.vstack((x0_hat, x2_hat)))
     # X_hat = np.transpose(np.vstack((x0_hat, x1_hat, x2_hat, x3_hat)))
     if args.model[0] == 0:
         Y_hat = np.dot(X_hat, W)
     elif args.model[0] == 1:
-        Y_hat = getGPR(X_hat)
+        mu, sgm = getGPR(X_data, x2_hat, invK, iKY)
+        ## 元のスケールに戻す
+        mu = mu + np.mean(Y_data)
     elif args.model[0] == 2:
         Y_hat = getNN(X_hat)
     print("done.")
@@ -117,5 +155,7 @@ if __name__ == "__main__":
     ## 描画
     label = "dist[m]", "time[s]"
     # label = "order/horses[-]", "time[s]"
-    show_graph(X_data[:,1], Y_data, x2_hat, Y_hat, label)
+    # show_graph(X_data[:,1], Y_data, x2_hat, Y_hat, label)
     # show_graph(X_data[:,2], Y_data, x2_hat, Y_hat, label)
+
+    showGPR_1D(X_data, Y_data, x2_hat, mu, np.diagonal(sgm), label)

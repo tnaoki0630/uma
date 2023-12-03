@@ -26,7 +26,7 @@ def RBFkarnel(X1, X2, diag):
     if diag:
         ## 対角成分に観測ノイズの補正を付与
         shape = np.shape(X1)
-        Kmtrx = Kmtrx - theta[2]*np.eye(shape[0])
+        Kmtrx = Kmtrx + theta[2]*np.eye(shape[0])
     return Kmtrx
 ###
 def constructGPR(X, Y):
@@ -40,7 +40,6 @@ def constructGPR(X, Y):
 ###
 def getGPR(X_data, X_hat, invK, iKY):
     k_hat = RBFkarnel(X_data, X_hat, False)
-    print(np.shape(k_hat))
     mu = np.dot(k_hat.T, iKY)
     K_hat = RBFkarnel(X_hat, X_hat, True)
     khTiKkh = np.dot(k_hat.T, np.dot(invK, k_hat))
@@ -64,14 +63,19 @@ def show_graph(X, Y, x, y, arr):
     plt.show()
 ###
 def showGPR_1D(X, Y, x, y_mean, y_var, arr):
+    ## ハイパーパラメータの取得
+    theta = args.parameter
+    ## 描画
     fig, ax = plt.subplots(dpi=100)
     ax.scatter(X, Y, marker='.')
     ax.plot(x, y_mean, 'tab:red')
-    ax.fill_between(x, y_mean - y_var, y_mean + y_var, color='lightblue', alpha=0.5, label='Variance Range')
+    print(y_var)
+    ax.fill_between(x, y_mean - 2*y_var, y_mean + 2*y_var, color='lightblue', alpha=0.5, label='Variance Range')
     ax.set_xlabel(arr[0])
     ax.set_ylabel(arr[1])
+    ax.set_title(f'theta1 = {theta[0]}, theta2 = {theta[1]}, theta3 = {theta[2]}')
     ax.grid()
-    plt.show()
+    plt.savefig(f'GPR_{theta}.png')
 
 if __name__ == "__main__":
     ## コマンド引数関連
@@ -81,7 +85,7 @@ if __name__ == "__main__":
     ## データ読み込み方式
     parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="DATABASE = 0: html(default)\nDATABASE = 1: csv", default=[0])
     ## ハイパーパラメータ
-    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="hyper-parameter for RBF karnel", default=[1, 100, 0.1])
+    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="hyper-parameter for RBF karnel", default=[10.0, 100.0, 1.0])
     
     ## 引数の取得
     args = parser.parse_args()

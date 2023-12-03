@@ -7,30 +7,29 @@ from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
 from makeCSV import scrape_hitchart, scrape_grades, extract_integer, strtime2fltsec, strdate2intdate, extract_dataset
 
+def learn_linear(X, Y):
+    ## 単回帰
+    # W_P = Polynomial.fit(X_data[:,1], Y_data, 1)
+    # print(W_P.convert().coef)
+    ## 重回帰
+    invXtX = np.linalg.inv(np.dot(X_data.T, X_data))
+    W = np.dot(np.dot(invXtX, X_data.T), Y_data)
+    return W
+###
+def show_graph(X, Y, x, y, arr):
+    fig, ax = plt.subplots(dpi=100)
+    ax.scatter(X, Y, marker='.')
+    ax.plot(x, y, 'tab:red')
+    ax.set_xlabel(arr[0])
+    ax.set_ylabel(arr[1])
+    # ax.set_title(arr[3])
+    # ax.set_xlim(0, 35)
+    # ax.set_ylim(-250, 2000)
+    ax.grid()
+    plt.show()
+###
 
 if __name__ == "__main__":
-    def learn_linear(X, Y):
-        ## 単回帰
-        # W_P = Polynomial.fit(X_data[:,1], Y_data, 1)
-        # print(W_P.convert().coef)
-        ## 重回帰
-        invXtX = np.linalg.inv(np.dot(X_data.T, X_data))
-        W = np.dot(np.dot(invXtX, X_data.T), Y_data)
-        return W
-    ###
-    def show_graph(X, Y, x, y, arr):
-        fig, ax = plt.subplots(dpi=100)
-        ax.scatter(X, Y, marker='.')
-        ax.plot(x, y, 'tab:red')
-        ax.set_xlabel(arr[0])
-        ax.set_ylabel(arr[1])
-        # ax.set_title(arr[3])
-        # ax.set_xlim(0, 35)
-        # ax.set_ylim(-250, 2000)
-        ax.grid()
-        plt.show()
-    ###
-
     ## ヒットチャートのページから馬ごとのURLを取得
     ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
     if not all(ids):

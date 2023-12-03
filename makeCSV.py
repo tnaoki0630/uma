@@ -132,7 +132,8 @@ def strdate2intdate(arr):
         date.append(yyyymmdd)
     return date
 ###
-def extract_dataset(N, req):
+def extract_dataset(arr_id, arr_req):
+    ## initialize
     X = []
     Y = []
     x1 = []
@@ -144,11 +145,12 @@ def extract_dataset(N, req):
     x7 = []
     x8 = []
     x9 = []
-
-    for n in range(N):
-        url = f"https://db.netkeiba.com/horse/result/{ids[n]}"
+    n = 0
+    ## loop for id
+    for id in arr_id:
+        url = f"https://db.netkeiba.com/horse/result/{id}"
         ## URL先の成績表をNumPy配列として取得
-        grades_data = scrape_grades(url, required_data)
+        grades_data = scrape_grades(url, arr_req)
         if grades_data:
             data = np.array(grades_data)
         else:
@@ -167,7 +169,7 @@ def extract_dataset(N, req):
         vec_weight_2 = extract_integer(data[:, 23]) # 馬体重
         vec_race = extract_integer(data[:, 4]) # レース名（数字のみを抽出:G1→1）
         vec_race_num = extract_integer(data[:, 3]) # レース番号
-        # print(ids[n],vec_time[0:3])
+        ## データの追加
         Y = np.append(Y, vec_time)
         x1 = np.append(x1, vec_id)
         x2 = np.append(x2, vec_date)
@@ -178,54 +180,57 @@ def extract_dataset(N, req):
         x7 = np.append(x7, vec_weight_2)
         x8 = np.append(x8, vec_race)
         x9 = np.append(x9, vec_race_num)
-    ## 正則化
+        ## インクリメント
+        n += 1
+    ## バイアス項
     x0 = np.ones_like(x1)
     # X = np.transpose(np.vstack((x0, x1, x2, x3)))
-    X = np.transpose(np.vstack((x0, x2))) # 単回帰
+    X = np.transpose(np.vstack((x0, x6))) # 単回帰
     Z = np.transpose(np.vstack((Y, x0, x1, x2, x3, x4, x5, x6, x7, x8, x9)))
     return X, Y, Z
 ###
 
+## 直接実行された場合のみ処理する（関数として呼び出された場合は実行しない）
+if __name__ == "__main__":
+    ## ヒットチャートのページから馬ごとのURLを取得
+    ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
+    if not all(ids):
+        print("Error at scrape_hitchart")
+        exit()
 
-## ヒットチャートのページから馬ごとのURLを取得
-ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
-if not all(ids):
-    print("Error at scrape_hitchart")
-    exit()
+    ## N 位まで学習に使用
+    N = 100
+    required_data = 6, 7, 14, 17 # 頭数, 枠番, 距離, タイム
+    data = extract_dataset(ids[:N-1], required_data)
+    if data:
+        X_data = data[0]
+        Y_data = data[1]
+    else:
+        print("Error at extract_dataset")
+        exit()
 
-## N 位まで学習に使用
-N = 100
-required_data = 6, 7, 14, 17 # 頭数, 枠番, 距離, タイム
-data = extract_dataset(N, required_data)
-if data:
-    X_data = data[0]
-    Y_data = data[1]
-else:
-    print("Error at extract_dataset")
-    exit()
+    Z_data = data[2]
+    #訓練用データと検証用データに分ける
+    #検証用データとするレースの日付(yyyymmdd)とレース番号で入力
+    threshold_date = 20231126
+    race_number = 12
 
-Z_data = data[2]
-#訓練用データと検証用データに分ける
-#検証用データとするレースの日付(yyyymmdd)とレース番号で入力
-threshold_date = 20231126
-race_number = 12
+    #訓練用データ
+    training_data = Z_data[Z_data[:, 3] < threshold_date]
+    print(training_data)
 
-#訓練用データ
-training_data = Z_data[Z_data[:, 3] < threshold_date]
-print(training_data)
+    #検証用データ
+    validation_data = Z_data[Z_data[:, 3] == threshold_date]
+    validation_data = validation_data[validation_data[:, 9] == 1] #同日開催のレース名に1が入るレースを抽出 ex.G1, 1勝クラス
+    validation_data = validation_data[validation_data[:, 10] == race_number] #G1のみを抽出するためにレース番号を指定
+    print(validation_data)
 
-#検証用データ
-validation_data = Z_data[Z_data[:, 3] == threshold_date]
-validation_data = validation_data[validation_data[:, 9] == 1] #同日開催のレース名に1が入るレースを抽出 ex.G1, 1勝クラス
-validation_data = validation_data[validation_data[:, 10] == race_number] #G1のみを抽出するためにレース番号を指定
-print(validation_data)
+    #訓練用データのCSV出力
+    with open('training_data.csv', 'w', newline='', ) as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerows(training_data)
 
-#訓練用データのCSV出力
-with open('training_data.csv', 'w', newline='', ) as csvfile:
-    csvwriter = csv.writer(csvfile)
-    csvwriter.writerows(training_data)
-
-#検証用データのCSV出力
-with open('validation_data.csv', 'w', newline='', ) as csvfile:
-    csvwriter = csv.writer(csvfile)
-    csvwriter.writerows(validation_data)
+    #検証用データのCSV出力
+    with open('validation_data.csv', 'w', newline='', ) as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerows(validation_data)

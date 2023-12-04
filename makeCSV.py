@@ -184,9 +184,10 @@ def extract_dataset(arr_id, arr_req):
         n += 1
     ## バイアス項
     x0 = np.ones_like(x1)
-    X = x6 # 単回帰
+    # X = x6 # 単回帰
     # X = np.transpose(np.vstack((x0, x1, x2, x3))) # 重回帰
     # X = np.transpose(np.vstack((x0, x6))) # 重回帰を単回帰と比較
+    X = np.transpose(np.vstack((x6, x7))) # 2入力
     Z = np.transpose(np.vstack((Y, x0, x1, x2, x3, x4, x5, x6, x7, x8, x9)))
     return X, Y, Z
 ###

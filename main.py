@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from makeCSV import scrape_hitchart, scrape_grades, extract_integer, strtime2fltsec, strdate2intdate, extract_dataset
 import argparse
 from scipy.spatial.distance import cdist
+import time
 ###
 def constructLR(X, Y):
     ## 単回帰
@@ -79,7 +80,7 @@ def showGPR_1D(X, Y, x, y_mean, y_var, arr):
     ax.set_ylabel(arr[1])
     ax.set_title(f'theta1 = {theta[0]}, theta2 = {theta[1]}, theta3 = {theta[2]}')
     ax.grid()
-    plt.savefig(f'GPR_{theta}.png')
+    plt.savefig(f'GPR_{theta}_{arr[2]}.png')
 
 if __name__ == "__main__":
     ## コマンド引数関連
@@ -94,9 +95,11 @@ if __name__ == "__main__":
     ## 引数の取得
     args = parser.parse_args()
 
+    ## データ収集
+    start_time = time.time()
     print("start data collection")
-    N = 10 # 学習に使用するテーブルの数
-    required_data = 6, 7, 14, 17 # 頭数, 枠番, 距離, タイム
+    N = 100 # 学習に使用するテーブルの数
+    required_data = 6, 7, 14, 17, 23 # 頭数, 枠番, 距離, タイム, 体重
     if args.database[0] == 0:
         ## ヒットチャートのページから馬ごとのURLを取得
         ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
@@ -126,9 +129,12 @@ if __name__ == "__main__":
         else:
             print("Error at extract_dataset")
             exit()
-    print("done.")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"done. elapsed time: {elapsed_time}")
 
     ## 回帰モデルの構築
+    start_time = time.time()
     print("start model construction")
     if args.model[0] == 0:
         ## 線形回帰
@@ -140,9 +146,12 @@ if __name__ == "__main__":
         ## ニューラルネット
         print("Error:: NN is under development...")
         exit()
-    print("done.")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"done. elapsed time: {elapsed_time}")
 
     ## データ生成
+    start_time = time.time()
     print("start data generation")
     x1_hat = np.linspace(1, 3, 100)
     x6_hat = np.linspace(1500, 3500, 100)
@@ -158,15 +167,16 @@ if __name__ == "__main__":
         mu, sgm = getGPR(X_data, Y_data, X_hat, invK)
     elif args.model[0] == 2:
         Y_hat = getNN(X_hat)
-    print("done.")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"done. elapsed time: {elapsed_time}")
 
     ## 描画
-    # label = "dist[m]", "time[s]"
-    label = "wight[kg]", "time[s]"
     # label = "order/horses[-]", "time[s]"
     # show_graph(X_data[:,1], Y_data, x2_hat, Y_hat, label)
-    # show_graph(X_data[:,2], Y_data, x2_hat, Y_hat, label)
-    # showGPR_1D(X_data[:,0], Y_data, X_hat[:,0], mu, np.diagonal(sgm), label)
+    label = "dist[m]", "time[s]", "L-t"
+    showGPR_1D(X_data[:,0], Y_data, X_hat[:,0], mu, np.diagonal(sgm), label)
+    label = "wight[kg]", "time[s]", "W-t"
     showGPR_1D(X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
-    print(mu)
-    print(sgm)
+    # print(mu)
+    # print(np.diagonal(sgm))

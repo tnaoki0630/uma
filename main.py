@@ -93,7 +93,7 @@ def getGPR(theta, X_data, Y_data, X_hat):
     k_hat = RBFkarnel(theta, X_ndata, X_nhat, False, False)
     mu = np.dot(k_hat.T, np.dot(invK, Y_ndata))
     # 元のスケールに戻す
-    mu = mu + np.mean(Y_data)*np.sqrt(np.var(Y_data))
+    mu = mu*np.sqrt(np.var(Y_data)) + np.mean(Y_data)
 
     ## sgm の計算
     K_hat = RBFkarnel(theta, X_nhat, X_nhat, True, False)
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         ## 事前取得したcsvからデータ取得
         ### (下みたいな感じでhtmlを解析する時と同じように書けたらめっちゃラク。
         ### extract_datasetはhtml解析も含んでしまってるので、コードの設計を変える必要がある。)
-        data = extract_dataset(ids[:N-1], required_data)
+        data = extract_dataset(ids[:N], required_data)
         if data:
             X_data = data[0]
             Y_data = data[1]

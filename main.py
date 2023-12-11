@@ -203,7 +203,7 @@ if __name__ == "__main__":
     start_time = time.time()
     print("start data generation")
     x1_hat = np.linspace(1, 3, 100)
-    x6_hat = np.linspace(1500, 3500, 100)
+    x6_hat = np.linspace(1500, 2500, 100)
     x3_hat = np.linspace(0, 1, 100)
     x7_hat = np.linspace(440, 540, 100)
     x0_hat = np.ones_like(x1_hat)

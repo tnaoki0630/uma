@@ -103,7 +103,7 @@ for t1 in theta1:
 ## check NLL
 plt.title(f't3 = {t3:.2f}')
 plt.xlabel('t1')
-plt.xlabel('t2')
+plt.ylabel('t2')
 plt.imshow(L, cmap='jet', extent=[theta1.min(), theta1.max(), theta2.min(), theta2.max()])
 plt.colorbar()
 plt.savefig('NLL_t1t2.png')

@@ -21,6 +21,8 @@ def constructLR(X, Y):
 def RBFkarnel(theta, X1, X2, BOOL_diag, BOOL_grad):
     ## RBFカーネル
     # diff = np.subtract.outer(X1, X2) # 1入力
+    print(X1.shape)
+    print(X2.shape)
     diff = cdist(X1, X2, 'euclidean') # 複数入力
     Karnel = np.exp(theta[0])*np.exp(-0.5*(diff**2/np.exp(2*theta[1])))
     if BOOL_diag:
@@ -126,10 +128,10 @@ if __name__ == "__main__":
     ## 学習に使用するテーブル数
     parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 3)", default=[3])
     ## モデル選択
-    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR\nMODEL = 1: GPR(defoult)\nMODEL = 2: NN", default=[1])
+    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR\nMODEL = 1: GPR w/o optimization (default)\nMODEL = 2: GPR w/ optimization", default=[1])
     ## ハイパーパラメータ
-    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="PARAMETER[0] \\in R (default: 1.0)\nPARAMETER[1] \\in R (default: 20.0)\nPARAMETER[2] \\in R (default: 10.0)", default=[1.0, 20.0, 10.0])
-    
+    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="PARAMETER[0] \\in R (default: 4.0)\nPARAMETER[1] \\in R (default: 2.0)\nPARAMETER[2] \\in R (default: 4.0)", default=[4.0, 2.0, 4.0])
+
     ## 引数の取得
     args = parser.parse_args()
 
@@ -181,13 +183,9 @@ if __name__ == "__main__":
     if args.model[0] == 0:
         ## 線形回帰
         W = constructLR(X_data, Y_data)
-    elif args.model[0] == 1:
+    elif args.model[0] == 2:
         ## ガウス過程回帰
         theta = constructGPR(X_data, Y_data)
-    elif args.model[0] == 2:
-        ## ニューラルネット
-        print("Error:: NN is under development...")
-        exit()
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}")
@@ -195,24 +193,17 @@ if __name__ == "__main__":
     ## データ生成
     start_time = time.time()
     print("start data generation")
-    x0_hat = np.ones_like(x1_hat)
-    x1_hat = np.linspace(1, 3, 100)
-    x3_hat = np.linspace(0, 1, 100)
-    x6_hat = np.linspace(1000, 3000, 100)
-    x7_hat = np.linspace(440, 540, 100)
-    ## normalize
-    x6_hat = (x6_hat - mean_data[6])/np.sqrt(var_data[6])
-    x7_hat = (x7_hat - mean_data[7])/np.sqrt(var_data[7])
-    # X_hat = np.transpose(np.vstack((x0_hat, x2_hat)))
-    # X_hat = np.transpose(np.vstack((x0_hat, x1_hat, x2_hat, x3_hat)))
-    X_hat = np.transpose(np.vstack((x6_hat, x7_hat)))
-    # X_hat = x6_hat
+    x1_hat = np.linspace(-2, 2, 100) ## normalized
+    X_hat = np.transpose(np.vstack((x1_hat, x1_hat, x1_hat)))
     if args.model[0] == 0:
         Y_hat = np.dot(X_hat, W)
     elif args.model[0] == 1:
+        ## コマンド引数でパラメータを与える
+        theta = np.array(args.parameter)
         mu, sgm = getGPR(theta, X_data, Y_data, X_hat)
     elif args.model[0] == 2:
-        Y_hat = getNN(X_hat)
+        ## 最適化でパラメータを求める
+        mu, sgm = getGPR(theta, X_data, Y_data, X_hat)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}")
@@ -220,22 +211,45 @@ if __name__ == "__main__":
     ## 描画
     # label = "order/horses[-]", "time[s]"
     # show_graph(X_data[:,1], Y_data, x2_hat, Y_hat, label)
-    
-    ## L-t diagram
-    label = "dist[m]", "time[s]", "L-t"
-    # showGPR_1D(theta, X_data[:,0], Y_data, X_hat[:,0], mu, np.diagonal(sgm), label)
-    # showGPR_1D(theta, X_data[:], Y_data, X_hat[:], mu, np.diagonal(sgm), label)
+
+    ## 元のスケールに戻す
     Y_rawdata = Y_data*np.sqrt(var_data[0]) + mean_data[0]
     mu_raw = mu*np.sqrt(var_data[0]) + mean_data[0]
-    X_rawdata = X_data[:,0]*np.sqrt(var_data[1]) + mean_data[1]
-    X_rawhat = X_hat[:,0]*np.sqrt(var_data[1]) + mean_data[1]
-    showGPR_1D(theta, X_rawdata[:,0], Y_rawdata, X_rawhat[:,0], mu_raw, np.diagonal(sgm), label)
-    
+
+    ## L-t diagram
+    # label = "dist[m]", "time[s]", "L-t"
+    # # showGPR_1D(theta, X_data[:,0], Y_data, X_hat[:,0], mu, np.diagonal(sgm), label)
+    # # showGPR_1D(theta, X_data[:], Y_data, X_hat[:], mu, np.diagonal(sgm), label)
+    # X_rawdata = X_data[:,0]*np.sqrt(var_data[6]) + mean_data[6]
+    # X_rawhat = X_hat[:,0]*np.sqrt(var_data[6]) + mean_data[6]
+    # showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+
     ## W-t diagram
-    label = "wight[kg]", "time[s]", "W-t"
+    # label = "wight[kg]", "time[s]", "W-t"
+    # # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
+    # X_rawdata = X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7]
+    # X_rawhat = X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7]
+    # showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+
+    ## o-v diagram
+    label = "order [-]", "mean velocity [m/s]", "o-v"
     # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
-    X_rawdata = X_data[:,1]*np.sqrt(var_data[2]) + mean_data[2]
-    X_rawhat = X_hat[:,1]*np.sqrt(var_data[2]) + mean_data[2]
-    showGPR_1D(theta, X_rawdata[:,1], Y_rawdata, X_rawhat[:,1], mu_raw, np.diagonal(sgm), label)
+    X_rawdata = X_data[:,0]*np.sqrt(var_data[3]) + mean_data[3]
+    X_rawhat = X_hat[:,0]*np.sqrt(var_data[3]) + mean_data[3]
+    showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+
+    ## lw-t diagram
+    label = "load wight[kg]", "mean velocity [m/s]", "lw-t"
+    # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
+    X_rawdata = X_data[:,1]*np.sqrt(var_data[4]) + mean_data[4]
+    X_rawhat = X_hat[:,1]*np.sqrt(var_data[4]) + mean_data[4]
+    showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+
+    ## hw-v diagram
+    label = "horse wight[kg]", "mean velocity [m/s]", "hw-v"
+    X_rawdata = X_data[:,2]*np.sqrt(var_data[6]) + mean_data[6]
+    X_rawhat = X_hat[:,2]*np.sqrt(var_data[6]) + mean_data[6]
+    showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+
     # print(mu)
     # print(np.diagonal(sgm))

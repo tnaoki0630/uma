@@ -93,8 +93,10 @@ def scrape_grades(url, cols):
         if row_data:
             # 使うデータが揃ってる場合のみ出力
             if all(row_data[col] for col in cols):
-                data.append(row_data)
-                print(row_data[23])
+                # 馬体重の例外処理
+                if(re.search(r'\(([-+]?\d+)\)', row_data[23])):
+                    data.append(row_data)
+                    print(row_data[23])
     return data
 ###
 def extract_integer_in_parenthesis(arr):
@@ -104,6 +106,8 @@ def extract_integer_in_parenthesis(arr):
         match = re.search(r'\(([-+]?\d+)\)', string)
         if match:
             result.append(int(match.group(1)))
+        else:
+            result.append(None)
     return result
 ###
 def extract_integer(arr):
@@ -113,6 +117,8 @@ def extract_integer(arr):
         match = re.search(r'\d+', string)
         if match:
             result.append(int(match.group()))
+        else:
+            result.append(None)
     return result
 ###
 def strtime2fltsec(arr):
@@ -191,9 +197,6 @@ def extract_dataset(arr_id, arr_req):
         n += 1
     x0 = np.ones_like(x1) ## バイアス項
     ## normalize
-    np.set_printoptions(threshold=10000)
-    print(x7)
-    exit()
     # mean_data = np.array([Y.mean, x1.mean, x2.mean, x3.mean, x4.mean, x5.mean, x6.mean, x7.mean, x8.mean, x9.mean])
     # var_data = np.array([Y.var, x1.var, x2.var, x3.var, x4.var, x5.var, x6.var, x7.var, x8.var, x9.var])
     mean_data = np.array([Y.mean(), x1.mean(), x2.mean(), x3.mean(), x4.mean(), x5.mean(), x6.mean(), x7.mean()])
@@ -228,7 +231,7 @@ if __name__ == "__main__":
     ## N 位まで学習に使用
     N = 100
     required_data = 6, 7, 14, 17, 4 # 頭数, 枠番, 距離, タイム
-    data = extract_dataset(ids[:N-1], required_data)
+    data = extract_dataset(ids[:N], required_data)
     if data:
         X_data = data[0]
         Y_data = data[1]

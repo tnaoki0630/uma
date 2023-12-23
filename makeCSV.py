@@ -91,10 +91,20 @@ def scrape_grades(url, cols):
         row_data = [cell.get_text(strip=True) for cell in cells]
         # 空の行は無視する
         if row_data:
-            # 使うデータが欠けていれば無視する
+            # 使うデータが揃ってる場合のみ出力
             if all(row_data[col] for col in cols):
                 data.append(row_data)
+                print(row_data[23])
     return data
+###
+def extract_integer_in_parenthesis(arr):
+    result = []
+    for string in arr:
+        # 正規表現を使って()内の整数を抜き出す
+        match = re.search(r'\(([-+]?\d+)\)', string)
+        if match:
+            result.append(int(match.group(1)))
+    return result
 ###
 def extract_integer(arr):
     result = []
@@ -103,9 +113,6 @@ def extract_integer(arr):
         match = re.search(r'\d+', string)
         if match:
             result.append(int(match.group()))
-        else:
-            # マッチしなかった場合の処理（例: エラーハンドリング）
-            result.append(None)  # または何か適切な処理を行う
     return result
 ###
 def strtime2fltsec(arr):
@@ -166,7 +173,7 @@ def extract_dataset(arr_id, arr_req):
         vec_weight_1 = extract_integer(data[:, 13]) # 斤量
         vec_dist = extract_integer(data[:, 14]) # 距離
         vec_time = strtime2fltsec(data[:, 17]) # タイム
-        vec_weight_2 = extract_integer(data[:, 23]) # 馬体重
+        vec_weight_2 = extract_integer_in_parenthesis(data[:, 23]) # 馬体重の変化量
         vec_race = extract_integer(data[:, 4]) # レース名（数字のみを抽出:G1→1）
         vec_race_num = extract_integer(data[:, 3]) # レース番号
         ## データの追加
@@ -184,6 +191,9 @@ def extract_dataset(arr_id, arr_req):
         n += 1
     x0 = np.ones_like(x1) ## バイアス項
     ## normalize
+    np.set_printoptions(threshold=10000)
+    print(x7)
+    exit()
     # mean_data = np.array([Y.mean, x1.mean, x2.mean, x3.mean, x4.mean, x5.mean, x6.mean, x7.mean, x8.mean, x9.mean])
     # var_data = np.array([Y.var, x1.var, x2.var, x3.var, x4.var, x5.var, x6.var, x7.var, x8.var, x9.var])
     mean_data = np.array([Y.mean(), x1.mean(), x2.mean(), x3.mean(), x4.mean(), x5.mean(), x6.mean(), x7.mean()])

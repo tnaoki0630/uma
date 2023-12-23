@@ -1,8 +1,6 @@
 import requests
-from bs4 import BeautifulSoup
 import csv
 import numpy as np
-import re
 from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
 from makeCSV import scrape_hitchart, scrape_grades, extract_integer, strtime2fltsec, strdate2intdate, extract_dataset
@@ -22,8 +20,8 @@ def constructLR(X, Y):
 ###
 def RBFkarnel(theta, X1, X2, BOOL_diag, BOOL_grad):
     ## RBFカーネル
-    diff = np.subtract.outer(X1, X2) # 1入力
-    # diff = cdist(X1, X2, 'euclidean') # 複数入力
+    # diff = np.subtract.outer(X1, X2) # 1入力
+    diff = cdist(X1, X2, 'euclidean') # 複数入力
     Karnel = np.exp(theta[0])*np.exp(-0.5*(diff**2/np.exp(2*theta[1])))
     if BOOL_diag:
         ## 対角成分に観測ノイズの補正を付与
@@ -42,6 +40,7 @@ def NLL(theta, X, Y):
     ## RBF Karnel
     K = RBFkarnel(theta, X, X, True, False)
     invK = np.linalg.inv(K)
+    # invK = np.linalg.pinv(K) # 擬似逆
     ## Log Likelifood
     log_likelihood = - np.log(np.linalg.det(K)) - np.dot(Y.T, np.dot(invK, Y))
     return -log_likelihood
@@ -66,12 +65,9 @@ def NLL_grad(theta, X, Y):
 def constructGPR(X_data, Y_data):
     ## initial hyper-parameter
     theta = np.array(args.parameter)
-    ## normalize
-    X_normal = (X_data-np.mean(X_data))/np.sqrt(np.var(X_data)) # 1入力
-    Y_normal = (Y_data-np.mean(Y_data))/np.sqrt(np.var(Y_data))
     ## optimize parameter
-    # result = minimize(NLL, theta, method='BFGS', args=(X_normal, Y_normal)) # numerical gradient
-    result = minimize(NLL, theta, method='L-BFGS-B', jac=NLL_grad, args=(X_normal, Y_normal)) # analytical gradient
+    # result = minimize(NLL, theta, method='BFGS', args=(X_data, Y_data)) # numerical gradient
+    result = minimize(NLL, theta, method='L-BFGS-B', jac=NLL_grad, args=(X_data, Y_data)) # analytical gradient
     theta = result.x
     print("Minimized value:", result.fun)
     print("Optimal parameters:", result.x)
@@ -82,21 +78,14 @@ def constructGPR(X_data, Y_data):
     return theta
 ###
 def getGPR(theta, X_data, Y_data, X_hat):
-    ## normalize
-    X_ndata = (X_data-np.mean(X_data))/np.sqrt(np.var(X_data)) # 1入力
-    Y_ndata = (Y_data-np.mean(Y_data))/np.sqrt(np.var(Y_data))
-    X_nhat = (X_hat-np.mean(X_data))/np.sqrt(np.var(X_data)) # 1入力
     ## optimal RBF karnel
-    K = RBFkarnel(theta, X_ndata, X_ndata, True, False)
+    K = RBFkarnel(theta, X_data, X_data, True, False)
     invK = np.linalg.inv(K)
     ## mu の計算
-    k_hat = RBFkarnel(theta, X_ndata, X_nhat, False, False)
-    mu = np.dot(k_hat.T, np.dot(invK, Y_ndata))
-    # 元のスケールに戻す
-    mu = mu*np.sqrt(np.var(Y_data)) + np.mean(Y_data)
-
+    k_hat = RBFkarnel(theta, X_data, X_hat, False, False)
+    mu = np.dot(k_hat.T, np.dot(invK, Y_data))
     ## sgm の計算
-    K_hat = RBFkarnel(theta, X_nhat, X_nhat, True, False)
+    K_hat = RBFkarnel(theta, X_hat, X_hat, True, False)
     khTiKkh = np.dot(k_hat.T, np.dot(invK, k_hat))
     sgm = K_hat - khTiKkh
     return mu, sgm
@@ -148,11 +137,11 @@ if __name__ == "__main__":
     start_time = time.time()
     print("start data collection")
     N = min(100, max(1, args.number[0])) # 1~100となるよう例外処理
-    required_data = 6, 7, 14, 17, 23 # 頭数, 枠番, 距離, タイム, 体重
+    required_data = 0, 6, 8, 13, 14, 17, 23, 4, 3
     if args.database[0] == 0:
         ## ヒットチャートのページから馬ごとのURLを取得
         ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
-        if not all(ids):
+        if not ids:
             print("Error at scrape_hitchart")
             exit()
 
@@ -161,6 +150,8 @@ if __name__ == "__main__":
         if data:
             X_data = data[0]
             Y_data = data[1]
+            mean_data = data[2]
+            var_data = data[3]
         else:
             print("Error at extract_dataset")
             exit()
@@ -175,6 +166,8 @@ if __name__ == "__main__":
         if data:
             X_data = data[0]
             Y_data = data[1]
+            mean_data = data[2]
+            var_data = data[3]
         else:
             print("Error at extract_dataset")
             exit()
@@ -202,15 +195,18 @@ if __name__ == "__main__":
     ## データ生成
     start_time = time.time()
     print("start data generation")
-    x1_hat = np.linspace(1, 3, 100)
-    x6_hat = np.linspace(1500, 2500, 100)
-    x3_hat = np.linspace(0, 1, 100)
-    x7_hat = np.linspace(440, 540, 100)
     x0_hat = np.ones_like(x1_hat)
+    x1_hat = np.linspace(1, 3, 100)
+    x3_hat = np.linspace(0, 1, 100)
+    x6_hat = np.linspace(1000, 3000, 100)
+    x7_hat = np.linspace(440, 540, 100)
+    ## normalize
+    x6_hat = (x6_hat - mean_data[6])/np.sqrt(var_data[6])
+    x7_hat = (x7_hat - mean_data[7])/np.sqrt(var_data[7])
     # X_hat = np.transpose(np.vstack((x0_hat, x2_hat)))
     # X_hat = np.transpose(np.vstack((x0_hat, x1_hat, x2_hat, x3_hat)))
-    # X_hat = np.transpose(np.vstack((x6_hat, x7_hat)))
-    X_hat = x6_hat
+    X_hat = np.transpose(np.vstack((x6_hat, x7_hat)))
+    # X_hat = x6_hat
     if args.model[0] == 0:
         Y_hat = np.dot(X_hat, W)
     elif args.model[0] == 1:
@@ -224,10 +220,22 @@ if __name__ == "__main__":
     ## 描画
     # label = "order/horses[-]", "time[s]"
     # show_graph(X_data[:,1], Y_data, x2_hat, Y_hat, label)
+    
+    ## L-t diagram
     label = "dist[m]", "time[s]", "L-t"
     # showGPR_1D(theta, X_data[:,0], Y_data, X_hat[:,0], mu, np.diagonal(sgm), label)
-    showGPR_1D(theta, X_data[:], Y_data, X_hat[:], mu, np.diagonal(sgm), label)
-    # label = "wight[kg]", "time[s]", "W-t"
+    # showGPR_1D(theta, X_data[:], Y_data, X_hat[:], mu, np.diagonal(sgm), label)
+    Y_rawdata = Y_data*np.sqrt(var_data[0]) + mean_data[0]
+    mu_raw = mu*np.sqrt(var_data[0]) + mean_data[0]
+    X_rawdata = X_data[:,0]*np.sqrt(var_data[1]) + mean_data[1]
+    X_rawhat = X_hat[:,0]*np.sqrt(var_data[1]) + mean_data[1]
+    showGPR_1D(theta, X_rawdata[:,0], Y_rawdata, X_rawhat[:,0], mu_raw, np.diagonal(sgm), label)
+    
+    ## W-t diagram
+    label = "wight[kg]", "time[s]", "W-t"
     # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
+    X_rawdata = X_data[:,1]*np.sqrt(var_data[2]) + mean_data[2]
+    X_rawhat = X_hat[:,1]*np.sqrt(var_data[2]) + mean_data[2]
+    showGPR_1D(theta, X_rawdata[:,1], Y_rawdata, X_rawhat[:,1], mu_raw, np.diagonal(sgm), label)
     # print(mu)
     # print(np.diagonal(sgm))

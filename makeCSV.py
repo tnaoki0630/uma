@@ -182,14 +182,29 @@ def extract_dataset(arr_id, arr_req):
         x9 = np.append(x9, vec_race_num)
         ## インクリメント
         n += 1
-    ## バイアス項
-    x0 = np.ones_like(x1)
-    X = x6 # 単回帰
+    x0 = np.ones_like(x1) ## バイアス項
+    ## normalize
+    # mean_data = np.array([Y.mean, x1.mean, x2.mean, x3.mean, x4.mean, x5.mean, x6.mean, x7.mean, x8.mean, x9.mean])
+    # var_data = np.array([Y.var, x1.var, x2.var, x3.var, x4.var, x5.var, x6.var, x7.var, x8.var, x9.var])
+    mean_data = np.array([Y.mean(), x1.mean(), x2.mean(), x3.mean(), x4.mean(), x5.mean(), x6.mean(), x7.mean()])
+    var_data = np.array([Y.var(), x1.var(), x2.var(), x3.var(), x4.var(), x5.var(), x6.var(), x7.var()])
+    Y = (Y - mean_data[0])/np.sqrt(var_data[0])
+    x1 = (x1 - mean_data[1])/np.sqrt(var_data[1])
+    x2 = (x2 - mean_data[2])/np.sqrt(var_data[2])
+    x3 = (x3 - mean_data[3])/np.sqrt(var_data[3])
+    x4 = (x4 - mean_data[4])/np.sqrt(var_data[4])
+    x5 = (x5 - mean_data[5])/np.sqrt(var_data[5])
+    x6 = (x6 - mean_data[6])/np.sqrt(var_data[6])
+    x7 = (x7 - mean_data[7])/np.sqrt(var_data[7])
+    # x8 = (x8 - mean_data[8])/np.sqrt(var_data[8])
+    # x9 = (x9 - mean_data[9])/np.sqrt(var_data[9])
+    ## reshape
+    # X = x6
     # X = np.transpose(np.vstack((x0, x1, x2, x3))) # 重回帰
     # X = np.transpose(np.vstack((x0, x6))) # 重回帰を単回帰と比較
-    # X = np.transpose(np.vstack((x6, x7))) # 2入力
-    Z = np.transpose(np.vstack((Y, x0, x1, x2, x3, x4, x5, x6, x7, x8, x9)))
-    return X, Y, Z
+    X = np.transpose(np.vstack((x6, x7))) # 2入力
+    # Z = np.transpose(np.vstack((Y, x0, x1, x2, x3, x4, x5, x6, x7, x8, x9)))
+    return X, Y, mean_data, var_data
 ###
 
 ## 直接実行された場合のみ処理する（関数として呼び出された場合は実行しない）
@@ -202,7 +217,7 @@ if __name__ == "__main__":
 
     ## N 位まで学習に使用
     N = 100
-    required_data = 6, 7, 14, 17 # 頭数, 枠番, 距離, タイム
+    required_data = 6, 7, 14, 17, 4 # 頭数, 枠番, 距離, タイム
     data = extract_dataset(ids[:N-1], required_data)
     if data:
         X_data = data[0]

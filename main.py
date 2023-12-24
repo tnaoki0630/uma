@@ -3,7 +3,7 @@ import csv
 import numpy as np
 from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
-from makeCSV import scrape_hitchart, scrape_grades, extract_integer, strtime2fltsec, strdate2intdate, extract_dataset
+from makeCSV import scrape_hitchart, scrape_grades, extract_integer, extract_float, strtime2fltsec, strdate2intdate, extract_dataset
 import argparse
 from scipy.spatial.distance import cdist
 from scipy.optimize import minimize
@@ -255,5 +255,17 @@ if __name__ == "__main__":
     X_rawhat = X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7]
     showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
 
-    # print(mu)
-    # print(np.diagonal(sgm))
+    print("input uma information: 馬番、頭数、斤量、体重、オッズ")
+    user_input = input()
+    
+    data = user_input.split()
+    ## 型変換 + 正規化
+    order = (int(data[0])/int(data[1]) - mean_data[3])/np.sqrt(var_data[3])
+    weight1 = (int(data[2]) - mean_data[4])/np.sqrt(var_data[4])
+    weight2 = (int(data[3]) - mean_data[6])/np.sqrt(var_data[6])
+    odds = (float(data[4]) - mean_data[7])/np.sqrt(var_data[7])
+    x_hat = np.array([order, weight1, weight2, odds])
+    x_hat = x_hat.reshape((1,4))
+    mu, sgm = getGPR(theta, X_data, Y_data, x_hat)
+    print(mu*np.sqrt(var_data[0])+mean_data[0])
+    print(np.diagonal(sgm))

@@ -257,7 +257,7 @@ if __name__ == "__main__":
 
     print("input uma information: 馬番、頭数、斤量、体重、オッズ")
     user_input = input()
-    
+
     data = user_input.split()
     ## 型変換 + 正規化
     order = (int(data[0])/int(data[1]) - mean_data[3])/np.sqrt(var_data[3])
@@ -267,5 +267,5 @@ if __name__ == "__main__":
     x_hat = np.array([order, weight1, weight2, odds])
     x_hat = x_hat.reshape((1,4))
     mu, sgm = getGPR(theta, X_data, Y_data, x_hat)
-    print(mu*np.sqrt(var_data[0])+mean_data[0])
-    print(np.diagonal(sgm))
+    print(f"mean: {mu*np.sqrt(var_data[0])+mean_data[0]}")
+    print(f"var: {np.diagonal(sgm)}")

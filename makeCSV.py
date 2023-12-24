@@ -120,6 +120,18 @@ def extract_integer(arr):
             result.append(None)
     return result
 ###
+###
+def extract_float(arr):
+    result = []
+    for string in arr:
+        # 正規表現を使って%dの部分を抜き出す
+        match = re.search(r'\d+\.\d', string)
+        if match:
+            result.append(float(match.group()))
+        else:
+            result.append(None)
+    return result
+###
 def strtime2fltsec(arr):
     result = []
     for time_str in arr:
@@ -182,6 +194,7 @@ def extract_dataset(arr_id, arr_req):
         vec_weight_2 = extract_integer_in_parenthesis(data[:, 23]) # 馬体重の変化量
         vec_race = extract_integer(data[:, 4]) # レース名（数字のみを抽出:G1→1）
         vec_race_num = extract_integer(data[:, 3]) # レース番号
+        vec_odds = extract_float(data[:, 9]) # オッズ
         ## データの追加
         Y = np.append(Y, vec_time)
         x1 = np.append(x1, vec_id)
@@ -191,14 +204,15 @@ def extract_dataset(arr_id, arr_req):
         x4 = np.append(x4, vec_weight_1)
         x5 = np.append(x5, vec_dist)
         x6 = np.append(x6, vec_weight_2)
+        x7 = np.append(x7, vec_odds)
         ## インクリメント
         n += 1
     x0 = np.ones_like(x1) ## バイアス項
     Y = x5/Y # 距離/タイム
     x3 = x3_1/x3_2 # 馬番/頭数
     ## normalize
-    mean_data = np.array([Y.mean(), x1.mean(), x2.mean(), x3.mean(), x4.mean(), x5.mean(), x6.mean()])
-    var_data = np.array([Y.var(), x1.var(), x2.var(), x3.var(), x4.var(), x5.var(), x6.var()])
+    mean_data = np.array([Y.mean(), x1.mean(), x2.mean(), x3.mean(), x4.mean(), x5.mean(), x6.mean(), x7.mean()])
+    var_data = np.array([Y.var(), x1.var(), x2.var(), x3.var(), x4.var(), x5.var(), x6.var(), x7.var()])
     Y = (Y - mean_data[0])/np.sqrt(var_data[0])
     x1 = (x1 - mean_data[1])/np.sqrt(var_data[1])
     x2 = (x2 - mean_data[2])/np.sqrt(var_data[2])
@@ -206,7 +220,7 @@ def extract_dataset(arr_id, arr_req):
     x4 = (x4 - mean_data[4])/np.sqrt(var_data[4])
     x5 = (x5 - mean_data[5])/np.sqrt(var_data[5])
     x6 = (x6 - mean_data[6])/np.sqrt(var_data[6])
-    # x7 = (x7 - mean_data[7])/np.sqrt(var_data[7])
+    x7 = (x7 - mean_data[7])/np.sqrt(var_data[7])
     # x8 = (x8 - mean_data[8])/np.sqrt(var_data[8])
     # x9 = (x9 - mean_data[9])/np.sqrt(var_data[9])
     ## reshape
@@ -214,7 +228,7 @@ def extract_dataset(arr_id, arr_req):
     # X = np.transpose(np.vstack((x0, x1, x2, x3))) # 重回帰
     # X = np.transpose(np.vstack((x0, x5))) # 重回帰を単回帰と比較
     # X = np.transpose(np.vstack((x5, x6))) # 距離、体重
-    X = np.transpose(np.vstack((x3, x4, x6))) # 馬番/頭数、斤量、体重
+    X = np.transpose(np.vstack((x3, x4, x6, x7))) # 馬番/頭数、斤量、体重、オッズ
     # Z = np.transpose(np.vstack((Y, x0, x1, x2, x3, x4, x5, x6, x7, x8, x9)))
     return X, Y, mean_data, var_data
 ###

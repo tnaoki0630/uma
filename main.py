@@ -21,8 +21,6 @@ def constructLR(X, Y):
 def RBFkarnel(theta, X1, X2, BOOL_diag, BOOL_grad):
     ## RBFカーネル
     # diff = np.subtract.outer(X1, X2) # 1入力
-    print(X1.shape)
-    print(X2.shape)
     diff = cdist(X1, X2, 'euclidean') # 複数入力
     Karnel = np.exp(theta[0])*np.exp(-0.5*(diff**2/np.exp(2*theta[1])))
     if BOOL_diag:
@@ -60,8 +58,8 @@ def NLL_grad(theta, X, Y):
     L_grad = np.zeros(rows[0])
     for row in range(rows[0]):
         L_grad[row] = - np.trace(np.dot(invK, dKdth[:,:,row])) + np.dot(iKY.T, np.dot(dKdth[:,:,row], iKY))
-        print(- np.trace(np.dot(invK, dKdth[:,:,row])))
-        print(np.dot(iKY.T, np.dot(dKdth[:,:,row], iKY)))
+        # print(- np.trace(np.dot(invK, dKdth[:,:,row])))
+        # print(np.dot(iKY.T, np.dot(dKdth[:,:,row], iKY)))
     return -L_grad
 ###
 def constructGPR(X_data, Y_data):
@@ -130,7 +128,7 @@ if __name__ == "__main__":
     ## モデル選択
     parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR\nMODEL = 1: GPR w/o optimization (default)\nMODEL = 2: GPR w/ optimization", default=[1])
     ## ハイパーパラメータ
-    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="PARAMETER[0] \\in R (default: 4.0)\nPARAMETER[1] \\in R (default: 2.0)\nPARAMETER[2] \\in R (default: 4.0)", default=[4.0, 2.0, 4.0])
+    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="PARAMETER[0] \\in R (default: 0.0)\nPARAMETER[1] \\in R (default: 0.0)\nPARAMETER[2] \\in R (default: 0.0)", default=[0.0, 0.0, 0.0])
 
     ## 引数の取得
     args = parser.parse_args()
@@ -194,7 +192,7 @@ if __name__ == "__main__":
     start_time = time.time()
     print("start data generation")
     x1_hat = np.linspace(-2, 2, 100) ## normalized
-    X_hat = np.transpose(np.vstack((x1_hat, x1_hat, x1_hat)))
+    X_hat = np.transpose(np.vstack((x1_hat, x1_hat, x1_hat, x1_hat)))
     if args.model[0] == 0:
         Y_hat = np.dot(X_hat, W)
     elif args.model[0] == 1:
@@ -249,6 +247,12 @@ if __name__ == "__main__":
     label = "horse wight[kg]", "mean velocity [m/s]", "hw-v"
     X_rawdata = X_data[:,2]*np.sqrt(var_data[6]) + mean_data[6]
     X_rawhat = X_hat[:,2]*np.sqrt(var_data[6]) + mean_data[6]
+    showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+
+    ## odds-v diagram
+    label = "odds [-]", "mean velocity [m/s]", "odds-v"
+    X_rawdata = X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7]
+    X_rawhat = X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7]
     showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
 
     # print(mu)

@@ -128,7 +128,7 @@ if __name__ == "__main__":
     ## モデル選択
     parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR\nMODEL = 1: GPR w/o optimization (default)\nMODEL = 2: GPR w/ optimization", default=[1])
     ## ハイパーパラメータ
-    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="PARAMETER[0] \\in R (default: 0.0)\nPARAMETER[1] \\in R (default: 0.0)\nPARAMETER[2] \\in R (default: 0.0)", default=[0.0, 0.0, 0.0])
+    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="PARAMETER[0] \\in R (default: 0.0)\nPARAMETER[1] \\in R (default: 0.0)\nPARAMETER[2] \\in R (default: 0.0)", default=[-1, -1, -1])
 
     ## 引数の取得
     args = parser.parse_args()
@@ -253,19 +253,29 @@ if __name__ == "__main__":
     label = "odds [-]", "mean velocity [m/s]", "odds-v"
     X_rawdata = X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7]
     X_rawhat = X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7]
+    # X_rawdata = np.exp(X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7])
+    # X_rawhat = np.exp(X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7])
     showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
 
-    print("input uma information: 馬番、頭数、斤量、体重、オッズ")
-    user_input = input()
-
-    data = user_input.split()
-    ## 型変換 + 正規化
-    order = (int(data[0])/int(data[1]) - mean_data[3])/np.sqrt(var_data[3])
-    weight1 = (int(data[2]) - mean_data[4])/np.sqrt(var_data[4])
-    weight2 = (int(data[3]) - mean_data[6])/np.sqrt(var_data[6])
-    odds = (float(data[4]) - mean_data[7])/np.sqrt(var_data[7])
-    x_hat = np.array([order, weight1, weight2, odds])
-    x_hat = x_hat.reshape((1,4))
-    mu, sgm = getGPR(theta, X_data, Y_data, x_hat)
-    print(f"mean: {mu*np.sqrt(var_data[0])+mean_data[0]}")
-    print(f"var: {np.diagonal(sgm)}")
+    while True:
+        try:
+            print("input uma information: 馬番、頭数、斤量、体重、オッズ")
+            user_input = input()
+            ## :q と入力があったら終了
+            if user_input == ":q": break
+            ## 入力をスペース区切りで分割
+            data = user_input.split()
+            ## 型変換 + 正規化
+            order = (int(data[0])/int(data[1]) - mean_data[3])/np.sqrt(var_data[3])
+            weight1 = (float(data[2]) - mean_data[4])/np.sqrt(var_data[4])
+            weight2 = (int(data[3]) - mean_data[6])/np.sqrt(var_data[6])
+            odds = (np.log(float(data[4])) - mean_data[7])/np.sqrt(var_data[7])
+            ## 説明変数の準備
+            x_hat = np.array([order, weight1, weight2, odds])
+            x_hat = x_hat.reshape((1,4))
+            ## 予測
+            mu, sgm = getGPR(theta, X_data, Y_data, x_hat)
+            print(f"mean: {mu*np.sqrt(var_data[0])+mean_data[0]}")
+            print(f"var: {np.diagonal(sgm)}")
+        except ValueError:
+            print("input error")

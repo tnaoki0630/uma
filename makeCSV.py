@@ -179,8 +179,9 @@ def extract_dataset(arr_id, arr_req):
         if grades_data:
             data = np.array(grades_data)
         else:
-            print("Error at scrape_grades")
-            exit()
+            # print("Error at scrape_grades")
+            # exit()
+            continue ## 戦績表がまだない新馬もいるらしい... 既知のエラーということで続行。
 
         ## データベクトルの準備
         row, col = np.shape(data)
@@ -194,7 +195,7 @@ def extract_dataset(arr_id, arr_req):
         vec_weight_2 = extract_integer_in_parenthesis(data[:, 23]) # 馬体重の変化量
         vec_race = extract_integer(data[:, 4]) # レース名（数字のみを抽出:G1→1）
         vec_race_num = extract_integer(data[:, 3]) # レース番号
-        vec_odds = extract_float(data[:, 9]) # オッズ
+        vec_odds = np.log(extract_float(data[:, 9])) # オッズ（必ず正の値を取るので対数）
         ## データの追加
         Y = np.append(Y, vec_time)
         x1 = np.append(x1, vec_id)

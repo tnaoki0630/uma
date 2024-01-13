@@ -3,7 +3,7 @@ import csv
 import numpy as np
 from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
-from makeCSV import scrape_hitchart, scrape_grades, extract_integer, extract_float, strtime2fltsec, strdate2intdate, extract_dataset
+from makeCSV import scrape_hitchart, extract_dataset
 import argparse
 from scipy.spatial.distance import cdist
 from scipy.optimize import minimize
@@ -42,7 +42,11 @@ def NLL(theta, X, Y):
     invK = np.linalg.inv(K)
     # invK = np.linalg.pinv(K) # 擬似逆
     ## Log Likelifood
-    log_likelihood = - np.log(np.linalg.det(K)) - np.dot(Y.T, np.dot(invK, Y))
+    # log_likelihood = - np.log(np.linalg.det(K)) - np.dot(Y.T, np.dot(invK, Y))
+    sign, logabsdetK = np.linalg.slogdet(K)
+    if sign <= 0:
+        raise ValueError("Error at NLL: det K <= 0.")
+    log_likelihood = - logabsdetK - np.dot(Y.T, np.dot(invK, Y))
     return -log_likelihood
 ###
 def NLL_grad(theta, X, Y):
@@ -174,6 +178,8 @@ if __name__ == "__main__":
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}")
+
+    ## 主成分分析
 
     ## 回帰モデルの構築
     start_time = time.time()

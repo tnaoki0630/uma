@@ -1,71 +1,66 @@
-import numpy as np
-from makeCSV import scrape_hitchart, extract_dataset
+import pandas as pd
+from pandas import plotting
+from makeCSV import scrape_hitchart
 import argparse
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 
-## test for cdist
-# # 例として行列Xと行列Yを作成する
-# X = np.array([[1, 2, 3],
-#               [4, 5, 6],
-#               [7, 8, 9]])
+## matplotlib を日本語フォントに変更
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['font.sans-serif'] = ['Hiragino Maru Gothic Pro', 'Yu Gothic', 'Meirio', 'Takao', 'IPAexGothic', 'IPAPGothic', 'VL PGothic', 'Noto Sans CJK JP']
 
-# Y = np.array([[12, 11, 10],
-#               [9, 8, 7],
-#               [6, 5, 4],
-#               [3, 2, 1]])
-
-# # cdist関数を使用して行列Xと行列Yの各行ベクトル間のユークリッド距離を計算
-# distances = cdist(X, Y, 'euclidean')
-
-# # 結果を表示
-# print(distances)
-
-## test for NLL
 ## コマンド引数関連
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-## データ読み込み方式
-parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="DATABASE = 0: html(default)\nDATABASE = 1: csv", default=[0])
 ## 学習に使用するテーブル数
 parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 3)", default=[3])
-## モデル選択
-parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR\nMODEL = 1: GPR(defoult)\nMODEL = 2: NN", default=[1])
-## ハイパーパラメータ
-parser.add_argument("-p", "--parameter", nargs=3, type=float, help="PARAMETER[0] \\in R (default: 1.0)\nPARAMETER[1] \\in R (default: 20.0)\nPARAMETER[2] \\in R (default: 10.0)", default=[1.0, 20.0, 10.0])
-
 ## 引数の取得
 args = parser.parse_args()
 
-## データ収集
-print("start data collection")
-N = min(100, max(1, args.number[0])) # 1~100となるよう例外処理
-required_data = 0, 6, 8, 13, 14, 17, 23, 4, 3
-if args.database[0] == 0:
-    ## ヒットチャートのページから馬ごとのURLを取得
-    ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
-    if not ids:
-        print("Error at scrape_hitchart")
-        exit()
-
-    ## htmlを解析してデータ取得
-    data = extract_dataset(ids[:N], required_data)
-    if data:
-        X_data = data[0]
-        Y_data = data[1]
-        mean_data = data[2]
-        var_data = data[3]
-    else:
-        print("Error at extract_dataset")
-        exit()
-elif args.database[0] == 1:
-    ## 未実装なのでexit
-    print("Error:: csv reading is under development...")
+## ヒットチャートのページから馬ごとのURLを取得
+ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
+if not ids:
+    print("Error at scrape_hitchart")
     exit()
-    ## 事前取得したcsvからデータ取得
-    data = extract_dataset(ids[:N], required_data)
-    if data:
-        X_data = data[0]
-        Y_data = data[1]
-    else:
-        print("Error at extract_dataset")
-        exit()
-print('done.')
+
+## 1つめはヘッダー込みでデータフレームを作成
+url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
+# pandasでスクレイピング
+df_all = pd.read_html(url, encoding='euc-jp')[0]
+df = df_all[['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り']]
+# うまIDを追加
+df_all['ID'] = ids[0]
+df['ID'] = ids[0]
+# 要素を入れ替え
+df = df[['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り']]
+
+N = min(100, max(1, args.number[0])) # 1~100となるよう例外処理
+for id in ids[1:N]:
+    url = f"https://db.netkeiba.com/horse/result/{id}"
+    # pandasでスクレイピング
+    try:
+        df1_all = pd.read_html(url, encoding='euc-jp')[0]
+    except ValueError:
+        print("Table not found")
+    df1 = df1_all[['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り']]
+    # うまIDを追加
+    df1_all['ID'] = id
+    df1['ID'] = id
+    # 要素を入れ替え
+    df1 = df1[['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り']]
+    # データフレームを結合
+    df_all = pd.concat([df_all, df1_all], ignore_index=True)
+    df = pd.concat([df, df1], ignore_index=True)
+
+df = df.apply(pd.to_numeric, errors='coerce') # すべての列を数値に変換（失敗した場合はNaNが入る）
+df = df.dropna() # 一つでもNaNなら削除
+
+X = df.iloc[:,1:].values # データ
+C1 = df.iloc[:,0].values # ID
+F = df.columns[1:].values # 変数名
+
+## 主成分分析
+pca = PCA()
+P = pca.fit_transform(X)
+decomposed_df = pd.DataFrame(pca.components_, columns=F, index=[f'PC{i+1}' for i in range(pca.n_components_)])
+decomposed_df.to_csv('output_file.csv', index=False)
+print(decomposed_df)

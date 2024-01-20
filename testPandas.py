@@ -3,6 +3,7 @@ from pandas import plotting
 from makeCSV import scrape_hitchart
 import argparse
 import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 
 ## matplotlib を日本語フォントに変更
 plt.rcParams['font.family'] = 'sans-serif'
@@ -50,16 +51,14 @@ for id in ids[1:N]:
     df_all = pd.concat([df_all, df1_all], ignore_index=True)
     df = pd.concat([df, df1], ignore_index=True)
 
-X = df.iloc[:,1:].values # データ
-C1 = df.iloc[:,0].values # ID
-F = df.columns[1:].values # 変数名
 
 # 取得したデータフレームの出力
-# print(df_all)
+df_all.to_csv('output_file.csv', index=False)
 # 型チェック
-print(df.dtypes)
-# なぜか着順が object なので数値に変換
-df['着 順'] = pd.to_numeric(df['着 順'], errors='coerce')
+# print(df.dtypes)
+# df['着 順'] = pd.to_numeric(df['着 順'], errors='coerce') # なぜか着順が object なので数値に変換
+df = df.apply(pd.to_numeric, errors='coerce') # すべての列を数値に変換（失敗した場合はNaNが入る）
+df = df.dropna() # NaNを削除
 
 # 散布図行列のプロット
 plotting.scatter_matrix(df.iloc[:,1:], figsize=(10, 10), alpha=0.5)

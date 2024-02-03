@@ -241,14 +241,8 @@ def extract_dataset(arr_id, arr_req):
 if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-    ## データ読み込み方式
-    parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="DATABASE = 0: html(default)\nDATABASE = 1: csv", default=[0])
     ## 学習に使用するテーブル数
     parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 3)", default=[3])
-    ## モデル選択
-    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR\nMODEL = 1: GPR w/o optimization (default)\nMODEL = 2: GPR w/ optimization", default=[1])
-    ## ハイパーパラメータ
-    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="PARAMETER[0] \\in R (default: 0.0)\nPARAMETER[1] \\in R (default: 0.0)\nPARAMETER[2] \\in R (default: 0.0)", default=[-1, -1, -1])
     ## 引数の取得
     args = parser.parse_args()
 

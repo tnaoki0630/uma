@@ -22,16 +22,21 @@ if not ids:
     print("Error at scrape_hitchart")
     exit()
 
+# 変数リスト
+varlist = ['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重']
+varlist_wID = varlist[:]
+varlist_wID.insert(0, 'ID')
+
 ## 1つめはヘッダー込みでデータフレームを作成
 url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
 # pandasでスクレイピング
 df_all = pd.read_html(url, encoding='euc-jp')[0]
-df = df_all[['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り']]
+df = df_all[varlist]
 # うまIDを追加
 df_all['ID'] = ids[0]
 df['ID'] = ids[0]
 # 要素を入れ替え
-df = df[['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り']]
+df = df[varlist_wID]
 
 N = min(100, max(1, args.number[0])) # 1~100となるよう例外処理
 for id in ids[1:N]:
@@ -41,12 +46,12 @@ for id in ids[1:N]:
         df1_all = pd.read_html(url, encoding='euc-jp')[0]
     except ValueError:
         print("Table not found")
-    df1 = df1_all[['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り']]
+    df1 = df1_all[varlist]
     # うまIDを追加
     df1_all['ID'] = id
     df1['ID'] = id
     # 要素を入れ替え
-    df1 = df1[['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り']]
+    df1 = df1[varlist_wID]
     # データフレームを結合
     df_all = pd.concat([df_all, df1_all], ignore_index=True)
     df = pd.concat([df, df1], ignore_index=True)

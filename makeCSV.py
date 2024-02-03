@@ -244,37 +244,65 @@ if __name__ == "__main__":
 
     ## N 位まで学習に使用
     N = 100
-    required_data = 6, 7, 14, 17, 4 # 頭数, 枠番, 距離, タイム
-    data = extract_dataset(ids[:N], required_data)
-    if data:
-        X_data = data[0]
-        Y_data = data[1]
-    else:
-        print("Error at extract_dataset")
-        exit()
+    # 変数リスト
+    varlist = ['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重']
+    varlist_wID = varlist[:]
+    varlist_wID.insert(0, 'ID')
 
-    Z_data = data[2]
-    #訓練用データと検証用データに分ける
-    #検証用データとするレースの日付(yyyymmdd)とレース番号で入力
-    threshold_date = 20231126
-    race_number = 12
+    ## 1つめはヘッダー込みでデータフレームを作成
+    url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
+    # pandasでスクレイピング
+    df_all = pd.read_html(url, encoding='euc-jp')[0]
+    df = df_all[varlist]
+    # うまIDを追加
+    df_all['ID'] = ids[0]
+    df['ID'] = ids[0]
+    # 要素を入れ替え
+    df = df[varlist_wID]
+    for id in ids[1:N]:
+        url = f"https://db.netkeiba.com/horse/result/{id}"
+        # pandasでスクレイピング
+        try:
+            df1_all = pd.read_html(url, encoding='euc-jp')[0]
+        except ValueError:
+            print("Table not found")
+            df1 = df1_all[varlist]
+            # うまIDを追加
+            df1_all['ID'] = id
+            df1['ID'] = id
+            # 要素を入れ替え
+            df1 = df1[varlist_wID]
+            # データフレームを結合
+            df_all = pd.concat([df_all, df1_all], ignore_index=True)
+            df = pd.concat([df, df1], ignore_index=True)
 
-    #訓練用データ
-    training_data = Z_data[Z_data[:, 3] < threshold_date]
-    print(training_data)
-
-    #検証用データ
-    validation_data = Z_data[Z_data[:, 3] == threshold_date]
-    validation_data = validation_data[validation_data[:, 9] == 1] #同日開催のレース名に1が入るレースを抽出 ex.G1, 1勝クラス
-    validation_data = validation_data[validation_data[:, 10] == race_number] #G1のみを抽出するためにレース番号を指定
-    print(validation_data)
-
-    #訓練用データのCSV出力
-    with open('training_data.csv', 'w', newline='', ) as csvfile:
+    #CSV出力
+    with open('UMA_DB.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerows(training_data)
+        csvwriter.writerows(data)
 
-    #検証用データのCSV出力
-    with open('validation_data.csv', 'w', newline='', ) as csvfile:
-        csvwriter = csv.writer(csvfile)
-        csvwriter.writerows(validation_data)
+    # Z_data = data[2]
+    # #訓練用データと検証用データに分ける
+    # #検証用データとするレースの日付(yyyymmdd)とレース番号で入力
+    # threshold_date = 20231126
+    # race_number = 12
+
+    # #訓練用データ
+    # training_data = Z_data[Z_data[:, 3] < threshold_date]
+    # print(training_data)
+
+    # #検証用データ
+    # validation_data = Z_data[Z_data[:, 3] == threshold_date]
+    # validation_data = validation_data[validation_data[:, 9] == 1] #同日開催のレース名に1が入るレースを抽出 ex.G1, 1勝クラス
+    # validation_data = validation_data[validation_data[:, 10] == race_number] #G1のみを抽出するためにレース番号を指定
+    # print(validation_data)
+
+    # #訓練用データのCSV出力
+    # with open('training_data.csv', 'w', newline='', ) as csvfile:
+    #     csvwriter = csv.writer(csvfile)
+    #     csvwriter.writerows(training_data)
+
+    # #検証用データのCSV出力
+    # with open('validation_data.csv', 'w', newline='', ) as csvfile:
+    #     csvwriter = csv.writer(csvfile)
+    #     csvwriter.writerows(validation_data)

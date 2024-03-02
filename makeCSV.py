@@ -53,7 +53,8 @@ def scrape_hitchart(url):
                     if anchor_tag:
                         href_value = anchor_tag.get('href')
                         # IDを抽出
-                        match = re.search(r'\d+', href_value)
+                        # match = re.search(r'\d+', href_value)
+                        match = re.search(r'\b\d{10}\b', href_value)
                         if match:
                             arr.append(int(match.group()))
     return arr

@@ -253,7 +253,7 @@ if __name__ == "__main__":
         exit()
 
     ## N 位まで学習に使用
-    N = 100
+    N = 5
     # 変数リスト
     varlist = ['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重']
     varlist_wID = varlist[:]
@@ -265,7 +265,11 @@ if __name__ == "__main__":
     df_all = pd.read_html(url, encoding='euc-jp')[0]
     df = df_all[varlist]
     # うまIDを追加
+    varlist_all = list(df_all)
+    varlist_all.insert(0, 'ID')
     df_all['ID'] = ids[0]
+    df_all = df_all[varlist_all]
+
     df['ID'] = ids[0]
     # 要素を入れ替え
     df = df[varlist_wID]
@@ -276,20 +280,21 @@ if __name__ == "__main__":
             df1_all = pd.read_html(url, encoding='euc-jp')[0]
         except ValueError:
             print("Table not found")
-            df1 = df1_all[varlist]
-            # うまIDを追加
-            df1_all['ID'] = id
-            df1['ID'] = id
-            # 要素を入れ替え
-            df1 = df1[varlist_wID]
-            # データフレームを結合
-            df_all = pd.concat([df_all, df1_all], ignore_index=True)
-            df = pd.concat([df, df1], ignore_index=True)
+        df1 = df1_all[varlist]
+        # うまIDを追加
+        df1_all['ID'] = id
+        df1['ID'] = id
+        # 要素を入れ替え
+        df1_all = df1_all[varlist_all]
+        df1 = df1[varlist_wID]
+        # データフレームを結合
+        df_all = pd.concat([df_all, df1_all], ignore_index=True)
+        df = pd.concat([df, df1], ignore_index=True)
+
+    print(df_all)
 
     #CSV出力
-    with open('UMA_DB.csv', 'w', newline='') as csvfile:
-        csvwriter = csv.writer(csvfile)
-        csvwriter.writerows(data)
+    df_all.to_csv('UMA_DB.csv', index = False)
 
     # Z_data = data[2]
     # #訓練用データと検証用データに分ける

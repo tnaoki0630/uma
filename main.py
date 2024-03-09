@@ -3,7 +3,7 @@ import csv
 import numpy as np
 from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
-from makeCSV import scrape_hitchart, extract_dataset
+from makeCSV import scrape_hitchart, extract_dataset, strtime2fltsec
 import argparse
 from scipy.spatial.distance import cdist
 from scipy.optimize import minimize
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     start_time = time.time()
     print("start data collection")
     N = min(100, max(1, args.number[0])) # 1~100となるよう例外処理
-    varlist = ['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重']
+    varlist = ['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重', 'タイム']
     if args.database[0] == 0:
         ## ヒットチャートのページから馬ごとのURLを取得
         ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
@@ -166,6 +166,19 @@ if __name__ == "__main__":
         df = pd.read_csv(csvpath)
         df = df[varlist]
         print(df)
+        
+        unique_ids = df['ID'].unique()
+        # 各IDごとに処理
+        for id_value in unique_ids:
+            # 特定のIDに対応するデータを抽出
+            subset_data = df[df['ID'] == id_value]
+            print(subset_data['タイム'])
+            # ここで subset_data を使って必要な処理を実行
+            subset_data['タイム'] = strtime2fltsec(subset_data['タイム'])
+            average_time = subset_data['タイム'].mean()
+            variance_time = np.sqrt(subset_data['タイム'].var())
+            print(f"ID：{id_value}, 平均：{average_time}, 分散：{variance_time}")
+            
         exit()
 
         data = extract_dataset(ids[:N], required_data)

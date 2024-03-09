@@ -3,7 +3,7 @@ import csv
 import numpy as np
 from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
-from makeCSV import scrape_hitchart, extract_dataset
+from makeCSV import scrape_hitchart, extract_dataset, strtime2fltsec
 import argparse
 from scipy.spatial.distance import cdist
 from scipy.optimize import minimize
@@ -124,20 +124,6 @@ def showGPR_1D(theta, X, Y, x, y_mean, y_var, arr):
     ax.grid()
     plt.savefig(f'GPR_{arr[2]}.png')
 
-#テラダ追記_始
-def strtime2fltsec(arr):
-    result = []
-    for time_str in arr:
-        # ":" で文字列を分割して分と秒に分ける
-        minutes, seconds = map(float, time_str.split(':'))
-        
-        # 分を秒に変換して合算
-        total_seconds = minutes * 60 + seconds
-        
-        result.append(total_seconds)
-    return result
-#テラダ追記_終
-
 if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
@@ -180,8 +166,7 @@ if __name__ == "__main__":
         df = pd.read_csv(csvpath)
         df = df[varlist]
         print(df)
-
-        #テラダ追記_始
+        
         unique_ids = df['ID'].unique()
         # 各IDごとに処理
         for id_value in unique_ids:
@@ -193,7 +178,6 @@ if __name__ == "__main__":
             average_time = subset_data['タイム'].mean()
             variance_time = np.sqrt(subset_data['タイム'].var())
             print(f"ID：{id_value}, 平均：{average_time}, 分散：{variance_time}")
-        #テラダ追記_終
             
         exit()
 

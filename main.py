@@ -3,11 +3,13 @@ import csv
 import numpy as np
 from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
-from makeCSV import scrape_hitchart, scrape_grades, extract_integer, extract_float, strtime2fltsec, strdate2intdate, extract_dataset
+from makeCSV import scrape_hitchart, extract_dataset
 import argparse
 from scipy.spatial.distance import cdist
 from scipy.optimize import minimize
 import time
+import pandas as pd
+
 ###
 def constructLR(X, Y):
     ## 単回帰
@@ -42,7 +44,11 @@ def NLL(theta, X, Y):
     invK = np.linalg.inv(K)
     # invK = np.linalg.pinv(K) # 擬似逆
     ## Log Likelifood
-    log_likelihood = - np.log(np.linalg.det(K)) - np.dot(Y.T, np.dot(invK, Y))
+    # log_likelihood = - np.log(np.linalg.det(K)) - np.dot(Y.T, np.dot(invK, Y))
+    sign, logabsdetK = np.linalg.slogdet(K)
+    if sign <= 0:
+        raise ValueError("Error at NLL: det K <= 0.")
+    log_likelihood = - logabsdetK - np.dot(Y.T, np.dot(invK, Y))
     return -log_likelihood
 ###
 def NLL_grad(theta, X, Y):
@@ -122,7 +128,7 @@ if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     ## データ読み込み方式
-    parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="DATABASE = 0: html(default)\nDATABASE = 1: csv", default=[0])
+    parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="READ = 0: html(default)\nREAD = 1: csv", default=[0])
     ## 学習に使用するテーブル数
     parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 3)", default=[3])
     ## モデル選択
@@ -137,14 +143,13 @@ if __name__ == "__main__":
     start_time = time.time()
     print("start data collection")
     N = min(100, max(1, args.number[0])) # 1~100となるよう例外処理
-    required_data = 0, 6, 8, 13, 14, 17, 23, 4, 3
+    varlist = ['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重']
     if args.database[0] == 0:
         ## ヒットチャートのページから馬ごとのURLを取得
         ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
         if not ids:
             print("Error at scrape_hitchart")
             exit()
-
         ## htmlを解析してデータ取得
         data = extract_dataset(ids[:N], required_data)
         if data:
@@ -156,12 +161,13 @@ if __name__ == "__main__":
             print("Error at extract_dataset")
             exit()
     elif args.database[0] == 1:
-        ## 未実装なのでexit
-        print("Error:: csv reading is under development...")
-        exit()
         ## 事前取得したcsvからデータ取得
-        ### (下みたいな感じでhtmlを解析する時と同じように書けたらめっちゃラク。
-        ### extract_datasetはhtml解析も含んでしまってるので、コードの設計を変える必要がある。)
+        csvpath = "UMA_DB.csv"
+        df = pd.read_csv(csvpath)
+        df = df[varlist]
+        print(df)
+        exit()
+
         data = extract_dataset(ids[:N], required_data)
         if data:
             X_data = data[0]
@@ -174,6 +180,8 @@ if __name__ == "__main__":
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}")
+
+    ## 主成分分析
 
     ## 回帰モデルの構築
     start_time = time.time()

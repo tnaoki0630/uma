@@ -130,9 +130,10 @@ def showPDF(N, mu, sgm, v, arr_label):
     for i in range(N):
         p = 1/np.sqrt(2*math.pi*sgm[i])*np.exp(-(v-mu[i])**2/sgm[i]**2)
         # ax.scatter(X, Y, marker='.')
-        ax.plot(v, p)
+        ax.plot(v, p, label=f'uma #{i}')
     ax.set_xlabel(arr_label[0])
     ax.set_ylabel(arr_label[1])
+    ax.legend()
     ax.grid()
     plt.savefig(f'PDF.png')
 
@@ -205,7 +206,7 @@ if __name__ == "__main__":
         print(arr_sgm)
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}")
+    print(f"done. elapsed time: {elapsed_time}\n")
 
     ## 回帰モデルの構築
     start_time = time.time()
@@ -220,7 +221,7 @@ if __name__ == "__main__":
         print("moedl construction is not supported.")
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}")
+    print(f"done. elapsed time: {elapsed_time}\n")
 
     ## データ生成
     start_time = time.time()
@@ -240,7 +241,7 @@ if __name__ == "__main__":
         print("data generation is not supported.")
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}")
+    print(f"done. elapsed time: {elapsed_time}\n")
 
     ## 描画
     start_time = time.time()
@@ -297,17 +298,105 @@ if __name__ == "__main__":
         showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
     elif args.model[0] == 3:
         print("start p(v) plotting")
-        label = "mean velocity [m/s]", "PDF"
+        label = "mean velocity [m/s]", "PDF [s/m]"
         # 描画範囲を設定
         vmin = np.min(arr_mu - 4*arr_sgm)
         vmax = np.max(arr_mu + 4*arr_sgm)
-        Nv = 200
+        Nv = 500
         arr_v = np.linspace(vmin, vmax, Nv)
         showPDF(Numa, arr_mu, arr_sgm, arr_v, label)
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}")
+    print(f"done. elapsed time: {elapsed_time}\n")
 
+    ## 期待値計算（半解析的）
+    start_time = time.time()
+    print("start semi-analitical integration")
+    if args.model[0] == 3:
+        # 積分領域を設定
+        Nv = 500
+        vmin = []
+        vmax = []
+        dv = []
+        for i in range(Numa):
+            vmin.append(arr_mu[i] - 8*arr_sgm[i])
+            vmax.append(arr_mu[i] + 8*arr_sgm[i])
+            dv.append((vmax[i] - vmin[i])/Nv)
+        # 積分
+        prob = []
+        for i in range(Numa):
+            coef = 1/(math.sqrt(2*math.pi)*arr_sgm[i])
+            # 初期化
+            sum = 0
+            for j in range(Nv):
+                vi = vmin[i] + dv[i]*j
+                # 初期化
+                prod = 1
+                for k in range(Numa):
+                    # i 以外についてerfの積をとる
+                    if(i != k):
+                        intg_top = math.erf((vi-arr_mu[k])/(math.sqrt(2)*arr_sgm[k]))
+                        intg_btm = math.erf(-arr_mu[k]/(math.sqrt(2)*arr_sgm[k]))
+                        prod *= (intg_top - intg_btm)/2
+                sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
+            prob.append(coef*sum)
+        # check
+        E = []
+        sum = 0
+        for i in range(Numa):
+            sum += prob[i]
+
+        print(f"tanshou probability: {prob}")
+        print(f"sum of E: {sum}")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"done. elapsed time: {elapsed_time}\n") 
+
+    ## 期待値計算（数値積分）
+    start_time = time.time()
+    print("start numerical integration")
+    if args.model[0] == 3:
+        # 積分領域を設定
+        Nv = 500
+        vmin = []
+        vmax = []
+        dv = []
+        prod = 1
+        for i in range(Numa):
+            vmin.append(arr_mu[i] - 8*arr_sgm[i])
+            vmax.append(arr_mu[i] + 8*arr_sgm[i])
+            dv.append((vmax[i] - vmin[i])/Nv)
+            # ついでに係数も計算しとく
+            prod *= arr_sgm[i]
+        coef = 1/(math.sqrt((2*math.pi)**Numa)*prod)
+        # 積分計算
+        E = []
+        for i in range(Numa):
+            sum = 0
+            for j in range(Nv):
+                vi = vmin[i] + dv[i]*j
+                prod = 1
+                for k in range(Numa):
+                    # i 以外について 0 から vi まで数値積分して、その積をとる
+                    if(i != k):
+                        sum2 = 0
+                        for l in range(Nv):
+                            vk = vmin[k] + dv[k]*l
+                            if(vk < vi):
+                                sum2 += math.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))*dv[k]
+                        prod *= sum2
+                sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
+            E.append(coef*sum)
+        # check
+        sum = 0
+        for i in range(Numa):
+            sum += E[i]
+        print(f"tanshou probability: {E}")
+        print(f"sum of E: {sum}")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"done. elapsed time: {elapsed_time}\n") 
+        
     exit()
 
     while True:

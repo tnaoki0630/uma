@@ -3,12 +3,13 @@ import csv
 import numpy as np
 from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
-from makeCSV import scrape_hitchart, extract_dataset, strtime2fltsec
+from makeCSV import scrape_hitchart, extract_dataset, strtime2fltsec, extract_integer, extract_float
 import argparse
 from scipy.spatial.distance import cdist
 from scipy.optimize import minimize
 import time
 import pandas as pd
+import math
 
 ###
 def constructLR(X, Y):
@@ -123,16 +124,28 @@ def showGPR_1D(theta, X, Y, x, y_mean, y_var, arr):
     ax.set_title(f'theta1 = {theta[0]:.2f}, theta2 = {theta[1]:.2f}, theta3 = {theta[2]:.2f}')
     ax.grid()
     plt.savefig(f'GPR_{arr[2]}.png')
+###
+def showPDF(N, mu, sgm, v, arr_label):
+    fig, ax = plt.subplots(dpi=100)
+    for i in range(N):
+        p = 1/np.sqrt(2*math.pi*sgm[i])*np.exp(-(v-mu[i])**2/sgm[i]**2)
+        # ax.scatter(X, Y, marker='.')
+        ax.plot(v, p, label=f'uma #{i}')
+    ax.set_xlabel(arr_label[0])
+    ax.set_ylabel(arr_label[1])
+    ax.legend()
+    ax.grid()
+    plt.savefig(f'PDF.png')
 
 if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     ## データ読み込み方式
-    parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="READ = 0: html(default)\nREAD = 1: csv", default=[0])
+    parser.add_argument("-d", "--database", nargs=1, type=int, choices=range(2), help="DATABASE = 0: html\nDATABASE = 1: csv (default)", default=[1])
     ## 学習に使用するテーブル数
     parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 3)", default=[3])
     ## モデル選択
-    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(3), help="MODEL = 0: LR\nMODEL = 1: GPR w/o optimization (default)\nMODEL = 2: GPR w/ optimization", default=[1])
+    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(4), help="MODEL = 0: LR\nMODEL = 1: GPR w/o optimization\nMODEL = 2: GPR w/ optimization\nMODEL = 3: Gauss distribution (default)", default=[3])
     ## ハイパーパラメータ
     parser.add_argument("-p", "--parameter", nargs=3, type=float, help="PARAMETER[0] \\in R (default: 0.0)\nPARAMETER[1] \\in R (default: 0.0)\nPARAMETER[2] \\in R (default: 0.0)", default=[-1, -1, -1])
 
@@ -143,7 +156,7 @@ if __name__ == "__main__":
     start_time = time.time()
     print("start data collection")
     N = min(100, max(1, args.number[0])) # 1~100となるよう例外処理
-    varlist = ['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重', 'タイム']
+    varlist = ['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重', 'タイム', '距離']
     if args.database[0] == 0:
         ## ヒットチャートのページから馬ごとのURLを取得
         ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
@@ -165,36 +178,58 @@ if __name__ == "__main__":
         csvpath = "UMA_DB.csv"
         df = pd.read_csv(csvpath)
         df = df[varlist]
+        df = df.dropna() # NaNを削除
         print(df)
-        
+
+        csvpath_odds = "UMA_ODDS.csv"
+        #df_odds = pd.read_csv(csvpath_odds)
+        #print(df_odds)
+
+
         unique_ids = df['ID'].unique()
+        # mu, sgm を格納する配列を準備
+        Numa = len(unique_ids)
+        arr_mu = []
+        arr_sgm = []
+        # オッズの配列（ひとまず平均値を入れとく）
+        arr_odds = []
         # 各IDごとに処理
         for id_value in unique_ids:
             # 特定のIDに対応するデータを抽出
             subset_data = df[df['ID'] == id_value]
-            print(subset_data['タイム'])
+            # print(subset_data[['タイム', '距離']])
             # ここで subset_data を使って必要な処理を実行
-            subset_data['タイム'] = strtime2fltsec(subset_data['タイム'])
-            average_time = subset_data['タイム'].mean()
-            variance_time = np.sqrt(subset_data['タイム'].var())
-            print(f"ID：{id_value}, 平均：{average_time}, 分散：{variance_time}")
-            
-        exit()
+            arr_time = np.array(strtime2fltsec(subset_data['タイム']))
+            arr_dist = np.array(extract_integer(subset_data['距離']))
+            arr_vel = arr_dist/arr_time
+            # 配列に追加
+            ## リストとして格納
+            # mu.append(arr_vel.mean())
+            # sgm.append(arr_vel.std())
+            ## Numpy 配列として格納
+            arr_mu = np.append(arr_mu, arr_vel.mean())
 
-        data = extract_dataset(ids[:N], required_data)
-        if data:
-            X_data = data[0]
-            Y_data = data[1]
-            mean_data = data[2]
-            var_data = data[3]
-        else:
-            print("Error at extract_dataset")
-            exit()
+            if(arr_vel.std() == 0):
+                arr_sgm = np.append(arr_sgm, 0.00000001)
+            else:
+                arr_sgm = np.append(arr_sgm, arr_vel.std())
+            
+            # オッズの履歴
+            # odds = extract_float((subset_data['オ ッ ズ']))
+            odds = subset_data['オ ッ ズ']
+            #arr_odds.append(odds.mean())
+        
+        with open(csvpath_odds, 'r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                arr_odds.append(float(row[0]))  # データをfloat型に変換して追加
+
+        print(f"mu: {arr_mu}")
+        print(f"sgm: {arr_sgm}")
+        print(f"odds: {arr_odds}")
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}")
-
-    ## 主成分分析
+    print(f"done. elapsed time: {elapsed_time}\n")
 
     ## 回帰モデルの構築
     start_time = time.time()
@@ -205,9 +240,11 @@ if __name__ == "__main__":
     elif args.model[0] == 2:
         ## ガウス過程回帰
         theta = constructGPR(X_data, Y_data)
+    else:
+        print("model construction is not supported.")
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}")
+    print(f"done. elapsed time: {elapsed_time}\n")
 
     ## データ生成
     start_time = time.time()
@@ -223,60 +260,180 @@ if __name__ == "__main__":
     elif args.model[0] == 2:
         ## 最適化でパラメータを求める
         mu, sgm = getGPR(theta, X_data, Y_data, X_hat)
+    else:
+        print("data generation is not supported.")
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}")
+    print(f"done. elapsed time: {elapsed_time}\n")
 
     ## 描画
-    # label = "order/horses[-]", "time[s]"
-    # show_graph(X_data[:,1], Y_data, x2_hat, Y_hat, label)
+    start_time = time.time()
+    if args.model[0] == 0 or args.model[0] == 1 or args.model[0] == 2:
+        print("start X-Y plottig")
+        # label = "order/horses[-]", "time[s]"
+        # show_graph(X_data[:,1], Y_data, x2_hat, Y_hat, label)
 
-    ## 元のスケールに戻す
-    Y_rawdata = Y_data*np.sqrt(var_data[0]) + mean_data[0]
-    mu_raw = mu*np.sqrt(var_data[0]) + mean_data[0]
+        ## 元のスケールに戻す
+        Y_rawdata = Y_data*np.sqrt(var_data[0]) + mean_data[0]
+        mu_raw = mu*np.sqrt(var_data[0]) + mean_data[0]
 
-    ## L-t diagram
-    # label = "dist[m]", "time[s]", "L-t"
-    # # showGPR_1D(theta, X_data[:,0], Y_data, X_hat[:,0], mu, np.diagonal(sgm), label)
-    # # showGPR_1D(theta, X_data[:], Y_data, X_hat[:], mu, np.diagonal(sgm), label)
-    # X_rawdata = X_data[:,0]*np.sqrt(var_data[6]) + mean_data[6]
-    # X_rawhat = X_hat[:,0]*np.sqrt(var_data[6]) + mean_data[6]
-    # showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+        ## L-t diagram
+        # label = "dist[m]", "time[s]", "L-t"
+        # # showGPR_1D(theta, X_data[:,0], Y_data, X_hat[:,0], mu, np.diagonal(sgm), label)
+        # # showGPR_1D(theta, X_data[:], Y_data, X_hat[:], mu, np.diagonal(sgm), label)
+        # X_rawdata = X_data[:,0]*np.sqrt(var_data[6]) + mean_data[6]
+        # X_rawhat = X_hat[:,0]*np.sqrt(var_data[6]) + mean_data[6]
+        # showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
 
-    ## W-t diagram
-    # label = "wight[kg]", "time[s]", "W-t"
-    # # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
-    # X_rawdata = X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7]
-    # X_rawhat = X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7]
-    # showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+        ## W-t diagram
+        # label = "wight[kg]", "time[s]", "W-t"
+        # # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
+        # X_rawdata = X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7]
+        # X_rawhat = X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7]
+        # showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
 
-    ## o-v diagram
-    label = "order [-]", "mean velocity [m/s]", "o-v"
-    # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
-    X_rawdata = X_data[:,0]*np.sqrt(var_data[3]) + mean_data[3]
-    X_rawhat = X_hat[:,0]*np.sqrt(var_data[3]) + mean_data[3]
-    showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+        ## o-v diagram
+        label = "order [-]", "mean velocity [m/s]", "o-v"
+        # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
+        X_rawdata = X_data[:,0]*np.sqrt(var_data[3]) + mean_data[3]
+        X_rawhat = X_hat[:,0]*np.sqrt(var_data[3]) + mean_data[3]
+        showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
 
-    ## lw-t diagram
-    label = "load wight[kg]", "mean velocity [m/s]", "lw-t"
-    # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
-    X_rawdata = X_data[:,1]*np.sqrt(var_data[4]) + mean_data[4]
-    X_rawhat = X_hat[:,1]*np.sqrt(var_data[4]) + mean_data[4]
-    showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+        ## lw-t diagram
+        label = "load wight[kg]", "mean velocity [m/s]", "lw-t"
+        # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
+        X_rawdata = X_data[:,1]*np.sqrt(var_data[4]) + mean_data[4]
+        X_rawhat = X_hat[:,1]*np.sqrt(var_data[4]) + mean_data[4]
+        showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
 
-    ## hw-v diagram
-    label = "horse wight[kg]", "mean velocity [m/s]", "hw-v"
-    X_rawdata = X_data[:,2]*np.sqrt(var_data[6]) + mean_data[6]
-    X_rawhat = X_hat[:,2]*np.sqrt(var_data[6]) + mean_data[6]
-    showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+        ## hw-v diagram
+        label = "horse wight[kg]", "mean velocity [m/s]", "hw-v"
+        X_rawdata = X_data[:,2]*np.sqrt(var_data[6]) + mean_data[6]
+        X_rawhat = X_hat[:,2]*np.sqrt(var_data[6]) + mean_data[6]
+        showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
 
-    ## odds-v diagram
-    label = "odds [-]", "mean velocity [m/s]", "odds-v"
-    X_rawdata = X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7]
-    X_rawhat = X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7]
-    # X_rawdata = np.exp(X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7])
-    # X_rawhat = np.exp(X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7])
-    showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+        ## odds-v diagram
+        label = "odds [-]", "mean velocity [m/s]", "odds-v"
+        X_rawdata = X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7]
+        X_rawhat = X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7]
+        # X_rawdata = np.exp(X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7])
+        # X_rawhat = np.exp(X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7])
+        showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
+    elif args.model[0] == 3:
+        print("start p(v) plotting")
+        label = "mean velocity [m/s]", "PDF [s/m]"
+        # 描画範囲を設定
+        vmin = np.min(arr_mu - 4*arr_sgm)
+        vmax = np.max(arr_mu + 4*arr_sgm)
+        Nv = 500
+        arr_v = np.linspace(vmin, vmax, Nv)
+        showPDF(Numa, arr_mu, arr_sgm, arr_v, label)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"done. elapsed time: {elapsed_time}\n")
+
+    ## 期待値計算（半解析的）
+    start_time = time.time()
+    print("start semi-analitical integration")
+    if args.model[0] == 3:
+        # 積分領域を設定
+        Nv = 1000
+        vmin = []
+        vmax = []
+        dv = []
+        for i in range(Numa):
+            vmin.append(arr_mu[i] - 8*arr_sgm[i])
+            vmax.append(arr_mu[i] + 8*arr_sgm[i])
+            dv.append((vmax[i] - vmin[i])/Nv)
+        # 積分
+        arr_prob = []
+        for i in range(Numa):
+            coef = 1/(math.sqrt(2*math.pi)*arr_sgm[i])
+            # 初期化
+            sum = 0
+            for j in range(Nv):
+                vi = vmin[i] + dv[i]*j
+                # 初期化
+                prod = 1
+                for k in range(Numa):
+                    # i 以外についてerfの積をとる
+                    if(i != k):
+                        intg_top = math.erf((vi-arr_mu[k])/(math.sqrt(2)*arr_sgm[k]))
+                        intg_btm = math.erf(-arr_mu[k]/(math.sqrt(2)*arr_sgm[k]))
+                        prod *= (intg_top - intg_btm)/2
+                sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
+            arr_prob.append(coef*sum)
+        # check
+        arr_earn = []
+        sum = 0
+        for i in range(Numa):
+            sum += arr_prob[i]
+            # 払戻金の期待値
+            arr_earn.append(arr_odds[i]*arr_prob[i])
+        print(f"sum of prob: {sum}")
+        print(f"tanshou probability: {arr_prob}")
+        print(f"expected earning: {arr_earn}")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"done. elapsed time: {elapsed_time}\n") 
+
+    arr_output =[]
+    arr_output = np.vstack((arr_mu, arr_sgm, arr_odds, arr_prob, arr_earn))
+    #arr_output = np.transpose(arr_output)
+    df_output = pd.DataFrame(arr_output)
+    df_output = df_output.transpose()
+    df_output.to_csv('output.csv', index = False)
+
+    ## 期待値計算（数値積分）
+    start_time = time.time()
+    print("start numerical integration")
+    if args.model[0] == 3:
+        # 積分領域を設定
+        Nv = 500
+        vmin = []
+        vmax = []
+        dv = []
+        prod = 1
+        for i in range(Numa):
+            vmin.append(arr_mu[i] - 8*arr_sgm[i])
+            vmax.append(arr_mu[i] + 8*arr_sgm[i])
+            dv.append((vmax[i] - vmin[i])/Nv)
+            # ついでに係数も計算しとく
+            prod *= arr_sgm[i]
+        coef = 1/(math.sqrt((2*math.pi)**Numa)*prod)
+        # 積分計算
+        arr_prob = []
+        for i in range(Numa):
+            sum = 0
+            for j in range(Nv):
+                vi = vmin[i] + dv[i]*j
+                prod = 1
+                for k in range(Numa):
+                    # i 以外について 0 から vi まで数値積分して、その積をとる
+                    if(i != k):
+                        sum2 = 0
+                        for l in range(Nv):
+                            vk = vmin[k] + dv[k]*l
+                            if(vk < vi):
+                                sum2 += math.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))*dv[k]
+                        prod *= sum2
+                sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
+            arr_prob.append(coef*sum)
+        # check
+        arr_earn = []
+        sum = 0
+        for i in range(Numa):
+            sum += arr_prob[i]
+            # 払戻金の期待値
+            arr_earn.append(arr_odds[i]*arr_prob[i])
+        print(f"sum of prob: {sum}")
+        print(f"tanshou probability: {arr_prob}")
+        print(f"expected earning: {arr_earn}")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"done. elapsed time: {elapsed_time}\n") 
+        
+    exit()
 
     while True:
         try:

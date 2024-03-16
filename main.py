@@ -208,7 +208,6 @@ if __name__ == "__main__":
             # sgm.append(arr_vel.std())
             ## Numpy 配列として格納
             arr_mu = np.append(arr_mu, arr_vel.mean())
-
             if(arr_vel.std() == 0):
                 arr_sgm = np.append(arr_sgm, 0.00000001)
             else:
@@ -223,7 +222,6 @@ if __name__ == "__main__":
             reader = csv.reader(file)
             for row in reader:
                 arr_odds.append(float(row[0]))  # データをfloat型に変換して追加
-
         print(f"mu: {arr_mu}")
         print(f"sgm: {arr_sgm}")
         print(f"odds: {arr_odds}")
@@ -388,7 +386,6 @@ if __name__ == "__main__":
     start_time = time.time()
     print("start numerical integration")
     if args.model[0] == 3:
-        # 積分領域を設定
         Nv = 500
         vmin = []
         vmax = []

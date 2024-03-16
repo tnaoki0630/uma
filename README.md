@@ -15,5 +15,3 @@
 - ガウス過程回帰: https://www.ism.ac.jp/~daichi/lectures/H26-GaussianProcess/gp-lecture2-daichi.pdf
 ### 勉強ノート
 - Miro: https://miro.com/welcomeonboard/dXVVeUFrMzFoNW1PQWwyOEVVWjhZaU9pSnlYcFV1RlVpUkNmaWhkOTNxalphcHhKdmxwVTUxSHVHQW9NNm1QbHwzNDU4NzY0NTcwMzgwODY2NTMxfDI=?share_link_id=928920182370
-- icloud:
-https://www.icloud.com/notes/061PgTsDQfeOhXY-mDYaLnXVA#New_Note

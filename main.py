@@ -130,7 +130,7 @@ def showPDF(N, mu, sgm, v, arr_label):
     for i in range(N):
         p = 1/np.sqrt(2*math.pi*sgm[i])*np.exp(-(v-mu[i])**2/sgm[i]**2)
         # ax.scatter(X, Y, marker='.')
-        ax.plot(v, p, label=f'uma #{i}')
+        ax.plot(v, p, label=f'uma #{i+1}')
     ax.set_xlabel(arr_label[0])
     ax.set_ylabel(arr_label[1])
     ax.legend()
@@ -262,21 +262,6 @@ if __name__ == "__main__":
         Y_rawdata = Y_data*np.sqrt(var_data[0]) + mean_data[0]
         mu_raw = mu*np.sqrt(var_data[0]) + mean_data[0]
 
-        ## L-t diagram
-        # label = "dist[m]", "time[s]", "L-t"
-        # # showGPR_1D(theta, X_data[:,0], Y_data, X_hat[:,0], mu, np.diagonal(sgm), label)
-        # # showGPR_1D(theta, X_data[:], Y_data, X_hat[:], mu, np.diagonal(sgm), label)
-        # X_rawdata = X_data[:,0]*np.sqrt(var_data[6]) + mean_data[6]
-        # X_rawhat = X_hat[:,0]*np.sqrt(var_data[6]) + mean_data[6]
-        # showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
-
-        ## W-t diagram
-        # label = "wight[kg]", "time[s]", "W-t"
-        # # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
-        # X_rawdata = X_data[:,3]*np.sqrt(var_data[7]) + mean_data[7]
-        # X_rawhat = X_hat[:,3]*np.sqrt(var_data[7]) + mean_data[7]
-        # showGPR_1D(theta, X_rawdata, Y_rawdata, X_rawhat, mu_raw, np.diagonal(sgm), label)
-
         ## o-v diagram
         label = "order [-]", "mean velocity [m/s]", "o-v"
         # showGPR_1D(theta, X_data[:,1], Y_data, X_hat[:,1], mu, np.diagonal(sgm), label)
@@ -322,7 +307,7 @@ if __name__ == "__main__":
     print("start semi-analitical integration")
     if args.model[0] == 3:
         # 積分領域を設定
-        Nv = 1000
+        Nv = 200
         vmin = []
         vmax = []
         dv = []
@@ -363,54 +348,56 @@ if __name__ == "__main__":
     print(f"done. elapsed time: {elapsed_time}\n") 
 
     ## 期待値計算（数値積分）
-    start_time = time.time()
-    print("start numerical integration")
-    if args.model[0] == 3:
-        # 積分領域を設定
-        Nv = 1000
-        vmin = []
-        vmax = []
-        dv = []
-        prod = 1
-        for i in range(Numa):
-            vmin.append(arr_mu[i] - 8*arr_sgm[i])
-            vmax.append(arr_mu[i] + 8*arr_sgm[i])
-            dv.append((vmax[i] - vmin[i])/Nv)
-            # ついでに係数も計算しとく
-            prod *= arr_sgm[i]
-        coef = 1/(math.sqrt((2*math.pi)**Numa)*prod)
-        # 積分計算
-        arr_prob = []
-        for i in range(Numa):
+    BOOL_numerical = False # 基本はFalseで良い
+    if BOOL_numerical:
+        start_time = time.time()
+        print("start numerical integration")
+        if args.model[0] == 3:
+            # 積分領域を設定
+            Nv = 200
+            vmin = []
+            vmax = []
+            dv = []
+            prod = 1
+            for i in range(Numa):
+                vmin.append(arr_mu[i] - 8*arr_sgm[i])
+                vmax.append(arr_mu[i] + 8*arr_sgm[i])
+                dv.append((vmax[i] - vmin[i])/Nv)
+                # ついでに係数も計算しとく
+                prod *= arr_sgm[i]
+            coef = 1/(math.sqrt((2*math.pi)**Numa)*prod)
+            # 積分計算
+            arr_prob = []
+            for i in range(Numa):
+                sum = 0
+                for j in range(Nv):
+                    vi = vmin[i] + dv[i]*j
+                    prod = 1
+                    for k in range(Numa):
+                        # i 以外について 0 から vi まで数値積分して、その積をとる
+                        if(i != k):
+                            sum2 = 0
+                            for l in range(Nv):
+                                vk = vmin[k] + dv[k]*l
+                                if(vk < vi):
+                                    sum2 += math.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))*dv[k]
+                            prod *= sum2
+                    sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
+                arr_prob.append(coef*sum)
+            # check
+            arr_earn = []
             sum = 0
-            for j in range(Nv):
-                vi = vmin[i] + dv[i]*j
-                prod = 1
-                for k in range(Numa):
-                    # i 以外について 0 から vi まで数値積分して、その積をとる
-                    if(i != k):
-                        sum2 = 0
-                        for l in range(Nv):
-                            vk = vmin[k] + dv[k]*l
-                            if(vk < vi):
-                                sum2 += math.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))*dv[k]
-                        prod *= sum2
-                sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
-            arr_prob.append(coef*sum)
-        # check
-        arr_earn = []
-        sum = 0
-        for i in range(Numa):
-            sum += arr_prob[i]
-            # 払戻金の期待値
-            arr_earn.append(arr_odds[i]*arr_prob[i])
-        print(f"sum of prob: {sum}")
-        print(f"tanshou probability: {arr_prob}")
-        print(f"expected earning: {arr_earn}")
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}\n") 
-        
+            for i in range(Numa):
+                sum += arr_prob[i]
+                # 払戻金の期待値
+                arr_earn.append(arr_odds[i]*arr_prob[i])
+            print(f"sum of prob: {sum}")
+            print(f"tanshou probability: {arr_prob}")
+            print(f"expected earning: {arr_earn}")
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"done. elapsed time: {elapsed_time}\n") 
+            
     exit()
 
     while True:

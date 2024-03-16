@@ -3,7 +3,7 @@ import csv
 import numpy as np
 from numpy.polynomial import Polynomial
 import matplotlib.pyplot as plt
-from makeCSV import scrape_hitchart, extract_dataset, strtime2fltsec, extract_integer
+from makeCSV import scrape_hitchart, extract_dataset, strtime2fltsec, extract_integer, extract_float
 import argparse
 from scipy.spatial.distance import cdist
 from scipy.optimize import minimize
@@ -178,6 +178,7 @@ if __name__ == "__main__":
         csvpath = "UMA_DB.csv"
         df = pd.read_csv(csvpath)
         df = df[varlist]
+        df = df.dropna() # NaNを削除
         print(df)
         
         unique_ids = df['ID'].unique()
@@ -185,6 +186,8 @@ if __name__ == "__main__":
         Numa = len(unique_ids)
         arr_mu = []
         arr_sgm = []
+        # オッズの配列（ひとまず平均値を入れとく）
+        arr_odds = []
         # 各IDごとに処理
         for id_value in unique_ids:
             # 特定のIDに対応するデータを抽出
@@ -194,7 +197,6 @@ if __name__ == "__main__":
             arr_time = np.array(strtime2fltsec(subset_data['タイム']))
             arr_dist = np.array(extract_integer(subset_data['距離']))
             arr_vel = arr_dist/arr_time
-            # print(f"ID：{id_value}, 平均：{arr_vel.mean()}, 標準偏差：{arr_vel.std()}")
             # 配列に追加
             ## リストとして格納
             # mu.append(arr_vel.mean())
@@ -202,8 +204,14 @@ if __name__ == "__main__":
             ## Numpy 配列として格納
             arr_mu = np.append(arr_mu, arr_vel.mean())
             arr_sgm = np.append(arr_sgm, arr_vel.std())
-        print(arr_mu)
-        print(arr_sgm)
+
+            # オッズの履歴
+            # odds = extract_float((subset_data['オ ッ ズ']))
+            odds = subset_data['オ ッ ズ']
+            arr_odds.append(odds.mean())
+        print(f"mu: {arr_mu}")
+        print(f"sgm: {arr_sgm}")
+        print(f"odds: {arr_odds}")
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n")
@@ -218,7 +226,7 @@ if __name__ == "__main__":
         ## ガウス過程回帰
         theta = constructGPR(X_data, Y_data)
     else:
-        print("moedl construction is not supported.")
+        print("model construction is not supported.")
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n")
@@ -314,7 +322,7 @@ if __name__ == "__main__":
     print("start semi-analitical integration")
     if args.model[0] == 3:
         # 積分領域を設定
-        Nv = 500
+        Nv = 1000
         vmin = []
         vmax = []
         dv = []
@@ -323,7 +331,7 @@ if __name__ == "__main__":
             vmax.append(arr_mu[i] + 8*arr_sgm[i])
             dv.append((vmax[i] - vmin[i])/Nv)
         # 積分
-        prob = []
+        arr_prob = []
         for i in range(Numa):
             coef = 1/(math.sqrt(2*math.pi)*arr_sgm[i])
             # 初期化
@@ -339,15 +347,17 @@ if __name__ == "__main__":
                         intg_btm = math.erf(-arr_mu[k]/(math.sqrt(2)*arr_sgm[k]))
                         prod *= (intg_top - intg_btm)/2
                 sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
-            prob.append(coef*sum)
+            arr_prob.append(coef*sum)
         # check
-        E = []
+        arr_earn = []
         sum = 0
         for i in range(Numa):
-            sum += prob[i]
-
-        print(f"tanshou probability: {prob}")
-        print(f"sum of E: {sum}")
+            sum += arr_prob[i]
+            # 払戻金の期待値
+            arr_earn.append(arr_odds[i]*arr_prob[i])
+        print(f"sum of prob: {sum}")
+        print(f"tanshou probability: {arr_prob}")
+        print(f"expected earning: {arr_earn}")
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n") 
@@ -357,7 +367,7 @@ if __name__ == "__main__":
     print("start numerical integration")
     if args.model[0] == 3:
         # 積分領域を設定
-        Nv = 500
+        Nv = 1000
         vmin = []
         vmax = []
         dv = []
@@ -370,7 +380,7 @@ if __name__ == "__main__":
             prod *= arr_sgm[i]
         coef = 1/(math.sqrt((2*math.pi)**Numa)*prod)
         # 積分計算
-        E = []
+        arr_prob = []
         for i in range(Numa):
             sum = 0
             for j in range(Nv):
@@ -386,13 +396,17 @@ if __name__ == "__main__":
                                 sum2 += math.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))*dv[k]
                         prod *= sum2
                 sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
-            E.append(coef*sum)
+            arr_prob.append(coef*sum)
         # check
+        arr_earn = []
         sum = 0
         for i in range(Numa):
-            sum += E[i]
-        print(f"tanshou probability: {E}")
-        print(f"sum of E: {sum}")
+            sum += arr_prob[i]
+            # 払戻金の期待値
+            arr_earn.append(arr_odds[i]*arr_prob[i])
+        print(f"sum of prob: {sum}")
+        print(f"tanshou probability: {arr_prob}")
+        print(f"expected earning: {arr_earn}")
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n") 

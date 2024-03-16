@@ -128,6 +128,7 @@ def extract_float(arr):
     result = []
     for string in arr:
         # 正規表現を使って%dの部分を抜き出す
+        print(string)
         match = re.search(r'\d+\.\d', string)
         if match:
             result.append(float(match.group()))
@@ -253,7 +254,7 @@ if __name__ == "__main__":
         exit()
 
     ## N 位まで学習に使用
-    N = 5
+    N = args.number[0]
     # 変数リスト
     varlist = ['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重']
     varlist_wID = varlist[:]

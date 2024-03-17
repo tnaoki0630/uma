@@ -180,7 +180,12 @@ if __name__ == "__main__":
         df = df[varlist]
         df = df.dropna() # NaNを削除
         print(df)
-        
+
+        csvpath_odds = "UMA_ODDS.csv"
+        #df_odds = pd.read_csv(csvpath_odds)
+        #print(df_odds)
+
+
         unique_ids = df['ID'].unique()
         # mu, sgm を格納する配列を準備
         Numa = len(unique_ids)
@@ -203,12 +208,20 @@ if __name__ == "__main__":
             # sgm.append(arr_vel.std())
             ## Numpy 配列として格納
             arr_mu = np.append(arr_mu, arr_vel.mean())
-            arr_sgm = np.append(arr_sgm, arr_vel.std())
-
+            if(arr_vel.std() == 0):
+                arr_sgm = np.append(arr_sgm, 0.00000001)
+            else:
+                arr_sgm = np.append(arr_sgm, arr_vel.std())
+            
             # オッズの履歴
             # odds = extract_float((subset_data['オ ッ ズ']))
             odds = subset_data['オ ッ ズ']
-            arr_odds.append(odds.mean())
+            #arr_odds.append(odds.mean())
+        
+        with open(csvpath_odds, 'r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                arr_odds.append(float(row[0]))  # データをfloat型に変換して追加
         print(f"mu: {arr_mu}")
         print(f"sgm: {arr_sgm}")
         print(f"odds: {arr_odds}")
@@ -346,6 +359,13 @@ if __name__ == "__main__":
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n") 
+
+    arr_output =[]
+    arr_output = np.vstack((arr_mu, arr_sgm, arr_odds, arr_prob, arr_earn))
+    #arr_output = np.transpose(arr_output)
+    df_output = pd.DataFrame(arr_output)
+    df_output = df_output.transpose()
+    df_output.to_csv('output.csv', index = False)
 
     ## 期待値計算（数値積分）
     BOOL_numerical = False # 基本はFalseで良い

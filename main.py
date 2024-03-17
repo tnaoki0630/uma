@@ -181,14 +181,6 @@ if __name__ == "__main__":
         df = df.dropna() # NaNを削除
         print(df)
 
-<<<<<<< HEAD
-=======
-        csvpath_odds = "UMA_ODDS.csv"
-        #df_odds = pd.read_csv(csvpath_odds)
-        #print(df_odds)
-
-
->>>>>>> e70b8e92deef753de5a7b76c4e80893794d5fbcc
         unique_ids = df['ID'].unique()
         # mu, sgm を格納する配列を準備
         Numa = len(unique_ids)
@@ -210,25 +202,9 @@ if __name__ == "__main__":
             ## Numpy 配列として格納
             arr_mu = np.append(arr_mu, arr_vel.mean())
             if(arr_vel.std() == 0):
-<<<<<<< HEAD
                 arr_sgm = np.append(arr_sgm, 1e-8)
             else:
                 arr_sgm = np.append(arr_sgm, arr_vel.std())
-=======
-                arr_sgm = np.append(arr_sgm, 0.00000001)
-            else:
-                arr_sgm = np.append(arr_sgm, arr_vel.std())
-            
-            # オッズの履歴
-            # odds = extract_float((subset_data['オ ッ ズ']))
-            odds = subset_data['オ ッ ズ']
-            #arr_odds.append(odds.mean())
-        
-        with open(csvpath_odds, 'r') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                arr_odds.append(float(row[0]))  # データをfloat型に変換して追加
->>>>>>> e70b8e92deef753de5a7b76c4e80893794d5fbcc
         print(f"mu: {arr_mu}")
         print(f"sgm: {arr_sgm}")
 
@@ -389,7 +365,6 @@ if __name__ == "__main__":
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n") 
 
-<<<<<<< HEAD
     # 計算結果の出力
     BOOL_output = False # 2つのcsvで馬の数が合ってないとエラーで落ちるので、フラグで管理。
     if BOOL_output:

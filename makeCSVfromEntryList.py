@@ -57,6 +57,55 @@ def scrape_entrylist(url):
                         arr.append(int(match.group()))
     return arr
 ###
+def scrape_oddslist(url):
+        # HTTP GETリクエストを送信してHTMLを取得
+    response = requests.get(url)
+
+    # エラーハンドリング
+    if response.status_code != 200:
+        print(f"Error: {response.status_code}")
+        return None
+    
+    # エンコーディングを取得
+    # detected_encoding = chardet.detect(response.content)['encoding']
+    detected_encoding = 'EUC-JP'
+
+    # BeautifulSoupを使ってHTMLを解析
+    soup = BeautifulSoup(response.content, 'html.parser', from_encoding = detected_encoding)
+
+    # 出馬表のデータを取得（この例では出馬表がページ内で１番目の表であると仮定）
+    table = soup.find('table')
+
+    # テーブルが見つからない場合
+    if not table:
+        print("Table not found1")
+        return None
+
+    # initialize
+    arr = []
+    # loop for table
+    # テーブルの各行を取得
+    rows = table.find_all('tr')
+    # 行ごとにデータを配列に追加
+    for row in rows:
+        ## 各セルのデータを取得，馬のセルのみを取得（騎手情報を取得したい場合はclass値を'Jockey'に変更）
+        cells = row.find_all('td', class_ = 'Txt_R Popular')
+        #row_data = [cell.get_text(strip=True) for cell in cells]
+        ## <a> タグの href 属性の値を取得
+        for cell in cells:
+            ## 空の行は無視する
+            if cell:
+                span_tag = cell.find('span')
+                odd = span_tag.text
+                arr.append(odd)
+                """if span_tag:
+                    href_value = span_tag.get('href')
+                    # IDを抽出
+                    match = re.search(r'\d+', href_value)
+                    if match:
+                        arr.append(int(match.group()))"""
+    return arr
+###
 def scrape_grades(url, cols):
     # HTTP GETリクエストを送信してHTMLを取得
     response = requests.get(url)
@@ -168,11 +217,16 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     ## エントリーリストから馬ごとのURLを取得
-    ids = scrape_entrylist("https://race.netkeiba.com/race/shutuba.html?race_id=202406020711&rf=race_list")
+    url  = "https://race.netkeiba.com/race/shutuba.html?race_id=202406020711"
+    ids = scrape_entrylist(url)
+    
     if not all(ids):
         print("Error at scrape_hitchart")
         exit()
-
+    print(ids)
+    #odds = scrape_oddslist(url)
+    #odds = extract_float(odds)
+    #print(odds)
 
     # 変数リスト
     varlist = ['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重']
@@ -193,7 +247,7 @@ if __name__ == "__main__":
     df['ID'] = ids[0]
     # 要素を入れ替え
     df = df[varlist_wID]
-    for id in ids:
+    for id in ids[1:]:
         url = f"https://db.netkeiba.com/horse/result/{id}"
         # pandasでスクレイピング
         try:

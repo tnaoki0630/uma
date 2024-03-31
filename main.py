@@ -125,12 +125,37 @@ def showGPR_1D(theta, X, Y, x, y_mean, y_var, arr):
     ax.grid()
     plt.savefig(f'GPR_{arr[2]}.png')
 ###
-def showPDF(N, mu, sgm, v, arr_label):
+def showPDF(csvpath, v, arr_label):
+    # csv から取得
+    df = pd.read_csv(csvpath)
+    df = df[varlist]
+    df = df.dropna() # NaNを削除
+    print(df)
+
     fig, ax = plt.subplots(dpi=100)
-    for i in range(N):
-        p = 1/np.sqrt(2*math.pi*sgm[i])*np.exp(-(v-mu[i])**2/sgm[i]**2)
-        # ax.scatter(X, Y, marker='.')
-        ax.plot(v, p, label=f'uma #{i}')
+    # 各IDごとに処理
+    unique_ids = df['ID'].unique()
+    i = 0
+    for id_value in unique_ids:
+        i += 1
+        # 特定のIDに対応するデータを抽出
+        subset_data = df[df['ID'] == id_value]
+        # ここで subset_data を使って必要な処理を実行
+        arr_time = np.array(strtime2fltsec(subset_data['タイム']))
+        arr_dist = np.array(extract_integer(subset_data['距離']))
+        arr_vel = arr_dist/arr_time
+        
+        # 期待値、標準偏差
+        mu = arr_vel.mean()
+        if(arr_vel.std() == 0):
+            sgm = 1e-8
+        else:
+            sgm = arr_vel.std()
+        # 確率分布とデータのプロット
+        p_v = 1/np.sqrt(2*math.pi)/sgm*np.exp(-(v-mu)**2/(2*sgm**2))
+        ax.plot(v, p_v, label=f'uma #{i}')
+        p_vn = 1/np.sqrt(2*math.pi)/sgm*np.exp(-(arr_vel-mu)**2/(2*sgm**2))
+        ax.scatter(arr_vel, p_vn, marker='.')
     ax.set_xlabel(arr_label[0])
     ax.set_ylabel(arr_label[1])
     ax.legend()
@@ -190,15 +215,10 @@ if __name__ == "__main__":
         for id_value in unique_ids:
             # 特定のIDに対応するデータを抽出
             subset_data = df[df['ID'] == id_value]
-            # print(subset_data[['タイム', '距離']])
             # ここで subset_data を使って必要な処理を実行
             arr_time = np.array(strtime2fltsec(subset_data['タイム']))
             arr_dist = np.array(extract_integer(subset_data['距離']))
             arr_vel = arr_dist/arr_time
-            # 配列に追加
-            ## リストとして格納
-            # mu.append(arr_vel.mean())
-            # sgm.append(arr_vel.std())
             ## Numpy 配列として格納
             arr_mu = np.append(arr_mu, arr_vel.mean())
             if(arr_vel.std() == 0):
@@ -315,7 +335,7 @@ if __name__ == "__main__":
         vmax = np.max(arr_mu + 4*arr_sgm)
         Nv = 500
         arr_v = np.linspace(vmin, vmax, Nv)
-        showPDF(Numa, arr_mu, arr_sgm, arr_v, label)
+        showPDF("UMA_DB.csv", arr_v, label)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n")
@@ -366,7 +386,7 @@ if __name__ == "__main__":
     print(f"done. elapsed time: {elapsed_time}\n") 
 
     # 計算結果の出力
-    BOOL_output = False # 2つのcsvで馬の数が合ってないとエラーで落ちるので、フラグで管理。
+    BOOL_output = True # 2つのcsvで馬の数が合ってないとエラーで落ちるのでフラグで管理。
     if BOOL_output:
         arr_output =[]
         arr_output = np.vstack((arr_mu, arr_sgm, arr_odds, arr_prob, arr_earn))
@@ -374,127 +394,6 @@ if __name__ == "__main__":
         df_output = pd.DataFrame(arr_output)
         df_output = df_output.transpose()
         df_output.to_csv('output.csv', index = False)
-
-    ## 3連単期待値計算
-    BOOL_numerical = False # 計算コスト高すぎ。
-    if BOOL_numerical:
-        start_time = time.time()
-        print("start sanrentan integration")
-        if args.model[0] == 3:
-            # 積分領域を設定
-            Nv = 200
-            vmin = []
-            vmax = []
-            dv = []
-            for i in range(Numa):
-                vmin.append(arr_mu[i] - 8*arr_sgm[i])
-                vmax.append(arr_mu[i] + 8*arr_sgm[i])
-                dv.append((vmax[i] - vmin[i])/Nv)
-            # 積分
-            tensor_prob = np.zeros((Numa, Numa, Numa))
-            tensor_earn = np.zeros((Numa, Numa, Numa))
-            for i in range(Numa):
-                for j in range(Numa):
-                    if(j != i):
-                        for k in range(Numa):
-                            if(k != i and k != j):
-                                print(f"integrating for i = {i}, j = {j}, k = {k}")
-                                coef = 1/(math.sqrt((2*math.pi)**3)*arr_sgm[i]*arr_sgm[j]*arr_sgm[k])
-                                # i について積分
-                                sum_i = 0
-                                for ii in range(Nv):
-                                    vi = vmin[i] + dv[i]*ii
-                                    # j について積分
-                                    sum_j = 0
-                                    for jj in range(Nv):
-                                        vj = vmin[j] + dv[j]*jj
-                                        if(vj < vi):
-                                            # k について積分
-                                            sum_k = 0
-                                            for kk in range(Nv):
-                                                vk = vmin[k] + dv[k]*kk
-                                                if(vk < vj):
-                                                    prod = 1
-                                                    for l in range(Numa):
-                                                        # i,j,k 以外についてerfの積をとる
-                                                        if(l != i and l != j and l != k):
-                                                            intg_top = math.erf((vk-arr_mu[l])/(math.sqrt(2)*arr_sgm[l]))
-                                                            intg_btm = math.erf(-arr_mu[l]/(math.sqrt(2)*arr_sgm[l]))
-                                                            prod *= (intg_top - intg_btm)/2
-                                                    sum_k += math.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))*prod*dv[k]
-                                            sum_j += math.exp(-(vj-arr_mu[j])**2/(2*arr_sgm[j]**2))*sum_k*dv[j]
-                                    sum_i += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*sum_j*dv[i]                                    
-                                tensor_prob[i,j,k] = coef*sum_i
-                                # 三連単の払戻金を計算（いったん単純な掛け算で）
-                                tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
-            print(f"sum of prob: {np.sum(tensor_prob)}")
-            print(f"tanshou probability: {np.sum(tensor_prob, axis=(1,2))}")
-            print(f"sanrentan probability: {tensor_prob}")
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        print(f"done. elapsed time: {elapsed_time}\n") 
-    
-    ## 3連単期待値計算（w/ numpyベクトル演算）
-    start_time = time.time()
-    print("start sanrentan integration")
-    if args.model[0] == 3:
-        # 積分領域の定義
-        Nv = 10000
-        vmin = arr_mu - 8 * arr_sgm
-        vmax = arr_mu + 8 * arr_sgm
-        dv = (vmax - vmin) / Nv
-        # 積分
-        tensor_prob = np.zeros((Numa, Numa, Numa))
-        tensor_earn = np.zeros((Numa, Numa, Numa))
-        for i in range(Numa):
-            for j in range(Numa):
-                if(j != i):
-                    for k in range(Numa):
-                        if(k != i and k != j):
-                            coef = 1/(math.sqrt((2*math.pi)**3)*arr_sgm[i]*arr_sgm[j]*arr_sgm[k])
-                            
-                            # v のnp配列
-                            vi = np.linspace(vmin[i], vmax[i], Nv)
-                            vj = np.linspace(vmin[j], vmax[j], Nv)
-                            vk = np.linspace(vmin[k], vmax[k], Nv)
-                            
-                            # exp のnp配列
-                            vi_exp = np.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))
-                            vj_exp = np.exp(-(vj-arr_mu[j])**2/(2*arr_sgm[j]**2))
-                            vk_exp = np.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))
-                            
-                            # 積分領域を指定するブール配列
-                            BOOL_vk = vk[np.newaxis, :] < vj[:, np.newaxis]
-                            BOOL_vj = vj[np.newaxis, :] < vi[:, np.newaxis]
-                            # 01に変換
-                            BOOL_vk = BOOL_vk.astype(int)
-                            BOOL_vj = BOOL_vj.astype(int)
-
-                            # i,j,k 以外についてerfの積をとる
-                            prod = 1
-                            for l in range(Numa):
-                                if(l != i and l != j and l != k):
-                                    prod *= (erf((vk-arr_mu[l])/(math.sqrt(2)*arr_sgm[l])) - erf(-arr_mu[l]/(math.sqrt(2)*arr_sgm[l])))/2
-                            
-                            # 積分計算
-                            sum_k = np.dot(BOOL_vk, vk_exp*prod)*dv[k]
-                            sum_j = np.dot(BOOL_vj, vj_exp*sum_k)*dv[j]
-                            sum_i = np.sum(vi_exp*sum_j)*dv[i]
-                            # print(np.shape(BOOL_vk))
-                            # print(np.shape(BOOL_vj))
-                            # print(np.shape(sum_k))
-                            # print(np.shape(sum_j))
-                            # print(np.shape(sum_i))
-
-                            # 期待値
-                            tensor_prob[i,j,k] = coef*sum_i
-                            tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
-        print(f"sum of prob: {np.sum(tensor_prob)}")
-        print(f"tanshou probability: {np.sum(tensor_prob, axis=(1,2))}")
-        # print(f"sanrentan probability: {tensor_prob}")
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}\n")
 
     ## 期待値計算（数値積分）
     BOOL_numerical = False # 確認用。基本 False で良い。
@@ -546,6 +445,124 @@ if __name__ == "__main__":
         elapsed_time = end_time - start_time
         print(f"done. elapsed time: {elapsed_time}\n") 
         
+
+    ## 3連単期待値計算
+    # BOOL_numerical = True
+    BOOL_numerical = False # 計算コスト高すぎ。
+    if BOOL_numerical:
+        start_time = time.time()
+        print("start sanrentan integration")
+        if args.model[0] == 3:
+            # 積分領域を設定
+            Nv = 200
+            vmin = []
+            vmax = []
+            dv = []
+            for i in range(Numa):
+                vmin.append(arr_mu[i] - 8*arr_sgm[i])
+                vmax.append(arr_mu[i] + 8*arr_sgm[i])
+                dv.append((vmax[i] - vmin[i])/Nv)
+            # 積分
+            tensor_prob = np.zeros((Numa, Numa, Numa))
+            tensor_earn = np.zeros((Numa, Numa, Numa))
+            for i in range(Numa):
+                for j in range(Numa):
+                    if(j != i):
+                        for k in range(Numa):
+                            if(k != i and k != j):
+                                print(f"integrating for i = {i}, j = {j}, k = {k}")
+                                coef = 1/(math.sqrt((2*math.pi)**3)*arr_sgm[i]*arr_sgm[j]*arr_sgm[k])
+                                # i について積分
+                                sum_i = 0
+                                for ii in range(Nv):
+                                    vi = vmin[i] + dv[i]*ii
+                                    # j について積分
+                                    sum_j = 0
+                                    for jj in range(Nv):
+                                        vj = vmin[j] + dv[j]*jj
+                                        if(vj < vi):
+                                            # k について積分
+                                            sum_k = 0
+                                            for kk in range(Nv):
+                                                vk = vmin[k] + dv[k]*kk
+                                                if(vk < vj):
+                                                    prod = 1
+                                                    for l in range(Numa):
+                                                        # i,j,k 以外についてerfの積をとる
+                                                        if(l != i and l != j and l != k):
+                                                            intg_top = math.erf((vk-arr_mu[l])/(math.sqrt(2)*arr_sgm[l]))
+                                                            intg_btm = math.erf(-arr_mu[l]/(math.sqrt(2)*arr_sgm[l]))
+                                                            prod *= (intg_top - intg_btm)/2
+                                                    sum_k += math.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))*prod*dv[k]
+                                            sum_j += math.exp(-(vj-arr_mu[j])**2/(2*arr_sgm[j]**2))*sum_k*dv[j]
+                                    sum_i += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*sum_j*dv[i]                                    
+                                # 当選確率
+                                tensor_prob[i,j,k] = coef*sum_i
+                                # 払戻金の期待値（いったん掛け算で計算）
+                                tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
+            print(f"sum of prob: {np.sum(tensor_prob)}")
+            print(f"tanshou probability: {np.sum(tensor_prob, axis=(1,2))}")
+            print(f"sanrentan probability: {tensor_prob}")
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"done. elapsed time: {elapsed_time}\n") 
+    
+    ## 3連単期待値計算（w/ numpyベクトル演算）
+    start_time = time.time()
+    print("start sanrentan integration")
+    if args.model[0] == 3:
+        # 積分領域の定義
+        Nv = 200
+        vmin = arr_mu - 8 * arr_sgm
+        vmax = arr_mu + 8 * arr_sgm
+        dv = (vmax - vmin) / Nv
+        # 積分
+        tensor_prob = np.zeros((Numa, Numa, Numa))
+        tensor_earn = np.zeros((Numa, Numa, Numa))
+        for i in range(Numa):
+            for j in range(Numa):
+                if(j != i):
+                    for k in range(Numa):
+                        if(k != i and k != j):
+                            coef = 1/(math.sqrt((2*math.pi)**3)*arr_sgm[i]*arr_sgm[j]*arr_sgm[k])
+                            
+                            # v のnp配列
+                            vi = np.linspace(vmin[i], vmax[i], Nv)
+                            vj = np.linspace(vmin[j], vmax[j], Nv)
+                            vk = np.linspace(vmin[k], vmax[k], Nv)
+                            
+                            # exp のnp配列
+                            vi_exp = np.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))
+                            vj_exp = np.exp(-(vj-arr_mu[j])**2/(2*arr_sgm[j]**2))
+                            vk_exp = np.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))
+                            
+                            # 積分領域を指定するブール行列 (H_ij: R^N_i -> R^N_j)
+                            BOOL_vk = vk[np.newaxis, :] < vj[:, np.newaxis]
+                            BOOL_vj = vj[np.newaxis, :] < vi[:, np.newaxis]
+
+                            # i,j,k 以外についてerfの積をとる
+                            prod = 1
+                            # prod_p1 = 1
+                            for l in range(Numa):
+                                if(l != i and l != j and l != k):
+                                    prod *= (erf((vk-arr_mu[l])/(math.sqrt(2)*arr_sgm[l])) - erf(-arr_mu[l]/(math.sqrt(2)*arr_sgm[l])))/2
+                            
+                            ## 積分
+                            sum_k = np.dot(BOOL_vk, vk_exp*prod)*dv[k]
+                            sum_j = np.dot(BOOL_vj, vj_exp*sum_k)*dv[j]
+                            sum_i = np.sum(vi_exp*sum_j)*dv[i]
+
+                            # 当選確率
+                            tensor_prob[i,j,k] = coef*sum_i
+                            # 払戻金の期待値（いったん掛け算で計算）
+                            tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
+        print(f"sum of prob: {np.sum(tensor_prob)}")
+        print(f"tanshou probability: {np.sum(tensor_prob, axis=(1,2))}")
+        print(f"sanrentan probability: {tensor_prob}")
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"done. elapsed time: {elapsed_time}\n")
+
     exit()
 
     while True:

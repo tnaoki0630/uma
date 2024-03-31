@@ -22,7 +22,10 @@ Ni = 6
 Nj = 11
 vi = np.linspace(0, 10, Ni)
 vj = np.linspace(-20, 20, Nj)
+vk = np.linspace(0, 20, Ni)
 condition = vi[np.newaxis, :] < vj[:, np.newaxis]
 print(vi)
 print(vj)
+print(vk)
 print(condition)
+print(np.dot(condition, vk))

@@ -2,7 +2,7 @@ import requests
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-from makeCSV import strtime2fltsec_v2, extract_integer_v2
+from makeCSV import strtime2fltsec, extract_integer, strtime2fltsec_v2, extract_integer_v2
 import argparse
 import time
 import pandas as pd
@@ -49,8 +49,6 @@ def showPDF(csvpath, v, arr_label):
 if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-    ## 学習に使用するテーブル数
-    parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 3)", default=[3])
     ## モデル選択
     parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(5), help="MODEL = 0: LR\nMODEL = 1: GPR w/o optimization\nMODEL = 2: GPR w/ optimization\nMODEL = 3: Gauss distribution (default)\nMODEL = 4: Gauss distribution w/ pedigree", default=[3])
     
@@ -364,7 +362,7 @@ if __name__ == "__main__":
             print(f"sanrentan probability: {tensor_prob}")
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"done. elapsed time: {elapsed_time}\n") 
+        print(f"done. elapsed time: {elapsed_time}\n")
     
     ## 3連単期待値計算（w/ numpyベクトル演算）
     start_time = time.time()
@@ -418,6 +416,7 @@ if __name__ == "__main__":
         print(f"sum of prob: {np.sum(tensor_prob)}")
         print(f"tanshou probability: {np.sum(tensor_prob, axis=(1,2))}")
         print(f"sanrentan probability: {tensor_prob}")
+        print(f"sanrentan probability: {np.shape(tensor_prob)}")
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n")

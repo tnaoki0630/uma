@@ -23,14 +23,14 @@ for index, row in df.iterrows():
     # 血統の一致度
     arr_score = np.dot(H,arr_weight)
 
-    ## 型チェック
-    # print(type(row_expanded))
-    # print(type(df_reduced.values))
-    # print(type(arr_weight))
-    ## 内容チェック
-    # print(df_all['ID'])
-    # print(df_reduced['ID'])
-    # print(H)
-    # print(arr_weight)
-    print(np.shape(H))
-    print(arr_score)
+## 型チェック
+print(type(row_expanded))
+print(type(df_reduced.values))
+print(type(arr_weight))
+## 内容チェック
+print(df_all['ID'])
+print(df_reduced['ID'])
+print(H)
+print(arr_weight)
+print(np.shape(H))
+print(arr_score)

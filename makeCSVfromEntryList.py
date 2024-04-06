@@ -253,9 +253,9 @@ if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     ## 学習に使用するテーブル数
-    parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 3)", default=[3])
+    parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 10)", default=[10])
     ## 作成するcsvの種類
-    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(4), help="MODEL = 0: UMA_DB\nMODEL = 1: UMA_PED", default=[0])
+    parser.add_argument("-t", "--type", nargs=1, type=int, choices=range(2), help="TYPE = 0: DataBase\nTYPE = 1: EntryList", default=[1])
     ## 引数の取得
     args = parser.parse_args()
 
@@ -266,32 +266,18 @@ if __name__ == "__main__":
     if not all(ids):
         print("Error at scrape_hitchart")
         exit()
-    # print(ids)
-    #odds = scrape_oddslist(url)
-    #odds = extract_float(odds)
-    #print(odds)
 
     ## 戦績表のスクレイピング
-    if args.model[0] == 0:
-        # 変数リスト
-        varlist = ['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重']
-        varlist_wID = varlist[:]
-        varlist_wID.insert(0, 'ID')
-
+    if args.type[0] == 0:
         ## 1つめはヘッダー込みでデータフレームを作成
         url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
         # pandasでスクレイピング
         df_all = pd.read_html(url, encoding='euc-jp')[0]
-        df = df_all[varlist]
         # うまIDを追加
         varlist_all = list(df_all)
         varlist_all.insert(0, 'ID')
         df_all['ID'] = ids[0]
         df_all = df_all[varlist_all]
-
-        df['ID'] = ids[0]
-        # 要素を入れ替え
-        df = df[varlist_wID]
         for id in ids[1:]:
             url = f"https://db.netkeiba.com/horse/result/{id}"
             # pandasでスクレイピング
@@ -299,22 +285,18 @@ if __name__ == "__main__":
                 df1_all = pd.read_html(url, encoding='euc-jp')[0]
             except ValueError:
                 print("Table not found")
-            df1 = df1_all[varlist]
             # うまIDを追加
             df1_all['ID'] = id
-            df1['ID'] = id
             # 要素を入れ替え
             df1_all = df1_all[varlist_all]
-            df1 = df1[varlist_wID]
             # データフレームを結合
             df_all = pd.concat([df_all, df1_all], ignore_index=True)
-            df = pd.concat([df, df1], ignore_index=True)
 
         #CSV出力
         df_all.to_csv('UMA_DB.csv', index = False)
     
     ## 血統情報の出力
-    if args.model[0] == 1:
+    if args.type[0] == 1:
         arr_ped = []
         for id in ids:
             url = f"https://db.netkeiba.com/horse/ped/{id}"
@@ -322,7 +304,7 @@ if __name__ == "__main__":
             ped = scrape_pedigree(url)
             arr_ped.append(ped)
         
-        # 列名リスト(いいやり方が思いつかなかったのでベタ書き。二分アルゴリズムとか使えばもっとスッキリさせれる気がする)
+        # 列名リスト(いいやり方が思いつかなかったのでベタ書き。二分木の深さ優先探索アルゴリズムに近い気がするので、その辺の技術を流用すればもっとスッキリさせれる気がする)
         list = ['f', 'ff', 'fff', 'ffff', 'fffff', 'ffffm']
         list.extend(['fffm', 'fffmf', 'fffmm'])
         list.extend(['ffm', 'ffmf', 'ffmff', 'ffmfm'])

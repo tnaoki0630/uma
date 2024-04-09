@@ -129,7 +129,7 @@ if __name__ == "__main__":
         arr_mu = []
         arr_sgm = []
         # 正規化定数
-        phi = 0.5/(5*2**5) # 血統情報が全て一致する馬のデータを0.5倍してカウント
+        phi = 0.1/(5*2**5) # 血統情報が全て一致する馬のデータを0.5倍してカウント
         # 血統の重みベクトル（親等と字数が対応しているためlenで判定）
         arr_weight =  np.array([2**(5-len(idx)) for idx in list(df_ped)])
         # 各IDごとに処理
@@ -158,17 +158,25 @@ if __name__ == "__main__":
             # 一致する行を取り除いたデータフレームを作成
             df_reduced = df_all.drop(matching_rows.index)
             # ID ごとにグループ化して和をとる
-            arr_groupedsum = df_reduced.groupby('ID')['速度'].sum()
+            df_groupedsum = df_reduced.groupby('ID')['速度'].sum()
+
+
 
             # 重み付きのデータ数
-            Zi = len(subset_data) + phi*(arr_score*len(arr_groupedsum)).sum()
+            Zi = len(subset_data) + phi*(arr_score*len(df_groupedsum)).sum()
             # 速度データを足しこんで平均値を計算
-            sum = vi_sum + phi*(arr_score*arr_groupedsum).sum()
-            arr_mu = np.append(arr_mu, sum/Zi)
+            sum = vi_sum + phi*(arr_score*df_groupedsum.values).sum()
+            mu = sum/Zi
+            arr_mu = np.append(arr_mu, mu)
             # 自乗誤差ベクトルの計算
-            sqerr = ((subset_data['速度']-sum/Zi)**2).sum()
-            arr_groupedsqerr = df_reduced.groupby('ID')['速度'].apply(lambda vi: ((vi-sum/Zi) ** 2).sum())
-            sum = sqerr + phi*(arr_score*arr_groupedsqerr).sum()
+            sqerrsum = ((subset_data['速度']-mu)**2).sum()
+            df_groupedsum = df_reduced.groupby('ID')['速度'].apply(lambda vi: ((vi-sum/Zi) ** 2).sum())
+            if False: # groupby を使わずに和を取った場合と比較して検証
+                check = df_reduced['速度'].apply(lambda vi: ((vi-sum/Zi) ** 2))
+                print(f"groupedsum: {df_groupedsum}")
+                print(f"check: {check}")
+                print(f"error: {df_groupedsum.sum()-check.sum()}")
+            sum = sqerrsum + phi*(arr_score*df_groupedsum.values).sum()
             arr_sgm = np.append(arr_sgm, np.sqrt(sum/Zi))
         # 血統情報を使わない統計量
         print(f"mu w/o ped: {(df.groupby('ID')['速度'].mean()).values}")
@@ -399,7 +407,6 @@ if __name__ == "__main__":
 
                             # i,j,k 以外についてerfの積をとる
                             prod = 1
-                            # prod_p1 = 1
                             for l in range(Numa):
                                 if(l != i and l != j and l != k):
                                     prod *= (erf((vk-arr_mu[l])/(math.sqrt(2)*arr_sgm[l])) - erf(-arr_mu[l]/(math.sqrt(2)*arr_sgm[l])))/2
@@ -416,7 +423,6 @@ if __name__ == "__main__":
         print(f"sum of prob: {np.sum(tensor_prob)}")
         print(f"tanshou probability: {np.sum(tensor_prob, axis=(1,2))}")
         print(f"sanrentan probability: {tensor_prob}")
-        print(f"sanrentan probability: {np.shape(tensor_prob)}")
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n")

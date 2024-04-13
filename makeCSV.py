@@ -1,9 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
-import numpy as np
 import re
-from numpy.polynomial import Polynomial
 import argparse
 import pandas as pd
 from pandas import plotting
@@ -58,6 +56,53 @@ def scrape_hitchart(url):
                             arr.append(int(match.group()))
     return arr
 ###
+def scrape_entrylist(url):
+    # HTTP GETリクエストを送信してHTMLを取得
+    response = requests.get(url)
+
+    # エラーハンドリング
+    if response.status_code != 200:
+        print(f"Error: {response.status_code}")
+        return None
+    
+    # エンコーディングを取得
+    # detected_encoding = chardet.detect(response.content)['encoding']
+    detected_encoding = 'EUC-JP'
+
+    # BeautifulSoupを使ってHTMLを解析
+    soup = BeautifulSoup(response.content, 'html.parser', from_encoding = detected_encoding)
+
+    # 出馬表のデータを取得（この例では出馬表がページ内で１番目の表であると仮定）
+    table = soup.find('table')
+
+    # テーブルが見つからない場合
+    if not table:
+        print("Table not found1")
+        return None
+
+    # initialize
+    arr = []
+    # loop for table
+    # テーブルの各行を取得
+    rows = table.find_all('tr')
+    # 行ごとにデータを配列に追加
+    for row in rows:
+        ## 各セルのデータを取得，馬のセルのみを取得（騎手情報を取得したい場合はclass値を'Jockey'に変更）
+        cells = row.find_all('td', class_ = 'HorseInfo')
+        #row_data = [cell.get_text(strip=True) for cell in cells]
+        ## <a> タグの href 属性の値を取得
+        for cell in cells:
+            ## 空の行は無視する
+            if cell:
+                anchor_tag = cell.find('a')
+                if anchor_tag:
+                    href_value = anchor_tag.get('href')
+                    # IDを抽出
+                    match = re.search(r'\d+', href_value)
+                    if match:
+                        arr.append(int(match.group()))
+    return arr
+###
 def scrape_grades(url, cols):
     # HTTP GETリクエストを送信してHTMLを取得
     response = requests.get(url)
@@ -101,6 +146,47 @@ def scrape_grades(url, cols):
                     data.append(row_data)
     return data
 ###
+def scrape_pedigree(url):
+    # HTTP GETリクエストを送信してHTMLを取得
+    response = requests.get(url)
+
+    # エラーハンドリング
+    if response.status_code != 200:
+        print(f"Error: {response.status_code}")
+        return None
+    
+    # エンコーディングを取得
+    # detected_encoding = chardet.detect(response.content)['encoding']
+    detected_encoding = 'EUC-JP'
+
+    # BeautifulSoupを使ってHTMLを解析
+    soup = BeautifulSoup(response.content, 'html.parser', from_encoding = detected_encoding)
+
+    # 出馬表のデータを取得（この例では出馬表がページ内で１番目の表であると仮定）
+    table = soup.find('table')
+
+    # テーブルが見つからない場合
+    if not table:
+        print("Table not found1")
+        return None
+
+    # テーブルの各行を取得
+    rows = table.find_all('tr')
+
+    # 行ごとにデータを配列に追加
+    arr = []
+    for row in rows:
+        # 各セルのデータを取得
+        cells = row.find_all('td')
+        for cell in cells:
+            # 馬名を抽出
+            names = cell.find('a') ## 最初に現れる <a> に馬名が入る
+            row_data = [name.get_text(strip=True) for name in names]
+            # 空の行は無視する
+            if row_data:
+                arr.append(row_data[0])
+    return arr
+###
 def extract_integer_in_parenthesis(arr):
     result = []
     for string in arr:
@@ -123,6 +209,15 @@ def extract_integer(arr):
             result.append(None)
     return result
 ###
+def extract_integer_v2(str):
+    # 入出力1つvar
+    # 正規表現を使って%dの部分を抜き出す
+    match = re.search(r'\d+', str)
+    if match:
+        result = int(match.group())
+    else:
+        result = None
+    return result
 ###
 def extract_float(arr):
     result = []
@@ -148,6 +243,14 @@ def strtime2fltsec(arr):
         result.append(total_seconds)
     return result
 ###
+def strtime2fltsec_v2(str):
+    # 入出力1つvar
+    # ":" で文字列を分割して分と秒に分ける
+    minutes, seconds = map(float, str.split(':'))
+    # 分を秒に変換して合算
+    total_seconds = minutes * 60 + seconds
+    return total_seconds
+###
 def strdate2intdate(arr):
     date = []
     for date_str in arr:
@@ -160,142 +263,147 @@ def strdate2intdate(arr):
         date.append(yyyymmdd)
     return date
 ###
-def extract_dataset(arr_id, arr_req):
-    ## initialize
-    X = []
-    Y = []
-    x1 = []
-    x2 = []
-    x3_1 = []
-    x3_2 = []
-    x4 = []
-    x5 = []
-    x6 = []
-    x7 = []
-    x8 = []
-    x9 = []
-    n = 0
-    ## loop for id
-    for id in arr_id:
-        url = f"https://db.netkeiba.com/horse/result/{id}"
-        ## URL先の成績表をNumPy配列として取得
-        grades_data = scrape_grades(url, arr_req)
-        if grades_data:
-            data = np.array(grades_data)
-        else:
-            # print("Error at scrape_grades")
-            # exit()
-            continue ## 戦績表がまだない新馬もいるらしい... 既知のエラーということで続行。
-
-        ## データベクトルの準備
-        row, col = np.shape(data)
-        vec_id = (n+1)*np.ones(row) # ヒットチャート順位
-        vec_date = strdate2intdate(data[:, 0]) # 日付
-        vec_num = extract_integer(data[:, 6]) # 頭数
-        vec_order = extract_integer(data[:, 8]) # 馬番
-        vec_weight_1 = extract_integer(data[:, 13]) # 斤量
-        vec_dist = extract_integer(data[:, 14]) # 距離
-        vec_time = strtime2fltsec(data[:, 17]) # タイム
-        vec_weight_2 = extract_integer_in_parenthesis(data[:, 23]) # 馬体重の変化量
-        vec_race = extract_integer(data[:, 4]) # レース名（数字のみを抽出:G1→1）
-        vec_race_num = extract_integer(data[:, 3]) # レース番号
-        vec_odds = np.log(extract_float(data[:, 9])) # オッズ（必ず正の値を取るので対数）
-        ## データの追加
-        Y = np.append(Y, vec_time)
-        x1 = np.append(x1, vec_id)
-        x2 = np.append(x2, vec_date)
-        x3_1 = np.append(x3_1, vec_order)
-        x3_2 = np.append(x3_2, vec_num)
-        x4 = np.append(x4, vec_weight_1)
-        x5 = np.append(x5, vec_dist)
-        x6 = np.append(x6, vec_weight_2)
-        x7 = np.append(x7, vec_odds)
-        ## インクリメント
-        n += 1
-    x0 = np.ones_like(x1) ## バイアス項
-    Y = x5/Y # 距離/タイム
-    x3 = x3_1/x3_2 # 馬番/頭数
-    ## normalize
-    mean_data = np.array([Y.mean(), x1.mean(), x2.mean(), x3.mean(), x4.mean(), x5.mean(), x6.mean(), x7.mean()])
-    var_data = np.array([Y.var(), x1.var(), x2.var(), x3.var(), x4.var(), x5.var(), x6.var(), x7.var()])
-    Y = (Y - mean_data[0])/np.sqrt(var_data[0])
-    x1 = (x1 - mean_data[1])/np.sqrt(var_data[1])
-    x2 = (x2 - mean_data[2])/np.sqrt(var_data[2])
-    x3 = (x3 - mean_data[3])/np.sqrt(var_data[3])
-    x4 = (x4 - mean_data[4])/np.sqrt(var_data[4])
-    x5 = (x5 - mean_data[5])/np.sqrt(var_data[5])
-    x6 = (x6 - mean_data[6])/np.sqrt(var_data[6])
-    x7 = (x7 - mean_data[7])/np.sqrt(var_data[7])
-    # x8 = (x8 - mean_data[8])/np.sqrt(var_data[8])
-    # x9 = (x9 - mean_data[9])/np.sqrt(var_data[9])
-    ## reshape
-    # X = x6
-    # X = np.transpose(np.vstack((x0, x1, x2, x3))) # 重回帰
-    # X = np.transpose(np.vstack((x0, x5))) # 重回帰を単回帰と比較
-    # X = np.transpose(np.vstack((x5, x6))) # 距離、体重
-    X = np.transpose(np.vstack((x3, x4, x6, x7))) # 馬番/頭数、斤量、体重、オッズ
-    # Z = np.transpose(np.vstack((Y, x0, x1, x2, x3, x4, x5, x6, x7, x8, x9)))
-    return X, Y, mean_data, var_data
-###
 
 ## 直接実行された場合のみ処理する（関数として呼び出された場合は実行しない）
 if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     ## 学習に使用するテーブル数
-    parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 3)", default=[3])
+    parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 20)", default=[20])
+    ## 作成するcsvの種類
+    parser.add_argument("-t", "--type", nargs=1, type=int, choices=range(2), help="TYPE = 0: EntryList (default) \nTYPE = 1: DataBase", default=[0])
     ## 引数の取得
     args = parser.parse_args()
 
-    ## ヒットチャートのページから馬ごとのURLを取得
-    ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
-    if not all(ids):
-        print("Error at scrape_hitchart")
-        exit()
+    # EntryList
+    if args.type[0] == 0:
+        # エントリーリストから馬ごとのURLを取得
+        url  = "https://race.netkeiba.com/race/shutuba.html?race_id=202406020711"
+        ids = scrape_entrylist(url)
+        if not all(ids):
+            print("Error at scrape_entrylist")
+            exit()
 
-    ## N 位まで学習に使用
-    N = args.number[0]
-    # 変数リスト
-    varlist = ['頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重']
-    varlist_wID = varlist[:]
-    varlist_wID.insert(0, 'ID')
-
-    ## 1つめはヘッダー込みでデータフレームを作成
-    url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
-    # pandasでスクレイピング
-    df_all = pd.read_html(url, encoding='euc-jp')[0]
-    df = df_all[varlist]
-    # うまIDを追加
-    varlist_all = list(df_all)
-    varlist_all.insert(0, 'ID')
-    df_all['ID'] = ids[0]
-    df_all = df_all[varlist_all]
-
-    df['ID'] = ids[0]
-    # 要素を入れ替え
-    df = df[varlist_wID]
-    for id in ids[1:N]:
-        url = f"https://db.netkeiba.com/horse/result/{id}"
+        ## 戦績表
+        # 1つめはヘッダー込みでデータフレームを作成
+        url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
         # pandasでスクレイピング
-        try:
-            df1_all = pd.read_html(url, encoding='euc-jp')[0]
-        except ValueError:
-            print("Table not found")
-        df1 = df1_all[varlist]
+        df_all = pd.read_html(url, encoding='euc-jp')[0]
         # うまIDを追加
-        df1_all['ID'] = id
-        df1['ID'] = id
+        varlist_all = list(df_all)
+        varlist_all.insert(0, 'ID')
+        df_all['ID'] = ids[0]
+        df_all = df_all[varlist_all]
+        for id in ids[1:]:
+            url = f"https://db.netkeiba.com/horse/result/{id}"
+            # pandasでスクレイピング
+            try:
+                df1_all = pd.read_html(url, encoding='euc-jp')[0]
+            except ValueError:
+                print("Table not found")
+            # うまIDを追加
+            df1_all['ID'] = id
+            # 要素を入れ替え
+            df1_all = df1_all[varlist_all]
+            # データフレームを結合
+            df_all = pd.concat([df_all, df1_all], ignore_index=True)
+        #CSV出力
+        df_all.to_csv('UMA_DB_EL.csv', index = False)
+    
+        ## 血統情報
+        arr_ped = []
+        for id in ids:
+            url = f"https://db.netkeiba.com/horse/ped/{id}"
+            # BeautifulSoupでスクレイピング
+            ped = scrape_pedigree(url)
+            arr_ped.append(ped)
+        # 列名リスト(いいやり方が思いつかなかったのでベタ書き。二分木の深さ優先探索アルゴリズムに近い気がするので、その辺の技術を流用すればもっとスッキリさせれる気がする)
+        list = ['f', 'ff', 'fff', 'ffff', 'fffff', 'ffffm']
+        list.extend(['fffm', 'fffmf', 'fffmm'])
+        list.extend(['ffm', 'ffmf', 'ffmff', 'ffmfm'])
+        list.extend(['ffmm', 'ffmmf', 'ffmmm'])
+        list.extend(['fm', 'fmf', 'fmff', 'fmfff', 'fmffm', 'fmfm', 'fmfmf', 'fmfmm'])
+        list.extend(['fmm', 'fmmf', 'fmmff', 'fmmfm', 'fmmm', 'fmmmf', 'fmmmm'])
+        list.extend(['m', 'mf', 'mff', 'mfff', 'mffff', 'mfffm'])
+        list.extend(['mffm', 'mffmf', 'mffmm'])
+        list.extend(['mfm', 'mfmf', 'mfmff', 'mfmfm'])
+        list.extend(['mfmm', 'mfmmf', 'mfmmm'])
+        list.extend(['mm', 'mmf', 'mmff', 'mmfff', 'mmffm', 'mmfm', 'mmfmf', 'mmfmm'])
+        list.extend(['mmm', 'mmmf', 'mmmff', 'mmmfm', 'mmmm', 'mmmmf', 'mmmmm'])
+        # pandas データフレームに変換
+        df = pd.DataFrame(arr_ped, columns=list)
+        # uma ID を左に追加
+        df.insert(0, 'ID', ids)
+        #CSV出力_
+        df.to_csv('UMA_ped_EL.csv', index = False)
+
+    # DataBase
+    if args.type[0] == 1:
+        # ヒットチャートのページから馬ごとのURLを取得
+        ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
+        if not all(ids):
+            print("Error at scrape_hitchart")
+            exit()
+        # 出力するテーブル数
+        N = min(100, max(1, args.number[0])) # 1~100となるよう例外処理
+
+        ## 戦績表
+        # 1つめはヘッダー込みでデータフレームを作成
+        url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
+        # pandasでスクレイピング
+        df_all = pd.read_html(url, encoding='euc-jp')[0]
+        # うまIDを追加
+        varlist_all = list(df_all)
+        varlist_all.insert(0, 'ID')
+        df_all['ID'] = ids[0]
         # 要素を入れ替え
-        df1_all = df1_all[varlist_all]
-        df1 = df1[varlist_wID]
-        # データフレームを結合
-        df_all = pd.concat([df_all, df1_all], ignore_index=True)
-        df = pd.concat([df, df1], ignore_index=True)
+        df_all = df_all[varlist_all]
+        for id in ids[1:N]:
+            url = f"https://db.netkeiba.com/horse/result/{id}"
+            # pandasでスクレイピング
+            try:
+                df1_all = pd.read_html(url, encoding='euc-jp')[0]
+            except ValueError:
+                print("Table not found")
+            # うまIDを追加
+            df1_all['ID'] = id
+            # 要素を入れ替え
+            df1_all = df1_all[varlist_all]
+            # データフレームを結合
+            df_all = pd.concat([df_all, df1_all], ignore_index=True)
+        # CSV出力
+        df_all.to_csv('UMA_DB.csv', index = False)
 
-    print(df_all)
+        # 配列を初期化
+        df_all = []
 
-    #CSV出力
-    df_all.to_csv('UMA_DB.csv', index = False)
+        ## 血統情報
+        arr_ped = []
+        for id in ids[:N]:
+            url = f"https://db.netkeiba.com/horse/ped/{id}"
+            # BeautifulSoupでスクレイピング
+            ped = scrape_pedigree(url)
+            arr_ped.append(ped)
+        # 列名リスト(いいやり方が思いつかなかったのでベタ書き。二分木の深さ優先探索アルゴリズムに近い気がするので、その辺の技術を流用すればもっとスッキリさせれる気がする)
+        list = ['f', 'ff', 'fff', 'ffff', 'fffff', 'ffffm']
+        list.extend(['fffm', 'fffmf', 'fffmm'])
+        list.extend(['ffm', 'ffmf', 'ffmff', 'ffmfm'])
+        list.extend(['ffmm', 'ffmmf', 'ffmmm'])
+        list.extend(['fm', 'fmf', 'fmff', 'fmfff', 'fmffm', 'fmfm', 'fmfmf', 'fmfmm'])
+        list.extend(['fmm', 'fmmf', 'fmmff', 'fmmfm', 'fmmm', 'fmmmf', 'fmmmm'])
+        list.extend(['m', 'mf', 'mff', 'mfff', 'mffff', 'mfffm'])
+        list.extend(['mffm', 'mffmf', 'mffmm'])
+        list.extend(['mfm', 'mfmf', 'mfmff', 'mfmfm'])
+        list.extend(['mfmm', 'mfmmf', 'mfmmm'])
+        list.extend(['mm', 'mmf', 'mmff', 'mmfff', 'mmffm', 'mmfm', 'mmfmf', 'mmfmm'])
+        list.extend(['mmm', 'mmmf', 'mmmff', 'mmmfm', 'mmmm', 'mmmmf', 'mmmmm'])
+        # pandas データフレームに変換
+        df = pd.DataFrame(arr_ped, columns=list)
+        # uma ID を左に追加
+        df.insert(0, 'ID', ids[:N])
+        #CSV出力
+        df.to_csv('UMA_ped.csv', index = False)
+
 
     # Z_data = data[2]
     # #訓練用データと検証用データに分ける

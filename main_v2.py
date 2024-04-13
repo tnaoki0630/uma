@@ -378,10 +378,11 @@ if __name__ == "__main__":
     if args.model[0] == 3 or args.model[0] == 4:
         # 積分領域の定義
         Nv = 200
-        vmin = arr_mu - 8 * arr_sgm
-        vmax = arr_mu + 8 * arr_sgm
+        vmin = arr_mu - 6 * arr_sgm
+        vmax = arr_mu + 6 * arr_sgm
         dv = (vmax - vmin) / Nv
         # 積分
+        tensor_num = np.zeros((Numa, Numa, Numa), dtype=object)
         tensor_prob = np.zeros((Numa, Numa, Numa))
         tensor_earn = np.zeros((Numa, Numa, Numa))
         for i in range(Numa):
@@ -416,10 +417,36 @@ if __name__ == "__main__":
                             sum_j = np.dot(BOOL_vj, vj_exp*sum_k)*dv[j]
                             sum_i = np.sum(vi_exp*sum_j)*dv[i]
 
+                            # うま番号
+                            tensor_num[i,j,k] = f"{i+1}-{j+1}-{k+1}"
                             # 当選確率
                             tensor_prob[i,j,k] = coef*sum_i
                             # 払戻金の期待値（いったん掛け算で計算）
                             tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
+                        else:
+                            # 重複するものはNone
+                            tensor_num[i,j,k] = None
+                            tensor_prob[i,j,k] = None
+                            tensor_earn[i,j,k] = None
+                else:
+                    for k in range(Numa):
+                        # 重複するものはNone
+                        tensor_num[i,j,k] = None
+                        tensor_prob[i,j,k] = None
+                        tensor_earn[i,j,k] = None
+        # 各テンソルを1次元のDataFrameに変換
+        df_num = pd.DataFrame(tensor_num.flatten())
+        df_prob = pd.DataFrame(tensor_prob.flatten())
+        df_earn = pd.DataFrame(tensor_earn.flatten())
+        # 列名を設定
+        df_num.columns = ['うま番号']
+        df_prob.columns = ['当選確率']
+        df_earn.columns = ['払戻金']
+        # DataFrameを結合
+        df_output = pd.concat([df_num, df_prob, df_earn], axis=1)
+        # Nanを削除してCSVファイルに書き込み
+        (df_output.dropna()).to_csv('output.csv', index=False)
+        # 標準出力
         print(f"sum of prob: {np.sum(tensor_prob)}")
         print(f"tanshou probability: {np.sum(tensor_prob, axis=(1,2))}")
         print(f"sanrentan probability: {tensor_prob}")

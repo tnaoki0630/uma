@@ -245,6 +245,8 @@ def sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
                     tensor_num[i,j,k] = None
                     tensor_prob[i,j,k] = None
                     tensor_earn[i,j,k] = None
+    # 三連複
+    print("hoge")
     # 各テンソルを1次元のDataFrameに変換
     df_num = pd.DataFrame(tensor_num.flatten())
     df_prob = pd.DataFrame(tensor_prob.flatten())
@@ -457,7 +459,7 @@ if __name__ == "__main__":
         df_sortbyearn = df_result.sort_values(by='払戻金', ascending=False)
         # CSVファイルに書き込み
         df_result.to_csv('output.csv', index=False)
-        df_sortbyearn.to_csv('output_earn.csv', index=False)
+        df_sortbyprob.to_csv('output_prob.csv', index=False)
         df_sortbyearn.to_csv('output_earn.csv', index=False)
     end_time = time.time()
     elapsed_time = end_time - start_time

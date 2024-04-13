@@ -64,7 +64,48 @@ def tanshou_integration(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
                     intg_btm = math.erf(-arr_mu[k]/(math.sqrt(2)*arr_sgm[k]))
                     prod *= (intg_top - intg_btm)/2
             sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
-        arr_num.append(f"{i}")
+        arr_num.append(i)
+        arr_prob.append(coef*sum)
+        arr_earn.append(coef*sum*arr_odds[i])
+    # リストをDataFrameに変換
+    df_num = pd.DataFrame(arr_num)
+    df_prob = pd.DataFrame(arr_prob)
+    df_earn = pd.DataFrame(arr_earn)
+    # 列名を設定
+    df_num.columns = ['うま番号']
+    df_prob.columns = ['当選確率']
+    df_earn.columns = ['払戻金']
+    # DataFrameを結合
+    DataFrame = pd.concat([df_num, df_prob, df_earn], axis=1)
+    print(f"sum of prob: {df_prob.sum()}")
+    print(f"tanshou probability: {arr_prob}")
+    return DataFrame
+##
+def tanshou_integration_v0(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
+    prod = 1
+    for i in range(Numa):
+        prod *= arr_sgm[i]
+    coef = 1/(math.sqrt((2*math.pi)**Numa)*prod)
+    # 積分計算
+    arr_num = []
+    arr_prob = []
+    arr_earn = []
+    for i in range(Numa):
+        sum = 0
+        for j in range(Nv):
+            vi = vmin[i] + dv[i]*j
+            prod = 1
+            for k in range(Numa):
+                # i 以外について 0 から vi まで数値積分して、その積をとる
+                if(i != k):
+                    sum2 = 0
+                    for l in range(Nv):
+                        vk = vmin[k] + dv[k]*l
+                        if(vk < vi):
+                            sum2 += math.exp(-(vk-arr_mu[k])**2/(2*arr_sgm[k]**2))*dv[k]
+                    prod *= sum2
+            sum += math.exp(-(vi-arr_mu[i])**2/(2*arr_sgm[i]**2))*prod*dv[i]
+        arr_num.append(i)
         arr_prob.append(coef*sum)
         arr_earn.append(coef*sum*arr_odds[i])
     # リストをDataFrameに変換
@@ -329,8 +370,6 @@ if __name__ == "__main__":
             # ID ごとにグループ化して和をとる
             df_groupedsum = df_reduced.groupby('ID')['速度'].sum()
 
-
-
             # 重み付きのデータ数
             Zi = len(subset_data) + phi*(arr_score*len(df_groupedsum)).sum()
             # 速度データを足しこんで平均値を計算
@@ -375,7 +414,6 @@ if __name__ == "__main__":
     print(f"done. elapsed time: {elapsed_time}\n")
 
     ## 期待値計算
-    start_time = time.time()
     print("start probability integration")
     if args.model[0] == 3 or args.model[0] == 4:
         # 積分領域を設定
@@ -390,15 +428,29 @@ if __name__ == "__main__":
 
         ## 積分計算
         # 単勝
+        start_time = time.time()
         df_result = tanshou_integration(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv)
-        if False:
-            # 三連単（遅すぎるので基本使わない）
+        end_time = time.time()
+        print(f"elapsed time(tanshou): {end_time - start_time}\n")
+        if False: # とても遅いので基本OFF
+            # 単勝（数値積分）
+            start_time = time.time()
+            df_result = tanshou_integration_v0(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv)
+            end_time = time.time()
+            print(f"elapsed time(tanshou_v0): {end_time - start_time}\n")
+            # 三連単
+            start_time = time.time()
             df_result = sanrentan_integration(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv)
+            end_time = time.time()
+            print(f"elapsed time(sanrentan): {end_time - start_time}\n")
         # 三連単 w/ ベクトル演算
+        start_time = time.time()
         df_result = sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv)
+        end_time = time.time()
+        print(f"elapsed time(sanrentan_v2): {end_time - start_time}\n")
         
         # Nanを削除してCSVファイルに書き込み
         (df_result.dropna()).to_csv('output.csv', index=False)
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"done. elapsed time: {elapsed_time}\n")
+    print(f"done.")

@@ -8,6 +8,7 @@ import time
 import pandas as pd
 import math
 from scipy.special import erf
+from itertools import combinations, permutations
 
 def showPDF(csvpath, v, arr_label):
     # csv から取得
@@ -231,9 +232,10 @@ def sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
                         tensor_num[i,j,k] = f"{i+1}-{j+1}-{k+1}"
                         # 当選確率
                         tensor_prob[i,j,k] = coef*sum_i
-                        # 払戻金の期待値（いったん掛け算で計算）
-                        # tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
-                        tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]**3*arr_odds[j]**2*arr_odds[k]
+                        # 払戻金の期待値
+                        # tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k] ## ただの掛け算
+                        # tensor_earn[i,j,k] = coef*sum_i*(arr_odds[i]**3)*(arr_odds[j]**2)*(arr_odds[k]) ## 冪乗して重みづけ（やりすぎ？）
+                        tensor_earn[i,j,k] = coef*sum_i*(3*arr_odds[i])*(2*arr_odds[j])*(arr_odds[k]) ## 係数で重みづけ
                     else:
                         # 重複するものはNone
                         tensor_num[i,j,k] = None
@@ -245,21 +247,46 @@ def sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
                     tensor_num[i,j,k] = None
                     tensor_prob[i,j,k] = None
                     tensor_earn[i,j,k] = None
-    # 三連複
-    print("hoge")
     # 各テンソルを1次元のDataFrameに変換
     df_num = pd.DataFrame(tensor_num.flatten())
     df_prob = pd.DataFrame(tensor_prob.flatten())
     df_earn = pd.DataFrame(tensor_earn.flatten())
-    # 列名を設定
-    df_num.columns = ['うま番号']
-    df_prob.columns = ['当選確率']
-    df_earn.columns = ['払戻金']
     # DataFrameを結合
-    DataFrame = pd.concat([df_num, df_prob, df_earn], axis=1)
+    DataFrame_ordered = pd.concat([df_num, df_prob, df_earn], axis=1)
+    # 列名を設定
+    DataFrame_ordered.columns = ['うま番号', '当選確率', '払戻金']
+
+    ## 三連複の確率計算
+    # 順序を区別しない組み合わせのリストを取得
+    comblist = combinations(range(Numa), 3)
+    num_unordered = []
+    prob_unordered = []
+    earn_unordered = []
+    for combo in comblist:
+        # タプルで馬番を取得
+        i, j, k = combo
+        num_unordered.append(f"{i+1}-{j+1}-{k+1}")
+        sum = 0
+        # combo の中で、順序を区別する全ての組み合わせを取得
+        for perm in permutations(combo):
+            # 確率の和をとる
+            sum += tensor_prob[perm]
+        prob_unordered.append(sum)
+        # 払戻金を計算
+        earn_unordered.append(sum*arr_odds[i]*arr_odds[j]*arr_odds[k])
+        ## check
+        # print(combo, sum, tensor_prob[combo])
+    # DataFrameに変換
+    df_num = pd.DataFrame(num_unordered)
+    df_prob = pd.DataFrame(prob_unordered)
+    df_earn = pd.DataFrame(earn_unordered)
+    # DataFrameを結合
+    DataFrame_unordered = pd.concat([df_num, df_prob, df_earn], axis=1)
+    # 列名を設定
+    DataFrame_unordered.columns = ['うま番号', '当選確率', '払戻金']
     print(f"sum of prob: {df_prob.sum()}")
     print(f"tanshou probability: {np.nansum(tensor_prob, axis=(1,2))}")
-    return DataFrame.dropna()
+    return DataFrame_ordered.dropna(), DataFrame_unordered
 ##
 if __name__ == "__main__":
     ## コマンド引数関連
@@ -343,7 +370,7 @@ if __name__ == "__main__":
         arr_mu = []
         arr_sgm = []
         # 正規化定数
-        phi = 0.1/(5*2**5) # 血統情報が全て一致する馬のデータを0.5倍してカウント
+        phi = 0.001/(5*2**5) # 血統情報が全て一致する馬のデータをスカラー倍してカウント
         # 血統の重みベクトル（親等と字数が対応しているためlenで判定）
         arr_weight =  np.array([2**(5-len(idx)) for idx in list(df_ped)])
         # 各IDごとに処理
@@ -382,7 +409,7 @@ if __name__ == "__main__":
             arr_mu = np.append(arr_mu, mu)
             # 自乗誤差ベクトルの計算
             sqerrsum = ((subset_data['速度']-mu)**2).sum()
-            df_groupedsum = df_reduced.groupby('ID')['速度'].apply(lambda vi: ((vi-sum/Zi) ** 2).sum())
+            df_groupedsum = df_reduced.groupby('ID')['速度'].apply(lambda vi: ((vi-mu) ** 2).sum())
             if False: # groupby を使わずに和を取った場合と比較して検証
                 check = df_reduced['速度'].apply(lambda vi: ((vi-sum/Zi) ** 2))
                 print(f"groupedsum: {df_groupedsum}")
@@ -449,18 +476,35 @@ if __name__ == "__main__":
             print(f"elapsed time(sanrentan): {end_time - start_time}\n")
         # 三連単 w/ ベクトル演算
         start_time = time.time()
-        df_result = sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv)
+        df_ordered, df_unordered = sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv)
         end_time = time.time()
-        print(f"elapsed time(sanrentan_v2): {end_time - start_time}\n")        
+        print(f"elapsed time(sanrentan_v2): {end_time - start_time}\n")
         
-        # prob でソート
-        df_sortbyprob = df_result.sort_values(by='当選確率', ascending=False)
-        # earn でソート
-        df_sortbyearn = df_result.sort_values(by='払戻金', ascending=False)
+        ### CSV出力
+        ## 三連単
         # CSVファイルに書き込み
-        df_result.to_csv('output.csv', index=False)
-        df_sortbyprob.to_csv('output_prob.csv', index=False)
-        df_sortbyearn.to_csv('output_earn.csv', index=False)
+        fname = f"model{args.model[0]}_ordered.csv"
+        df_ordered.to_csv(fname, index=False)
+        # prob でソート
+        fname = f"model{args.model[0]}_ordered_prob.csv"
+        df_sorted = df_ordered.sort_values('当選確率', ascending=False)
+        df_sorted.to_csv(fname, index=False)
+        # earn でソート
+        fname = f"model{args.model[0]}_ordered_earn.csv"
+        df_sorted = df_ordered.sort_values('払戻金', ascending=False)
+        df_sorted.to_csv(fname, index=False)
+        ## 三連複
+        # CSVファイルに書き込み
+        fname = f"model{args.model[0]}_unordered.csv"
+        df_unordered.to_csv(fname, index=False)
+        # prob でソート
+        fname = f"model{args.model[0]}_unordered_prob.csv"
+        df_sorted = df_unordered.sort_values(by='当選確率', ascending=False)
+        df_sorted.to_csv(fname, index=False)
+        # earn でソート
+        fname = f"model{args.model[0]}_unordered_earn.csv"
+        df_sorted = df_unordered.sort_values(by='払戻金', ascending=False)
+        df_sorted.to_csv(fname, index=False)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done.")

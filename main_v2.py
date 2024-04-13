@@ -163,7 +163,8 @@ def sanrentan_integration(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
                         # 当選確率
                         tensor_prob[i,j,k] = coef*sum_i
                         # 払戻金の期待値（いったん掛け算で計算）
-                        tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
+                        # tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
+                        tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]**3*arr_odds[j]**2*arr_odds[k]
                     else:
                         # 重複するものはNone
                         tensor_num[i,j,k] = None
@@ -231,7 +232,8 @@ def sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
                         # 当選確率
                         tensor_prob[i,j,k] = coef*sum_i
                         # 払戻金の期待値（いったん掛け算で計算）
-                        tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
+                        # tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]*arr_odds[j]*arr_odds[k]
+                        tensor_earn[i,j,k] = coef*sum_i*arr_odds[i]**3*arr_odds[j]**2*arr_odds[k]
                     else:
                         # 重複するものはNone
                         tensor_num[i,j,k] = None

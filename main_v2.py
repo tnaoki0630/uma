@@ -456,7 +456,8 @@ if __name__ == "__main__":
         # earn でソート
         df_sortbyearn = df_result.sort_values(by='払戻金', ascending=False)
         # CSVファイルに書き込み
-        df_sortbyprob.to_csv('output_prob.csv', index=False)
+        df_result.to_csv('output.csv', index=False)
+        df_sortbyearn.to_csv('output_earn.csv', index=False)
         df_sortbyearn.to_csv('output_earn.csv', index=False)
     end_time = time.time()
     elapsed_time = end_time - start_time

@@ -79,7 +79,7 @@ def tanshou_integration(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     DataFrame = pd.concat([df_num, df_prob, df_earn], axis=1)
     print(f"sum of prob: {df_prob.sum()}")
     print(f"tanshou probability: {arr_prob}")
-    return DataFrame
+    return DataFrame.dropna()
 ##
 def tanshou_integration_v0(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     prod = 1
@@ -120,7 +120,7 @@ def tanshou_integration_v0(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     DataFrame = pd.concat([df_num, df_prob, df_earn], axis=1)
     print(f"sum of prob: {df_prob.sum()}")
     print(f"tanshou probability: {arr_prob}")
-    return DataFrame
+    return DataFrame.dropna()
 ##
 def sanrentan_integration(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     tensor_num = np.zeros((Numa, Numa, Numa), dtype=object)
@@ -187,7 +187,7 @@ def sanrentan_integration(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     DataFrame = pd.concat([df_num, df_prob, df_earn], axis=1)
     print(f"sum of prob: {df_prob.sum()}")
     print(f"tanshou probability: {np.nansum(tensor_prob, axis=(1,2))}")
-    return DataFrame
+    return DataFrame.dropna()
 ##
 def sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     tensor_num = np.zeros((Numa, Numa, Numa), dtype=object)
@@ -255,7 +255,7 @@ def sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     DataFrame = pd.concat([df_num, df_prob, df_earn], axis=1)
     print(f"sum of prob: {df_prob.sum()}")
     print(f"tanshou probability: {np.nansum(tensor_prob, axis=(1,2))}")
-    return DataFrame
+    return DataFrame.dropna()
 ##
 if __name__ == "__main__":
     ## コマンド引数関連
@@ -408,7 +408,7 @@ if __name__ == "__main__":
         vmax = np.max(arr_mu + 4*arr_sgm)
         Nv = 500
         arr_v = np.linspace(vmin, vmax, Nv)
-        showPDF("UMA_DB.csv", arr_v, label)
+        showPDF("UMA_DB_EL.csv", arr_v, label)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n")
@@ -447,10 +447,15 @@ if __name__ == "__main__":
         start_time = time.time()
         df_result = sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv)
         end_time = time.time()
-        print(f"elapsed time(sanrentan_v2): {end_time - start_time}\n")
+        print(f"elapsed time(sanrentan_v2): {end_time - start_time}\n")        
         
-        # Nanを削除してCSVファイルに書き込み
-        (df_result.dropna()).to_csv('output.csv', index=False)
+        # prob でソート
+        df_sortbyprob = df_result.sort_values(by='当選確率', ascending=False)
+        # earn でソート
+        df_sortbyearn = df_result.sort_values(by='払戻金', ascending=False)
+        # CSVファイルに書き込み
+        df_sortbyprob.to_csv('output_prob.csv', index=False)
+        df_sortbyearn.to_csv('output_earn.csv', index=False)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done.")

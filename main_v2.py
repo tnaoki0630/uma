@@ -78,7 +78,7 @@ def tanshou_integration(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     df_earn.columns = ['払戻金']
     # DataFrameを結合
     DataFrame = pd.concat([df_num, df_prob, df_earn], axis=1)
-    print(f"sum of prob: {df_prob.sum()}")
+    print(f"sum of prob: {(df_prob.values).sum()}")
     print(f"tanshou probability: {arr_prob}")
     return DataFrame.dropna()
 ##
@@ -257,16 +257,15 @@ def sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     DataFrame_ordered.columns = ['うま番号', '当選確率', '払戻金']
 
     ## 三連複の確率計算
-    # 順序を区別しない組み合わせのリストを取得
-    comblist = combinations(range(Numa), 3)
     num_unordered = []
     prob_unordered = []
     earn_unordered = []
-    for combo in comblist:
+    # 順序を区別しない組み合わせのリストを取得
+    for combo in combinations(range(Numa), 3):
+        sum = 0
         # タプルで馬番を取得
         i, j, k = combo
         num_unordered.append(f"{i+1}-{j+1}-{k+1}")
-        sum = 0
         # combo の中で、順序を区別する全ての組み合わせを取得
         for perm in permutations(combo):
             # 確率の和をとる
@@ -284,7 +283,7 @@ def sanrentan_integration_v2(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     DataFrame_unordered = pd.concat([df_num, df_prob, df_earn], axis=1)
     # 列名を設定
     DataFrame_unordered.columns = ['うま番号', '当選確率', '払戻金']
-    print(f"sum of prob: {df_prob.sum()}")
+    print(f"sum of prob: {np.nansum(tensor_prob)}")
     print(f"tanshou probability: {np.nansum(tensor_prob, axis=(1,2))}")
     return DataFrame_ordered.dropna(), DataFrame_unordered
 ##
@@ -292,7 +291,20 @@ if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     ## モデル選択
-    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(5), help="MODEL = 0: LR\nMODEL = 1: GPR w/o optimization\nMODEL = 2: GPR w/ optimization\nMODEL = 3: Gauss distribution (default)\nMODEL = 4: Gauss distribution w/ pedigree", default=[3])
+    parser.add_argument("-m", "--model", nargs=1, type=int, choices=range(6), help="\
+                        MODEL = 0: LR\n\
+                        MODEL = 1: GPR w/o optimization\n\
+                        MODEL = 2: GPR w/ optimization\n\
+                        MODEL = 3: Gauss distribution (default)\n\
+                        MODEL = 4: Gauss distribution w/ pedigree\n\
+                        MODEL = 5: Gauss distribution w/ Bayesian\n\
+                        ", default=[3])
+    ## ハイパーパラメータ
+    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="\
+                        PARAMETER[0] \\in R (default: 1)\n\
+                        PARAMETER[1] \\in R (default: 15)\n\
+                        PARAMETER[2] \\in R (default: 1)\n\
+                        ", default=[1, 15, 1])
     ## 引数の取得
     args = parser.parse_args()
 
@@ -335,7 +347,7 @@ if __name__ == "__main__":
         reader = csv.reader(file)
         for row in reader:
             arr_odds.append(float(row[0]))  # データをfloat型に変換して追加
-    print(f"odds: {arr_odds}")
+
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n")
@@ -378,7 +390,6 @@ if __name__ == "__main__":
             # 特定のIDに対応するデータを抽出
             subset_data = df[df['ID'] == id_value]
             vi_sum = subset_data['速度'].sum()
-
             ## 距離関数の計算
             # df_ped から該当するIDの血統データを抽出
             subset_ped = df_ped[df_ped['ID'] == id_value]
@@ -392,7 +403,6 @@ if __name__ == "__main__":
             H = subset_expanded == df_ped_reduced.values
             # 血統の一致度を距離関数として採用
             arr_score = np.dot(H,arr_weight)
-
             ## 距離関数を用いた重み付け和の計算
             # df_all からumaIDが一致する行を探索
             matching_rows = df_all[df_all['ID'] == id_value]
@@ -400,7 +410,6 @@ if __name__ == "__main__":
             df_reduced = df_all.drop(matching_rows.index)
             # ID ごとにグループ化して和をとる
             df_groupedsum = df_reduced.groupby('ID')['速度'].sum()
-
             # 重み付きのデータ数
             Zi = len(subset_data) + phi*(arr_score*len(df_groupedsum)).sum()
             # 速度データを足しこんで平均値を計算
@@ -417,12 +426,38 @@ if __name__ == "__main__":
                 print(f"error: {df_groupedsum.sum()-check.sum()}")
             sum = sqerrsum + phi*(arr_score*df_groupedsum.values).sum()
             arr_sgm = np.append(arr_sgm, np.sqrt(sum/Zi))
-        # 血統情報を使わない統計量
+        # テーブルの統計量
         print(f"mu w/o ped: {(df.groupby('ID')['速度'].mean()).values}")
         print(f"sgm w/o ped: {(df.groupby('ID')['速度'].std()).values}")
         # 取得した統計量
         print(f"mu w/ ped: {arr_mu}")
         print(f"sgm w/ ped: {arr_sgm}")
+    elif args.model[0] == 5:
+        ## 正規分布 w/ ベイズ推定（分散は既知と仮定）
+        # 馬のIDリストを取得
+        unique_ids = df['ID'].unique()
+        Numa = len(unique_ids)
+        # sgm は既知と仮定し、コマンド引数より取得
+        sgm = args.parameter[0]
+        ## ハイパーパラメータをコマンド引数より取得
+        m = args.parameter[1]
+        sgm_mu = args.parameter[2]
+        ## 事後分布のパラメータを計算
+        df_groupedsum = df.groupby('ID')['速度'].count()
+        print(f"count: {df_groupedsum.values}")
+        arr_sgm_mu = 1/(np.sqrt(1/sgm_mu**2 + df_groupedsum.values/sgm**2))
+        df_groupedsum = df.groupby('ID')['速度'].sum()
+        print(f"sum: {df_groupedsum.values}")
+        arr_m = (arr_sgm_mu/sgm_mu)**2*m + (arr_sgm_mu/sgm)**2*df_groupedsum.values
+        ## 予測分布のパラメータを計算
+        arr_mu = arr_m
+        arr_sgm = sgm*np.ones(Numa) + arr_sgm_mu
+        # テーブルの統計量
+        print(f"mu from table: {(df.groupby('ID')['速度'].mean()).values}")
+        print(f"sgm from table: {(df.groupby('ID')['速度'].std()).values}")
+        # 取得した統計量
+        print(f"mu: {arr_mu}")
+        print(f"sgm: {arr_sgm}")
     else:
         print("model construction is not supported.")
     end_time = time.time()
@@ -431,7 +466,7 @@ if __name__ == "__main__":
 
     ## 描画
     start_time = time.time()
-    if args.model[0] == 3 or args.model[0] == 4:
+    if args.model[0] >= 3:
         print("start p(v) plotting")
         label = "mean velocity [m/s]", "PDF [s/m]"
         # 描画範囲を設定
@@ -446,7 +481,7 @@ if __name__ == "__main__":
 
     ## 期待値計算
     print("start probability integration")
-    if args.model[0] == 3 or args.model[0] == 4:
+    if args.model[0] >= 3:
         # 積分領域を設定
         Nv = 500
         vmin = []

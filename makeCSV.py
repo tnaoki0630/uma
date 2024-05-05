@@ -216,6 +216,7 @@ def extract_integer_v2(str):
     if match:
         result = int(match.group())
     else:
+        print(f"Warning: extract_integer_v2 failed! str = {str}")
         result = None
     return result
 ###
@@ -246,7 +247,12 @@ def strtime2fltsec(arr):
 def strtime2fltsec_v2(str):
     # 入出力1つvar
     # ":" で文字列を分割して分と秒に分ける
-    minutes, seconds = map(float, str.split(':'))
+    try:
+        minutes, seconds = map(float, str.split(':'))
+    except:
+        # 例外処理
+        print(f"Warning: strtime2fltsec_v2 failed! str = {str}")
+        return None
     # 分を秒に変換して合算
     total_seconds = minutes * 60 + seconds
     return total_seconds
@@ -271,7 +277,11 @@ if __name__ == "__main__":
     ## 学習に使用するテーブル数
     parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 20)", default=[20])
     ## 作成するcsvの種類
-    parser.add_argument("-t", "--type", nargs=1, type=int, choices=range(2), help="TYPE = 0: EntryList (default) \nTYPE = 1: DataBase", default=[0])
+    parser.add_argument("-t", "--type", nargs=1, type=int, choices=range(3), help="\
+                        TYPE = 0: EntryList (default) \n\
+                        TYPE = 1: DataBase\n\
+                        TYPE = 2: Jockey\n\
+                        ", default=[0])
     ## 引数の取得
     args = parser.parse_args()
 
@@ -404,6 +414,32 @@ if __name__ == "__main__":
         #CSV出力
         df.to_csv('UMA_ped.csv', index = False)
 
+
+    # Jockey
+    if args.type[0] == 2:
+        ids = ["05339"] # ルメール
+        page = 0
+        while True:
+            page += 1
+            url = f"https://db.netkeiba.com//?pid=jockey_detail&id={ids[0]}&page={page}"
+            try:
+                df1 = pd.read_html(url, encoding='euc-jp')[0]
+            except ValueError:
+                print("table not found")
+                break
+            # ジョッキーIDを追加
+            varlist = list(df1)
+            varlist.insert(0, 'ID')
+            df1['ID'] = ids[0]
+            # 要素を入れ替え
+            df1 = df1[varlist]
+            if page == 1:
+                df = df1
+            else:
+                # データフレームを結合
+                df = pd.concat([df, df1], ignore_index=True)
+        # CSV出力
+        df.to_csv('Jockey_DB.csv', index = False)
 
     # Z_data = data[2]
     # #訓練用データと検証用データに分ける

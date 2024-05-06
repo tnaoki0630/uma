@@ -40,7 +40,7 @@ def showPDF(csvpath, v, arr_label):
         p_v = 1/np.sqrt(2*math.pi)/sgm*np.exp(-(v-mu)**2/(2*sgm**2))
         ax.plot(v, p_v, label=f'uma #{i}')
         p_v = [0.01+0.1*(i-1)+0.08*rnd.random() for iter in range(len(arr_vel))]
-        ax.scatter(arr_vel, p_v, s=10, marker='.', alpha=0.02)
+        ax.scatter(arr_vel, p_v, s=10, marker='.', alpha=0.1)
     ax.set_xlabel(arr_label[0])
     ax.set_ylabel(arr_label[1])
     ax.legend()
@@ -321,9 +321,9 @@ if __name__ == "__main__":
     ### 事前取得したcsvから取得
     ## 戦績
     if args.binomen[0] == 0:
-        df = pd.read_csv("UMA_DB_EL.csv")
+        df = pd.read_csv("data/UMA_DB_EL.csv")
     elif args.binomen[0] == 1:
-        df = pd.read_csv("Jockey_DB_EL.csv")
+        df = pd.read_csv("data/Jockey_DB_EL.csv")
     ## データフレームを使用する変数だけに削減
     # varlist = ['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重', 'タイム', '距離']
     varlist = ['ID', 'タイム', '距離']
@@ -347,7 +347,7 @@ if __name__ == "__main__":
             print("Fatal Error: Jockey with pedigree is not supported.")
             exit()
         ## 戦績
-        df_all = pd.read_csv("UMA_DB.csv")
+        df_all = pd.read_csv("data/UMA_DB.csv")
         df_all = df_all[varlist]
         df_all = df_all.dropna()
         df_all['タイム'] = df_all['タイム'].apply(strtime2fltsec_v2)
@@ -356,12 +356,12 @@ if __name__ == "__main__":
         df_all = df_all[['ID', '速度']]
         df_all = df_all.dropna()
         ## 血統データ
-        df_ped_all = pd.read_csv("UMA_ped.csv")
-        df_ped = pd.read_csv("UMA_ped_EL.csv")
+        df_ped_all = pd.read_csv("data/UMA_ped.csv")
+        df_ped = pd.read_csv("data/UMA_ped_EL.csv")
 
     ## オッズ
     arr_odds = []
-    with open("UMA_ODDS.csv", 'r') as file:
+    with open("data/UMA_ODDS.csv", 'r') as file:
         reader = csv.reader(file)
         for row in reader:
             arr_odds.append(float(row[0]))  # データをfloat型に変換して追加
@@ -493,9 +493,9 @@ if __name__ == "__main__":
         Nv = 500
         arr_v = np.linspace(vmin, vmax, Nv)
         if args.binomen[0] == 0:
-            showPDF("UMA_DB_EL.csv", arr_v, label)
+            showPDF("data/UMA_DB_EL.csv", arr_v, label)
         elif args.binomen[0] ==1:
-            showPDF("Jockey_DB_EL.csv", arr_v, label)
+            showPDF("data/Jockey_DB_EL.csv", arr_v, label)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n")
@@ -539,26 +539,26 @@ if __name__ == "__main__":
         ### CSV出力
         ## 三連単
         # CSVファイルに書き込み
-        fname = f"ordered.csv"
+        fname = f"data/ordered.csv"
         df_ordered.to_csv(fname, index=False)
         # prob でソート
-        fname = f"ordered_prob.csv"
+        fname = f"data/ordered_prob.csv"
         df_sorted = df_ordered.sort_values('当選確率', ascending=False)
         df_sorted.to_csv(fname, index=False)
         # earn でソート
-        fname = f"ordered_earn.csv"
+        fname = f"data/ordered_earn.csv"
         df_sorted = df_ordered.sort_values('払戻金', ascending=False)
         df_sorted.to_csv(fname, index=False)
         ## 三連複
         # CSVファイルに書き込み
-        fname = f"unordered.csv"
+        fname = f"data/unordered.csv"
         df_unordered.to_csv(fname, index=False)
         # prob でソート
-        fname = f"unordered_prob.csv"
+        fname = f"data/unordered_prob.csv"
         df_sorted = df_unordered.sort_values(by='当選確率', ascending=False)
         df_sorted.to_csv(fname, index=False)
         # earn でソート
-        fname = f"unordered_earn.csv"
+        fname = f"data/unordered_earn.csv"
         df_sorted = df_unordered.sort_values(by='払戻金', ascending=False)
         df_sorted.to_csv(fname, index=False)
     end_time = time.time()

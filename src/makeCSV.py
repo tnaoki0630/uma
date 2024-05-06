@@ -326,7 +326,7 @@ if __name__ == "__main__":
             # データフレームを結合
             df_all = pd.concat([df_all, df1_all], ignore_index=True)
         #CSV出力
-        df_all.to_csv('UMA_DB_EL.csv', index = False)
+        df_all.to_csv('data/UMA_DB_EL.csv', index = False)
     
         ## 血統情報
         arr_ped = []
@@ -353,7 +353,7 @@ if __name__ == "__main__":
         # uma ID を左に追加
         df.insert(0, 'ID', ids)
         #CSV出力_
-        df.to_csv('UMA_ped_EL.csv', index = False)
+        df.to_csv('data/UMA_ped_EL.csv', index = False)
 
     # DataBase
     if args.type[0] == 1:
@@ -390,7 +390,7 @@ if __name__ == "__main__":
             # データフレームを結合
             df_all = pd.concat([df_all, df1_all], ignore_index=True)
         # CSV出力
-        df_all.to_csv('UMA_DB.csv', index = False)
+        df_all.to_csv('data/UMA_DB.csv', index = False)
 
         # 配列を初期化
         df_all = []
@@ -420,7 +420,7 @@ if __name__ == "__main__":
         # uma ID を左に追加
         df.insert(0, 'ID', ids[:N])
         #CSV出力
-        df.to_csv('UMA_ped.csv', index = False)
+        df.to_csv('data/UMA_ped.csv', index = False)
 
     # Jockey
     if args.type[0] == 2:
@@ -462,7 +462,7 @@ if __name__ == "__main__":
             else:
                 df_all = pd.concat([df_all, df], ignore_index=True)
         # CSV出力
-        df_all.to_csv('Jockey_DB_EL.csv', index = False)
+        df_all.to_csv('data/Jockey_DB_EL.csv', index = False)
 
     # Z_data = data[2]
     # #訓練用データと検証用データに分ける

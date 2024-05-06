@@ -9,6 +9,7 @@ import pandas as pd
 import math
 from scipy.special import erf
 from itertools import combinations, permutations
+import random as rnd
 
 def showPDF(csvpath, v, arr_label):
     # csv から取得
@@ -16,7 +17,7 @@ def showPDF(csvpath, v, arr_label):
     df = df[varlist]
     df = df.dropna() # NaNを削除
 
-    fig, ax = plt.subplots(dpi=100)
+    fig, ax = plt.subplots(dpi=200)
     # 各IDごとに処理
     unique_ids = df['ID'].unique()
     i = 0
@@ -38,13 +39,13 @@ def showPDF(csvpath, v, arr_label):
         # 確率分布とデータのプロット
         p_v = 1/np.sqrt(2*math.pi)/sgm*np.exp(-(v-mu)**2/(2*sgm**2))
         ax.plot(v, p_v, label=f'uma #{i}')
-        p_vn = 1/np.sqrt(2*math.pi)/sgm*np.exp(-(arr_vel-mu)**2/(2*sgm**2))
-        ax.scatter(arr_vel, p_vn, marker='.')
+        p_v = [0.01+0.1*(i-1)+0.08*rnd.random() for iter in range(len(arr_vel))]
+        ax.scatter(arr_vel, p_v, s=10, marker='.', alpha=0.02)
     ax.set_xlabel(arr_label[0])
     ax.set_ylabel(arr_label[1])
     ax.legend()
     ax.grid()
-    plt.savefig(f'PDF.png')
+    plt.savefig(f'fig/PDF.png')
 ##
 def tanshou_integration(Numa, arr_mu, arr_sgm, arr_odds, vmin, vmax, dv):
     arr_num = []
@@ -299,6 +300,11 @@ if __name__ == "__main__":
                         MODEL = 4: Gauss distribution w/ pedigree\n\
                         MODEL = 5: Gauss distribution w/ Bayesian\n\
                         ", default=[3])
+    ## UMA or Jockey
+    parser.add_argument("-b", "--binomen", nargs=1, type=int, choices=range(2), help="\
+                        BINOMEN = 0: Equus caballus (UMA)\n\
+                        BINOMEN = 1: Homo sapiens (Jockey)\n\
+                        ", default=[0])
     ## ハイパーパラメータ
     parser.add_argument("-p", "--parameter", nargs=3, type=float, help="\
                         PARAMETER[0] \\in R (default: 1)\n\
@@ -314,29 +320,41 @@ if __name__ == "__main__":
     
     ### 事前取得したcsvから取得
     ## 戦績
-    df_all = pd.read_csv("UMA_DB.csv")
-    df = pd.read_csv("UMA_DB_EL.csv")
+    if args.binomen[0] == 0:
+        df = pd.read_csv("UMA_DB_EL.csv")
+    elif args.binomen[0] == 1:
+        df = pd.read_csv("Jockey_DB_EL.csv")
     ## データフレームを使用する変数だけに削減
     # varlist = ['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重', 'タイム', '距離']
     varlist = ['ID', 'タイム', '距離']
-    df_all = df_all[varlist]
     df = df[varlist]
     ## NaNを削除
-    df_all = df_all.dropna()
     df = df.dropna()
     ## 文字列変換
-    df_all['タイム'] = df_all['タイム'].apply(strtime2fltsec_v2)
-    df_all['距離'] = df_all['距離'].apply(extract_integer_v2)
     df['タイム'] = df['タイム'].apply(strtime2fltsec_v2)
     df['距離'] = df['距離'].apply(extract_integer_v2)
     ## 平均速度の追加
-    df_all['速度'] = df_all['距離'] / df_all['タイム']
     df['速度'] = df['距離'] / df['タイム']
     ## IDと平均速度だけ使用
-    df_all = df_all[['ID', '速度']]
     df = df[['ID', '速度']]
-    
+    ## たまに文字列処理の例外が出るので、改めてNaNを削除
+    df = df.dropna()
+
+    ## DB を使用
     if args.model[0] == 4:
+        ## 例外処理
+        if args.binomen[0] != 0:
+            print("Fatal Error: Jockey with pedigree is not supported.")
+            exit()
+        ## 戦績
+        df_all = pd.read_csv("UMA_DB.csv")
+        df_all = df_all[varlist]
+        df_all = df_all.dropna()
+        df_all['タイム'] = df_all['タイム'].apply(strtime2fltsec_v2)
+        df_all['距離'] = df_all['距離'].apply(extract_integer_v2)
+        df_all['速度'] = df_all['距離'] / df_all['タイム']
+        df_all = df_all[['ID', '速度']]
+        df_all = df_all.dropna()
         ## 血統データ
         df_ped_all = pd.read_csv("UMA_ped.csv")
         df_ped = pd.read_csv("UMA_ped_EL.csv")
@@ -409,7 +427,7 @@ if __name__ == "__main__":
             # 一致する行を取り除いたデータフレームを作成
             df_reduced = df_all.drop(matching_rows.index)
             # ID ごとにグループ化して和をとる
-            df_groupedsum = df_reduced.groupby('ID')['速度'].sum()
+            df_groupedsum = df_reduced.groupby('ID', sort=False)['速度'].sum()
             # 重み付きのデータ数
             Zi = len(subset_data) + phi*(arr_score*len(df_groupedsum)).sum()
             # 速度データを足しこんで平均値を計算
@@ -418,7 +436,7 @@ if __name__ == "__main__":
             arr_mu = np.append(arr_mu, mu)
             # 自乗誤差ベクトルの計算
             sqerrsum = ((subset_data['速度']-mu)**2).sum()
-            df_groupedsum = df_reduced.groupby('ID')['速度'].apply(lambda vi: ((vi-mu) ** 2).sum())
+            df_groupedsum = df_reduced.groupby('ID', sort=False)['速度'].apply(lambda vi: ((vi-mu) ** 2).sum())
             if False: # groupby を使わずに和を取った場合と比較して検証
                 check = df_reduced['速度'].apply(lambda vi: ((vi-sum/Zi) ** 2))
                 print(f"groupedsum: {df_groupedsum}")
@@ -427,8 +445,8 @@ if __name__ == "__main__":
             sum = sqerrsum + phi*(arr_score*df_groupedsum.values).sum()
             arr_sgm = np.append(arr_sgm, np.sqrt(sum/Zi))
         # テーブルの統計量
-        print(f"mu w/o ped: {(df.groupby('ID')['速度'].mean()).values}")
-        print(f"sgm w/o ped: {(df.groupby('ID')['速度'].std()).values}")
+        print(f"mu w/o ped: {(df.groupby('ID', sort=False)['速度'].mean()).values}")
+        print(f"sgm w/o ped: {(df.groupby('ID', sort=False)['速度'].std()).values}")
         # 取得した統計量
         print(f"mu w/ ped: {arr_mu}")
         print(f"sgm w/ ped: {arr_sgm}")
@@ -443,18 +461,18 @@ if __name__ == "__main__":
         m = args.parameter[1]
         sgm_mu = args.parameter[2]
         ## 事後分布のパラメータを計算
-        df_groupedsum = df.groupby('ID')['速度'].count()
+        df_groupedsum = df.groupby('ID', sort=False)['速度'].count()
         print(f"count: {df_groupedsum.values}")
         arr_sgm_mu = 1/(np.sqrt(1/sgm_mu**2 + df_groupedsum.values/sgm**2))
-        df_groupedsum = df.groupby('ID')['速度'].sum()
+        df_groupedsum = df.groupby('ID', sort=False)['速度'].sum()
         print(f"sum: {df_groupedsum.values}")
         arr_m = (arr_sgm_mu/sgm_mu)**2*m + (arr_sgm_mu/sgm)**2*df_groupedsum.values
         ## 予測分布のパラメータを計算
         arr_mu = arr_m
         arr_sgm = sgm*np.ones(Numa) + arr_sgm_mu
         # テーブルの統計量
-        print(f"mu from table: {(df.groupby('ID')['速度'].mean()).values}")
-        print(f"sgm from table: {(df.groupby('ID')['速度'].std()).values}")
+        print(f"mu from table: {(df.groupby('ID', sort=False)['速度'].mean()).values}")
+        print(f"sgm from table: {(df.groupby('ID', sort=False)['速度'].std()).values}")
         # 取得した統計量
         print(f"mu: {arr_mu}")
         print(f"sgm: {arr_sgm}")
@@ -474,7 +492,10 @@ if __name__ == "__main__":
         vmax = np.max(arr_mu + 4*arr_sgm)
         Nv = 500
         arr_v = np.linspace(vmin, vmax, Nv)
-        showPDF("UMA_DB_EL.csv", arr_v, label)
+        if args.binomen[0] == 0:
+            showPDF("UMA_DB_EL.csv", arr_v, label)
+        elif args.binomen[0] ==1:
+            showPDF("Jockey_DB_EL.csv", arr_v, label)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"done. elapsed time: {elapsed_time}\n")
@@ -518,26 +539,26 @@ if __name__ == "__main__":
         ### CSV出力
         ## 三連単
         # CSVファイルに書き込み
-        fname = f"model{args.model[0]}_ordered.csv"
+        fname = f"ordered.csv"
         df_ordered.to_csv(fname, index=False)
         # prob でソート
-        fname = f"model{args.model[0]}_ordered_prob.csv"
+        fname = f"ordered_prob.csv"
         df_sorted = df_ordered.sort_values('当選確率', ascending=False)
         df_sorted.to_csv(fname, index=False)
         # earn でソート
-        fname = f"model{args.model[0]}_ordered_earn.csv"
+        fname = f"ordered_earn.csv"
         df_sorted = df_ordered.sort_values('払戻金', ascending=False)
         df_sorted.to_csv(fname, index=False)
         ## 三連複
         # CSVファイルに書き込み
-        fname = f"model{args.model[0]}_unordered.csv"
+        fname = f"unordered.csv"
         df_unordered.to_csv(fname, index=False)
         # prob でソート
-        fname = f"model{args.model[0]}_unordered_prob.csv"
+        fname = f"unordered_prob.csv"
         df_sorted = df_unordered.sort_values(by='当選確率', ascending=False)
         df_sorted.to_csv(fname, index=False)
         # earn でソート
-        fname = f"model{args.model[0]}_unordered_earn.csv"
+        fname = f"unordered_earn.csv"
         df_sorted = df_unordered.sort_values(by='払戻金', ascending=False)
         df_sorted.to_csv(fname, index=False)
     end_time = time.time()

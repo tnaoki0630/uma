@@ -56,7 +56,7 @@ def scrape_hitchart(url):
                             arr.append(int(match.group()))
     return arr
 ###
-def scrape_entrylist(url):
+def scrape_entrylist(url, BOOL_Jockey=False):
     # HTTP GETリクエストを送信してHTMLを取得
     response = requests.get(url)
 
@@ -88,7 +88,10 @@ def scrape_entrylist(url):
     # 行ごとにデータを配列に追加
     for row in rows:
         ## 各セルのデータを取得，馬のセルのみを取得（騎手情報を取得したい場合はclass値を'Jockey'に変更）
-        cells = row.find_all('td', class_ = 'HorseInfo')
+        if BOOL_Jockey:
+            cells = row.find_all('td', class_ = 'Jockey') # 引数でフラグ管理
+        else:
+            cells = row.find_all('td', class_ = 'HorseInfo')
         #row_data = [cell.get_text(strip=True) for cell in cells]
         ## <a> タグの href 属性の値を取得
         for cell in cells:
@@ -98,9 +101,9 @@ def scrape_entrylist(url):
                 if anchor_tag:
                     href_value = anchor_tag.get('href')
                     # IDを抽出
-                    match = re.search(r'\d+', href_value)
+                    match = re.search(r'0*\d+', href_value)
                     if match:
-                        arr.append(int(match.group()))
+                        arr.append(match.group())
     return arr
 ###
 def scrape_grades(url, cols):
@@ -282,6 +285,11 @@ if __name__ == "__main__":
                         TYPE = 1: DataBase\n\
                         TYPE = 2: Jockey\n\
                         ", default=[0])
+    ## データ数の上限
+    parser.add_argument("-u", "--upperbound", nargs=1, type=int, help="\
+                        UPPERBOUND \\in Z (default: 1000)\n\
+                        (UPPERBOUND = -1: all)\n\
+                        ", default=[1000])
     ## 引数の取得
     args = parser.parse_args()
 
@@ -414,32 +422,47 @@ if __name__ == "__main__":
         #CSV出力
         df.to_csv('UMA_ped.csv', index = False)
 
-
     # Jockey
     if args.type[0] == 2:
-        ids = ["05339"] # ルメール
-        page = 0
-        while True:
-            page += 1
-            url = f"https://db.netkeiba.com//?pid=jockey_detail&id={ids[0]}&page={page}"
-            try:
-                df1 = pd.read_html(url, encoding='euc-jp')[0]
-            except ValueError:
-                print("table not found")
-                break
-            # ジョッキーIDを追加
-            varlist = list(df1)
-            varlist.insert(0, 'ID')
-            df1['ID'] = ids[0]
-            # 要素を入れ替え
-            df1 = df1[varlist]
-            if page == 1:
-                df = df1
+        # エントリーリストから馬ごとのURLを取得
+        url  = "https://race.netkeiba.com/race/shutuba.html?race_id=202406020711"
+        ids = scrape_entrylist(url, True) # 第二引数が True なら騎手情報を取得
+        if not all(ids):
+            print("Error at scrape_entrylist")
+            exit()
+        
+        iter = 0
+        for id in ids:
+            iter+=1
+            page = 0
+            while True:
+                page += 1
+                url = f"https://db.netkeiba.com//?pid=jockey_detail&id={id}&page={page}"
+                try:
+                    df1 = pd.read_html(url, encoding='euc-jp')[0]
+                except ValueError:
+                    print("table not found")
+                    break
+                # ジョッキーIDを追加
+                varlist = list(df1)
+                varlist.insert(0, 'ID')
+                df1['ID'] = id
+                # 要素を入れ替え
+                df1 = df1[varlist]
+                if page == 1:
+                    df = df1
+                else:
+                    # データフレームを結合
+                    df = pd.concat([df, df1], ignore_index=True)
+                # 指定したデータ数を超えたらbreak(upperbound に負値が入ってる場合はbreakせず、read_htmlに失敗するまで続行)
+                if len(df) > args.upperbound[0] and args.upperbound[0] > 0:
+                    break
+            if iter == 1:
+                df_all = df
             else:
-                # データフレームを結合
-                df = pd.concat([df, df1], ignore_index=True)
+                df_all = pd.concat([df_all, df], ignore_index=True)
         # CSV出力
-        df.to_csv('Jockey_DB.csv', index = False)
+        df_all.to_csv('Jockey_DB_EL.csv', index = False)
 
     # Z_data = data[2]
     # #訓練用データと検証用データに分ける

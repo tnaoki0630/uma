@@ -15,3 +15,34 @@
 - ガウス過程回帰: https://www.ism.ac.jp/~daichi/lectures/H26-GaussianProcess/gp-lecture2-daichi.pdf
 ### 勉強ノート
 - Miro: https://miro.com/welcomeonboard/dXVVeUFrMzFoNW1PQWwyOEVVWjhZaU9pSnlYcFV1RlVpUkNmaWhkOTNxalphcHhKdmxwVTUxSHVHQW9NNm1QbHwzNDU4NzY0NTcwMzgwODY2NTMxfDI=?share_link_id=928920182370
+# ディレクトリについて
+## src
+- コード置き場
+## data
+- csvなどのデータ置き場
+## fig
+- 画像置き場
+
+# src について
+## 実行方法
+- <path>/uma のディレクトリで、`python src/<scriptname>.py`として実行する。
+- コマンド引数のオプションは`python src/<scriptname>.py -h`で確認できる。
+- オプションを指定するときは`python src/<scriptname>.py -m 1`とか`python src/<scriptname>.py --parameter 0 1 0`みたいな感じで実行する。
+  - オプションの指定がない場合はデフォルト値が入る。
+  - 要求される引数の数はオプションによって異なる。
+## main_v2.py
+- 当選確率や払戻金の期待値を算出するモジュールで、実行すると data/ に三連単の期待値 ordered*.csv や三連複の期待値 unordered*.csv の計算結果が作成される。
+- 現在用意されているオプションは下記の通り。
+  - -m/--model: 線形回帰やガウス分布など、使用するモデルを選択する。
+  - -b/--binomen: 学習に使うデータの種類を選択する。
+## makeCSV.py
+- netkeiba.com に転がってるテーブルをスクレイピングして data/ に UMA_DB.csv などを出力する。
+- 現在用意されているオプションは下記の通り。
+  - -t/--type: 作成するデータの種類を選択する。
+  - -n/--number: ヒットチャートからスクレイピングする時に使用され、何位までURLを取得するかを指定する。
+  - -u/--upperbound: 騎手データをスクレイピングする時に使用され、一人当たりに取得する試合の数の上限を指定する。（1ページ分のテーブルをまとめて取得するので、ここで指定した値は厳密な意味での上限ではない。特に困らないので仕様とする。）
+## plotting.py
+- スクレイピングしたデータを色んな方法でプロットして、確率分布の形状や変数の相関を調べるための補助モジュール。fig/ に *.png が作成される。
+- 現在用意されているオプションは下記の通り。
+ - -t/--type: 使用するデータの種類を選択する。
+ - -p/--parameter: RBFカーネルに使用するパラメータを指定する。本来は3自由度を持つカーネルなので引数を3つ指定する仕様としているが、現行のコードでは1Dのノンパラメトリック推定にのみ使っているので第1,第3引数は結果に一切影響しない。

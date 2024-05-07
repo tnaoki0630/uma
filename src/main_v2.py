@@ -302,15 +302,9 @@ if __name__ == "__main__":
                         ", default=[3])
     ## UMA or Jockey
     parser.add_argument("-b", "--binomen", nargs=1, type=int, choices=range(2), help="\
-                        BINOMEN = 0: Equus caballus (UMA)\n\
-                        BINOMEN = 1: Homo sapiens (Jockey)\n\
+                        BINOMEN = 0: Equus caballus (default)\n\
+                        BINOMEN = 1: Homo sapiens\n\
                         ", default=[0])
-    ## ハイパーパラメータ
-    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="\
-                        PARAMETER[0] \\in R (default: 1)\n\
-                        PARAMETER[1] \\in R (default: 15)\n\
-                        PARAMETER[2] \\in R (default: 1)\n\
-                        ", default=[1, 15, 1])
     ## 引数の取得
     args = parser.parse_args()
 

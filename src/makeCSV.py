@@ -277,14 +277,14 @@ def strdate2intdate(arr):
 if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-    ## 学習に使用するテーブル数
-    parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 20)", default=[20])
     ## 作成するcsvの種類
     parser.add_argument("-t", "--type", nargs=1, type=int, choices=range(3), help="\
                         TYPE = 0: EntryList (default) \n\
                         TYPE = 1: DataBase\n\
                         TYPE = 2: Jockey\n\
                         ", default=[0])
+    ## 学習に使用するテーブル数
+    parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 20)", default=[20])
     ## データ数の上限
     parser.add_argument("-u", "--upperbound", nargs=1, type=int, help="\
                         UPPERBOUND \\in Z (default: 1000)\n\

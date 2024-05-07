@@ -170,7 +170,7 @@ if __name__ == "__main__":
         name = "Jockey_DB_EL"
 
     ## 戦績
-    df = pd.read_csv(name+".csv")
+    df = pd.read_csv("data/"+name+".csv")
     ## データフレームを使用する変数だけに削減
     # varlist = ['ID', '頭 数', '馬 番', 'オ ッ ズ', '着 順', '斤 量', '上り', '馬体重', 'タイム', '距離']
     varlist = ['ID', 'タイム', '距離']

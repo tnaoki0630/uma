@@ -43,7 +43,7 @@ def showPDF(csvpath, v, arr_label):
         ax.scatter(arr_vel, p_v, s=10, marker='.', alpha=0.1)
     ax.set_xlabel(arr_label[0])
     ax.set_ylabel(arr_label[1])
-    ax.legend()
+    ax.legend(loc='upper right')
     ax.grid()
     plt.savefig(f'fig/PDF.png')
 ##

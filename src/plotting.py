@@ -148,7 +148,7 @@ if __name__ == "__main__":
                         TYPE = 2: Jockey\n\
                         ", default=[0])
     ## ハイパーパラメータ
-    parser.add_argument("-p", "--parameter", nargs=1, type=float, help="\
+    parser.add_argument("-p", "--parameter", nargs=3, type=float, help="\
                         PARAMETER[0] \\in R (default:  0.0)\n\
                         PARAMETER[1] \\in R (default: -3.0)\n\
                         PARAMETER[2] \\in R (default:  0.0)\n\

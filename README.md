@@ -13,6 +13,7 @@
 - git4windows: https://prog-8.com/docs/git-env-win
 - python早見帳: https://chokkan.github.io/python/index.html
 - ガウス過程回帰: https://www.ism.ac.jp/~daichi/lectures/H26-GaussianProcess/gp-lecture2-daichi.pdf
+- Pythonによる主成分回帰（PCR）と部分的最小２乗回帰（PLS）: https://www.salesanalytics.co.jp/datascience/datascience118/
 ### 勉強ノート
 - Miro: https://miro.com/welcomeonboard/dXVVeUFrMzFoNW1PQWwyOEVVWjhZaU9pSnlYcFV1RlVpUkNmaWhkOTNxalphcHhKdmxwVTUxSHVHQW9NNm1QbHwzNDU4NzY0NTcwMzgwODY2NTMxfDI=?share_link_id=928920182370
 # ディレクトリについて

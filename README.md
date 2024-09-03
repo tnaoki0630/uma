@@ -17,6 +17,7 @@
 - 部分的最小二乗回帰(Partial Least Squares Regression, PLS): https://datachemeng.com/partialleastsquares/
 - PLS：https://gochikika.ntt.com/Modeling/multicollinearity_regression.html
 - パターン認識と機械学習: https://deeplearning.jp/seminar-2/
+- パターン認識と機械学習の学習: https://herumi.github.io/prml/
 ### 勉強ノート
 - Miro: https://miro.com/welcomeonboard/dXVVeUFrMzFoNW1PQWwyOEVVWjhZaU9pSnlYcFV1RlVpUkNmaWhkOTNxalphcHhKdmxwVTUxSHVHQW9NNm1QbHwzNDU4NzY0NTcwMzgwODY2NTMxfDI=?share_link_id=928920182370
 # ディレクトリについて

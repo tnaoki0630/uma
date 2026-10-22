@@ -5,19 +5,19 @@
     {
       "horse_number": 1,
       "name": "アオバスター",
-      "mean_speed_mps": 17.183079645800515,
-      "std_speed_mps": 0.7151964434397157,
-      "win_probability": 0.11146666666666667,
+      "mean_speed_mps": 17.1830796458,
+      "std_speed_mps": 0.7151964434,
+      "win_probability": 0.1114666667,
       "model": "gp",
       "history_count": 3,
       "decimal_odds": 3.8,
-      "expected_return": 0.42357333333333336
+      "expected_return": 0.4235733333
     },
     {
       "horse_number": 2,
       "name": "コメットライン",
-      "mean_speed_mps": 17.735067430017722,
-      "std_speed_mps": 0.7308652986781596,
+      "mean_speed_mps": 17.73506743,
+      "std_speed_mps": 0.7308652987,
       "win_probability": 0.3411,
       "model": "gp",
       "history_count": 3,
@@ -27,9 +27,9 @@
     {
       "horse_number": 3,
       "name": "ミドリノカゼ",
-      "mean_speed_mps": 16.98069921988235,
-      "std_speed_mps": 0.8960422765917518,
-      "win_probability": 0.10533333333333333,
+      "mean_speed_mps": 16.9806992199,
+      "std_speed_mps": 0.8960422766,
+      "win_probability": 0.1053333333,
       "model": "fallback",
       "history_count": 2,
       "decimal_odds": null,
@@ -38,8 +38,8 @@
     {
       "horse_number": 4,
       "name": "ルナアーチ",
-      "mean_speed_mps": 17.41532680184952,
-      "std_speed_mps": 0.7318031794500666,
+      "mean_speed_mps": 17.4153268018,
+      "std_speed_mps": 0.7318031795,
       "win_probability": 0.1887,
       "model": "gp",
       "history_count": 3,
@@ -49,8 +49,8 @@
     {
       "horse_number": 5,
       "name": "サクラノート",
-      "mean_speed_mps": 16.91337402485294,
-      "std_speed_mps": 1.0736945147606987,
+      "mean_speed_mps": 16.9133740249,
+      "std_speed_mps": 1.0736945148,
       "win_probability": 0.1344,
       "model": "fallback",
       "history_count": 1,
@@ -60,8 +60,8 @@
     {
       "horse_number": 6,
       "name": "オリオンベル",
-      "mean_speed_mps": 17.201097179609622,
-      "std_speed_mps": 0.7308652986781596,
+      "mean_speed_mps": 17.2010971796,
+      "std_speed_mps": 0.7308652987,
       "win_probability": 0.119,
       "model": "gp",
       "history_count": 3,
@@ -86,7 +86,7 @@
         2,
         4
       ],
-      "probability": 0.11376666666666667,
+      "probability": 0.1137666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -106,7 +106,7 @@
         3,
         4
       ],
-      "probability": 0.08713333333333333,
+      "probability": 0.0871333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -116,7 +116,7 @@
         2,
         6
       ],
-      "probability": 0.07813333333333333,
+      "probability": 0.0781333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -126,7 +126,7 @@
         3,
         6
       ],
-      "probability": 0.057433333333333336,
+      "probability": 0.0574333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -146,7 +146,7 @@
         2,
         5
       ],
-      "probability": 0.05436666666666667,
+      "probability": 0.0543666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -156,9 +156,9 @@
         2,
         3
       ],
-      "probability": 0.053366666666666666,
+      "probability": 0.0533666667,
       "decimal_odds": 18.4,
-      "expected_return": 0.9819466666666666
+      "expected_return": 0.9819466667
     },
     {
       "selection": [
@@ -166,7 +166,7 @@
         4,
         6
       ],
-      "probability": 0.04173333333333333,
+      "probability": 0.0417333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -196,7 +196,7 @@
         5,
         6
       ],
-      "probability": 0.030833333333333334,
+      "probability": 0.0308333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -226,7 +226,7 @@
         4,
         5
       ],
-      "probability": 0.021466666666666665,
+      "probability": 0.0214666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -236,7 +236,7 @@
         5,
         6
       ],
-      "probability": 0.018866666666666667,
+      "probability": 0.0188666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -246,7 +246,7 @@
         3,
         6
       ],
-      "probability": 0.018533333333333332,
+      "probability": 0.0185333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -256,7 +256,7 @@
         3,
         5
       ],
-      "probability": 0.014333333333333333,
+      "probability": 0.0143333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -266,7 +266,7 @@
         5,
         6
       ],
-      "probability": 0.013333333333333334,
+      "probability": 0.0133333333,
       "decimal_odds": null,
       "expected_return": null
     }
@@ -278,7 +278,7 @@
         4,
         6
       ],
-      "probability": 0.030833333333333334,
+      "probability": 0.0308333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -288,7 +288,7 @@
         4,
         1
       ],
-      "probability": 0.030533333333333332,
+      "probability": 0.0305333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -298,7 +298,7 @@
         6,
         4
       ],
-      "probability": 0.02493333333333333,
+      "probability": 0.0249333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -308,7 +308,7 @@
         1,
         4
       ],
-      "probability": 0.02266666666666667,
+      "probability": 0.0226666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -318,7 +318,7 @@
         4,
         3
       ],
-      "probability": 0.022066666666666665,
+      "probability": 0.0220666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -328,7 +328,7 @@
         2,
         6
       ],
-      "probability": 0.021833333333333333,
+      "probability": 0.0218333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -348,7 +348,7 @@
         2,
         1
       ],
-      "probability": 0.020433333333333335,
+      "probability": 0.0204333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -358,7 +358,7 @@
         4,
         5
       ],
-      "probability": 0.018766666666666668,
+      "probability": 0.0187666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -378,7 +378,7 @@
         3,
         4
       ],
-      "probability": 0.017933333333333332,
+      "probability": 0.0179333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -398,7 +398,7 @@
         2,
         4
       ],
-      "probability": 0.016166666666666666,
+      "probability": 0.0161666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -408,7 +408,7 @@
         6,
         2
       ],
-      "probability": 0.016033333333333333,
+      "probability": 0.0160333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -418,7 +418,7 @@
         2,
         4
       ],
-      "probability": 0.014566666666666667,
+      "probability": 0.0145666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -428,7 +428,7 @@
         2,
         3
       ],
-      "probability": 0.014366666666666666,
+      "probability": 0.0143666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -438,7 +438,7 @@
         2,
         4
       ],
-      "probability": 0.014133333333333333,
+      "probability": 0.0141333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -458,7 +458,7 @@
         6,
         3
       ],
-      "probability": 0.013666666666666667,
+      "probability": 0.0136666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -478,7 +478,7 @@
         2,
         5
       ],
-      "probability": 0.013333333333333334,
+      "probability": 0.0133333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -488,7 +488,7 @@
         3,
         1
       ],
-      "probability": 0.013233333333333333,
+      "probability": 0.0132333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -508,7 +508,7 @@
         5,
         1
       ],
-      "probability": 0.012933333333333333,
+      "probability": 0.0129333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -568,7 +568,7 @@
         5,
         6
       ],
-      "probability": 0.011966666666666667,
+      "probability": 0.0119666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -598,7 +598,7 @@
         2,
         6
       ],
-      "probability": 0.011633333333333334,
+      "probability": 0.0116333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -628,7 +628,7 @@
         3,
         2
       ],
-      "probability": 0.010966666666666666,
+      "probability": 0.0109666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -638,7 +638,7 @@
         5,
         2
       ],
-      "probability": 0.010133333333333333,
+      "probability": 0.0101333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -668,7 +668,7 @@
         2,
         6
       ],
-      "probability": 0.008766666666666667,
+      "probability": 0.0087666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -698,7 +698,7 @@
         5,
         3
       ],
-      "probability": 0.008566666666666667,
+      "probability": 0.0085666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -708,7 +708,7 @@
         2,
         3
       ],
-      "probability": 0.008566666666666667,
+      "probability": 0.0085666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -728,9 +728,9 @@
         2,
         3
       ],
-      "probability": 0.008366666666666666,
+      "probability": 0.0083666667,
       "decimal_odds": 72.5,
-      "expected_return": 0.6065833333333334
+      "expected_return": 0.6065833333
     },
     {
       "selection": [
@@ -738,7 +738,7 @@
         6,
         2
       ],
-      "probability": 0.007933333333333334,
+      "probability": 0.0079333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -758,7 +758,7 @@
         1,
         2
       ],
-      "probability": 0.007733333333333333,
+      "probability": 0.0077333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -798,7 +798,7 @@
         2,
         5
       ],
-      "probability": 0.0067666666666666665,
+      "probability": 0.0067666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -818,7 +818,7 @@
         6,
         4
       ],
-      "probability": 0.006266666666666667,
+      "probability": 0.0062666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -838,7 +838,7 @@
         4,
         1
       ],
-      "probability": 0.006166666666666667,
+      "probability": 0.0061666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -858,7 +858,7 @@
         4,
         6
       ],
-      "probability": 0.006033333333333333,
+      "probability": 0.0060333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -878,7 +878,7 @@
         4,
         6
       ],
-      "probability": 0.005966666666666667,
+      "probability": 0.0059666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -888,7 +888,7 @@
         3,
         2
       ],
-      "probability": 0.005933333333333333,
+      "probability": 0.0059333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -928,7 +928,7 @@
         6,
         4
       ],
-      "probability": 0.005833333333333334,
+      "probability": 0.0058333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -968,7 +968,7 @@
         3,
         1
       ],
-      "probability": 0.005666666666666667,
+      "probability": 0.0056666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -978,7 +978,7 @@
         5,
         6
       ],
-      "probability": 0.005533333333333334,
+      "probability": 0.0055333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -988,7 +988,7 @@
         3,
         2
       ],
-      "probability": 0.005533333333333334,
+      "probability": 0.0055333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -998,7 +998,7 @@
         6,
         5
       ],
-      "probability": 0.0054666666666666665,
+      "probability": 0.0054666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1008,7 +1008,7 @@
         2,
         5
       ],
-      "probability": 0.005433333333333333,
+      "probability": 0.0054333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1028,7 +1028,7 @@
         1,
         2
       ],
-      "probability": 0.0051333333333333335,
+      "probability": 0.0051333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1038,7 +1038,7 @@
         1,
         3
       ],
-      "probability": 0.005033333333333333,
+      "probability": 0.0050333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1048,7 +1048,7 @@
         3,
         2
       ],
-      "probability": 0.004933333333333333,
+      "probability": 0.0049333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1078,7 +1078,7 @@
         1,
         5
       ],
-      "probability": 0.004566666666666667,
+      "probability": 0.0045666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1098,7 +1098,7 @@
         3,
         4
       ],
-      "probability": 0.004266666666666667,
+      "probability": 0.0042666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1108,7 +1108,7 @@
         4,
         3
       ],
-      "probability": 0.004233333333333334,
+      "probability": 0.0042333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1118,7 +1118,7 @@
         1,
         4
       ],
-      "probability": 0.004233333333333334,
+      "probability": 0.0042333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1128,7 +1128,7 @@
         3,
         4
       ],
-      "probability": 0.004166666666666667,
+      "probability": 0.0041666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1148,7 +1148,7 @@
         1,
         6
       ],
-      "probability": 0.004033333333333333,
+      "probability": 0.0040333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1208,7 +1208,7 @@
         6,
         1
       ],
-      "probability": 0.0036333333333333335,
+      "probability": 0.0036333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1218,7 +1218,7 @@
         1,
         6
       ],
-      "probability": 0.0034666666666666665,
+      "probability": 0.0034666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1228,7 +1228,7 @@
         5,
         4
       ],
-      "probability": 0.0034666666666666665,
+      "probability": 0.0034666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1238,7 +1238,7 @@
         5,
         4
       ],
-      "probability": 0.0033333333333333335,
+      "probability": 0.0033333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1258,7 +1258,7 @@
         5,
         3
       ],
-      "probability": 0.0032333333333333333,
+      "probability": 0.0032333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1268,7 +1268,7 @@
         4,
         5
       ],
-      "probability": 0.0031666666666666666,
+      "probability": 0.0031666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1288,7 +1288,7 @@
         3,
         6
       ],
-      "probability": 0.003033333333333333,
+      "probability": 0.0030333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1298,7 +1298,7 @@
         3,
         6
       ],
-      "probability": 0.0029666666666666665,
+      "probability": 0.0029666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1308,7 +1308,7 @@
         3,
         1
       ],
-      "probability": 0.0028666666666666667,
+      "probability": 0.0028666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1318,7 +1318,7 @@
         1,
         3
       ],
-      "probability": 0.0028333333333333335,
+      "probability": 0.0028333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1348,7 +1348,7 @@
         5,
         1
       ],
-      "probability": 0.002766666666666667,
+      "probability": 0.0027666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1378,7 +1378,7 @@
         1,
         5
       ],
-      "probability": 0.0026666666666666666,
+      "probability": 0.0026666667,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1408,7 +1408,7 @@
         5,
         1
       ],
-      "probability": 0.0021333333333333334,
+      "probability": 0.0021333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1418,7 +1418,7 @@
         5,
         6
       ],
-      "probability": 0.002033333333333333,
+      "probability": 0.0020333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1428,7 +1428,7 @@
         3,
         5
       ],
-      "probability": 0.0019333333333333333,
+      "probability": 0.0019333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1438,7 +1438,7 @@
         3,
         5
       ],
-      "probability": 0.0019333333333333333,
+      "probability": 0.0019333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1448,7 +1448,7 @@
         5,
         3
       ],
-      "probability": 0.0019333333333333333,
+      "probability": 0.0019333333,
       "decimal_odds": null,
       "expected_return": null
     },
@@ -1458,7 +1458,7 @@
         5,
         3
       ],
-      "probability": 0.0019333333333333333,
+      "probability": 0.0019333333,
       "decimal_odds": null,
       "expected_return": null
     },

@@ -1,0 +1,36 @@
+{
+  "race_id": "demo-tokyo-11r",
+  "prediction_at": "2026-10-23T06:00:00Z",
+  "conditions": {"venue": "東京", "surface": "芝", "distance_m": 1600, "track_condition": "良"},
+  "samples": 30000,
+  "seed": 2026,
+  "entrants": [
+    {"horse_id":"h1","horse_number":1,"name":"アオバスター","history":[
+      {"occurred_at":"2026-09-01T06:00:00Z","conditions":{"venue":"東京","surface":"芝","distance_m":1600,"track_condition":"良"},"speed_mps":17.25},
+      {"occurred_at":"2026-07-12T06:00:00Z","conditions":{"venue":"中山","surface":"芝","distance_m":1800,"track_condition":"稍重"},"speed_mps":16.88},
+      {"occurred_at":"2026-05-03T06:00:00Z","conditions":{"venue":"東京","surface":"芝","distance_m":1400,"track_condition":"良"},"speed_mps":17.12}]},
+    {"horse_id":"h2","horse_number":2,"name":"コメットライン","history":[
+      {"occurred_at":"2026-09-14T06:00:00Z","conditions":{"venue":"阪神","surface":"芝","distance_m":1600,"track_condition":"良"},"speed_mps":17.08},
+      {"occurred_at":"2026-07-20T06:00:00Z","conditions":{"venue":"東京","surface":"芝","distance_m":1600,"track_condition":"重"},"speed_mps":16.62},
+      {"occurred_at":"2026-04-18T06:00:00Z","conditions":{"venue":"京都","surface":"芝","distance_m":1800,"track_condition":"良"},"speed_mps":16.91}]},
+    {"horse_id":"h3","horse_number":3,"name":"ミドリノカゼ","history":[
+      {"occurred_at":"2026-08-23T06:00:00Z","conditions":{"venue":"東京","surface":"芝","distance_m":1600,"track_condition":"良"},"speed_mps":16.94},
+      {"occurred_at":"2026-06-09T06:00:00Z","conditions":{"venue":"東京","surface":"芝","distance_m":1400,"track_condition":"良"},"speed_mps":17.03}]},
+    {"horse_id":"h4","horse_number":4,"name":"ルナアーチ","history":[
+      {"occurred_at":"2026-09-28T06:00:00Z","conditions":{"venue":"中山","surface":"芝","distance_m":1600,"track_condition":"良"},"speed_mps":16.79},
+      {"occurred_at":"2026-08-02T06:00:00Z","conditions":{"venue":"新潟","surface":"芝","distance_m":1600,"track_condition":"良"},"speed_mps":16.98},
+      {"occurred_at":"2026-05-24T06:00:00Z","conditions":{"venue":"東京","surface":"芝","distance_m":1800,"track_condition":"稍重"},"speed_mps":16.71}]},
+    {"horse_id":"h5","horse_number":5,"name":"サクラノート","history":[
+      {"occurred_at":"2026-10-01T06:00:00Z","conditions":{"venue":"東京","surface":"芝","distance_m":1400,"track_condition":"良"},"speed_mps":16.72}]},
+    {"horse_id":"h6","horse_number":6,"name":"オリオンベル","history":[
+      {"occurred_at":"2026-09-07T06:00:00Z","conditions":{"venue":"阪神","surface":"芝","distance_m":1800,"track_condition":"良"},"speed_mps":16.54},
+      {"occurred_at":"2026-06-28T06:00:00Z","conditions":{"venue":"東京","surface":"芝","distance_m":1600,"track_condition":"稍重"},"speed_mps":16.61},
+      {"occurred_at":"2026-03-15T06:00:00Z","conditions":{"venue":"中山","surface":"芝","distance_m":1600,"track_condition":"良"},"speed_mps":16.66}]}
+  ],
+  "odds": [
+    {"bet_type":"win","selection":[1],"decimal_odds":3.8},
+    {"bet_type":"win","selection":[2],"decimal_odds":4.6},
+    {"bet_type":"trio","selection":[1,2,3],"decimal_odds":18.4},
+    {"bet_type":"trifecta","selection":[1,2,3],"decimal_odds":72.5}
+  ]
+}

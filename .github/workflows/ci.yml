@@ -1,0 +1,14 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -e '.[dev]'
+      - run: ruff check uma_api tests scripts
+      - run: pytest -q
+      - run: python scripts/generate_demo.py && git diff --exit-code web/demo-result.json
+      - run: docker build -t uma-predictor:test .

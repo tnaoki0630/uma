@@ -130,7 +130,7 @@ def build_validation_mode(
                 if occurred_at < target_date
             ][-40:]
             if basis == "horse":
-                display_name = f"競走馬 {subject_id[-4:]}"
+                display_name = row.get("馬名") or f"競走馬 {subject_id[-4:]}"
                 jockey_id = None
             else:
                 display_name = row.get("馬名") or f"馬番 {horse_number}"

@@ -20,6 +20,12 @@ def test_csv_validation_mode_is_chronological_and_uses_requested_basis(filename,
     assert mode["races"][0]["race_label"] >= mode["races"][1]["race_label"]
     assert all(race["prediction_basis"] == basis for race in mode["races"])
     assert all(race["entries"] for race in mode["races"])
+    if basis == "horse":
+        assert all(
+            not entry["name"].startswith("競走馬 ")
+            for race in mode["races"]
+            for entry in race["entries"]
+        )
 
 
 def test_jockey_basis_requires_jockey_ids():

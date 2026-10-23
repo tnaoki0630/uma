@@ -1,6 +1,11 @@
 import pandas as pd
 
-from src.makeCSV import collect_jockey_results, extract_hitchart_ids, extract_jockey_name
+from src.makeCSV import (
+    collect_jockey_results,
+    extract_hitchart_ids,
+    extract_horse_name,
+    extract_jockey_name,
+)
 
 
 def test_extract_hitchart_ids_handles_horses_and_jockeys_without_duplicates():
@@ -34,6 +39,15 @@ def test_extract_jockey_name_uses_result_page_title():
     html = "<html><head><title>Ｃ．ルメールの騎手成績｜競馬データベース</title></head></html>"
 
     assert extract_jockey_name(html) == "Ｃ．ルメール"
+
+
+def test_extract_horse_name_uses_result_page_title():
+    html = (
+        "<html><head><title>チェルヴィニア (Cervinia)の競走成績"
+        "｜競馬データベース</title></head></html>"
+    )
+
+    assert extract_horse_name(html) == "チェルヴィニア"
 
 
 def test_collect_jockey_results_preserves_ids_and_applies_strict_upperbound():

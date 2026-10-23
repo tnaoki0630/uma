@@ -1,7 +1,7 @@
 {
   "generated_from": [
     "UMA_DB.csv",
-    "Jockey_DB_EL.csv"
+    "Jockey_DB.csv"
   ],
   "modes": {
     "horse": {
@@ -5568,4049 +5568,60 @@
     "jockey": {
       "basis": "jockey",
       "label": "ジョッキー基準",
-      "source": "Jockey_DB_EL.csv",
+      "source": "Jockey_DB.csv",
       "max_validation_races": 10,
       "races": [
         {
-          "race_id": "20240505-2東京6-6",
+          "race_id": "20261018-4東京7-12",
           "prediction_basis": "jockey",
           "samples": 15000,
           "entries": [
-            {
-              "horse_number": 11,
-              "name": "ゲットアップ",
-              "jockey_id": "01077",
-              "jockey_name": "騎手 #01077",
-              "mean_speed_mps": 16.0325678314,
-              "std_speed_mps": 0.4644551136,
-              "win_probability": 0.2729333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 4.1,
-              "expected_return": 1.1190266667
-            },
-            {
-              "horse_number": 10,
-              "name": "マイショウチャン",
-              "jockey_id": "05386",
-              "jockey_name": "騎手 #05386",
-              "mean_speed_mps": 16.1257768228,
-              "std_speed_mps": 0.3854502827,
-              "win_probability": 0.3306,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 3.5,
-              "expected_return": 1.1571
-            },
             {
               "horse_number": 7,
-              "name": "タイキバルドル",
-              "jockey_id": "01184",
-              "jockey_name": "騎手 #01184",
-              "mean_speed_mps": 15.8530736987,
-              "std_speed_mps": 0.3835171648,
-              "win_probability": 0.1178,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 28.6,
-              "expected_return": 3.36908
-            },
-            {
-              "horse_number": 12,
-              "name": "フクノブルジュ",
-              "jockey_id": "01140",
-              "jockey_name": "騎手 #01140",
-              "mean_speed_mps": 16.0783062683,
-              "std_speed_mps": 0.3841248449,
-              "win_probability": 0.2786666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 38.1,
-              "expected_return": 10.6172
-            }
-          ],
-          "trio": [
-            {
-              "selection": [
-                10,
-                11,
-                12
-              ],
-              "probability": 0.4048666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                10,
-                12
-              ],
-              "probability": 0.2608666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                10,
-                11
-              ],
-              "probability": 0.1834,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                11,
-                12
-              ],
-              "probability": 0.1508666667,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "trifecta": [
-            {
-              "selection": [
-                10,
-                12,
-                11
-              ],
-              "probability": 0.0728,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                10,
-                12
-              ],
-              "probability": 0.0702,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                12,
-                10
-              ],
-              "probability": 0.0686666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                11,
-                12
-              ],
-              "probability": 0.0686,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                10,
-                11
-              ],
-              "probability": 0.0675333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                12,
-                7
-              ],
-              "probability": 0.0667333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                11,
-                10
-              ],
-              "probability": 0.0570666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                10,
-                7
-              ],
-              "probability": 0.0567333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                7,
-                12
-              ],
-              "probability": 0.0488,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                10,
-                7
-              ],
-              "probability": 0.0456,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                11,
-                7
-              ],
-              "probability": 0.0433333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                7,
-                10
-              ],
-              "probability": 0.0404,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                12,
-                7
-              ],
-              "probability": 0.0368,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                11,
-                7
-              ],
-              "probability": 0.0311333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                7,
-                11
-              ],
-              "probability": 0.0303333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                10,
-                12
-              ],
-              "probability": 0.026,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                7,
-                10
-              ],
-              "probability": 0.0259333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                7,
-                11
-              ],
-              "probability": 0.0258,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                7,
-                12
-              ],
-              "probability": 0.0257333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                12,
-                10
-              ],
-              "probability": 0.0222,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                10,
-                11
-              ],
-              "probability": 0.021,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                11,
-                10
-              ],
-              "probability": 0.0172,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                12,
-                11
-              ],
-              "probability": 0.0159333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                11,
-                12
-              ],
-              "probability": 0.0154666667,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
-          ],
-          "race_label": "2024/05/05 2東京6 6R 4歳以上1勝クラス",
-          "conditions": {
-            "venue": "東京",
-            "surface": "ダート",
-            "distance_m": 1600,
-            "track_condition": "良"
-          },
-          "actual_winner_number": 11,
-          "actual_winner_name": "ゲットアップ",
-          "actual_winner_probability": 0.2729333333,
-          "predicted_winner_hit": false,
-          "actual_winner_probability_rank": 3,
-          "brier_score": 0.7294542489
-        },
-        {
-          "race_id": "20240505-2東京6-1",
-          "prediction_basis": "jockey",
-          "samples": 15000,
-          "entries": [
-            {
-              "horse_number": 5,
-              "name": "アルプスオジョー",
-              "jockey_id": "01075",
-              "jockey_name": "騎手 #01075",
-              "mean_speed_mps": 16.0550588642,
-              "std_speed_mps": 0.3474345641,
-              "win_probability": 0.2622,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 2.2,
-              "expected_return": 0.57684
-            },
-            {
-              "horse_number": 10,
-              "name": "ゲンパチエトワール",
-              "jockey_id": "05386",
-              "jockey_name": "騎手 #05386",
-              "mean_speed_mps": 16.1257422006,
-              "std_speed_mps": 0.3488415086,
-              "win_probability": 0.3432,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 4.6,
-              "expected_return": 1.57872
-            },
-            {
-              "horse_number": 13,
-              "name": "メイシャローナ",
-              "jockey_id": "01184",
-              "jockey_name": "騎手 #01184",
-              "mean_speed_mps": 15.8527083222,
-              "std_speed_mps": 0.3466788736,
-              "win_probability": 0.1093333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 15.3,
-              "expected_return": 1.6728
-            },
-            {
-              "horse_number": 4,
-              "name": "キガタレイ",
-              "jockey_id": "01140",
-              "jockey_name": "騎手 #01140",
-              "mean_speed_mps": 16.0787017034,
-              "std_speed_mps": 0.3473764157,
-              "win_probability": 0.2852666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 8.9,
-              "expected_return": 2.5388733333
-            }
-          ],
-          "trio": [
-            {
-              "selection": [
-                4,
-                5,
-                10
-              ],
-              "probability": 0.4422,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                10,
-                13
-              ],
-              "probability": 0.2072,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                10,
-                13
-              ],
-              "probability": 0.1887333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                5,
-                13
-              ],
-              "probability": 0.1618666667,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "trifecta": [
-            {
-              "selection": [
-                10,
-                4,
-                5
-              ],
-              "probability": 0.0853333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                5,
-                4
-              ],
-              "probability": 0.0833333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                10,
-                5
-              ],
-              "probability": 0.0754,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                5,
-                10
-              ],
-              "probability": 0.0675333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                10,
-                4
-              ],
-              "probability": 0.0672,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                4,
-                10
-              ],
-              "probability": 0.0634,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                4,
-                13
-              ],
-              "probability": 0.0542,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                5,
-                13
-              ],
-              "probability": 0.0486666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                10,
-                13
-              ],
-              "probability": 0.0471333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                10,
-                13
-              ],
-              "probability": 0.0419333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                4,
-                13
-              ],
-              "probability": 0.0374666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                13,
-                4
-              ],
-              "probability": 0.0372666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                5,
-                13
-              ],
-              "probability": 0.037,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                13,
-                5
-              ],
-              "probability": 0.0344,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                13,
-                10
-              ],
-              "probability": 0.0298666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                13,
-                5
-              ],
-              "probability": 0.0283333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                13,
-                4
-              ],
-              "probability": 0.0274666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                13,
-                10
-              ],
-              "probability": 0.0247333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                10,
-                5
-              ],
-              "probability": 0.0210666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                10,
-                4
-              ],
-              "probability": 0.0194666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                4,
-                10
-              ],
-              "probability": 0.0192666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                5,
-                10
-              ],
-              "probability": 0.0179333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                4,
-                5
-              ],
-              "probability": 0.0164666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                5,
-                4
-              ],
-              "probability": 0.0151333333,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
-          ],
-          "race_label": "2024/05/05 2東京6 1R 3歳未勝利",
-          "conditions": {
-            "venue": "東京",
-            "surface": "ダート",
-            "distance_m": 1600,
-            "track_condition": "良"
-          },
-          "actual_winner_number": 10,
-          "actual_winner_name": "ゲンパチエトワール",
-          "actual_winner_probability": 0.3432,
-          "predicted_winner_hit": true,
-          "actual_winner_probability_rank": 1,
-          "brier_score": 0.5934659289
-        },
-        {
-          "race_id": "20240504-2東京5-12",
-          "prediction_basis": "jockey",
-          "samples": 15000,
-          "entries": [
-            {
-              "horse_number": 2,
-              "name": "バックスクリーン",
-              "jockey_id": "01179",
-              "jockey_name": "騎手 #01179",
-              "mean_speed_mps": 16.1786523738,
-              "std_speed_mps": 0.3845620023,
-              "win_probability": 0.2561333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 61.8,
-              "expected_return": 15.82904
-            },
-            {
-              "horse_number": 5,
-              "name": "レディアス",
-              "jockey_id": "01092",
-              "jockey_name": "騎手 #01092",
-              "mean_speed_mps": 16.2306776154,
-              "std_speed_mps": 0.388173252,
-              "win_probability": 0.3072666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 19.4,
-              "expected_return": 5.9609733333
-            },
-            {
-              "horse_number": 13,
-              "name": "ラップスター",
-              "jockey_id": "05386",
-              "jockey_name": "騎手 #05386",
-              "mean_speed_mps": 15.9727080596,
-              "std_speed_mps": 0.4489108268,
-              "win_probability": 0.1442,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 4.5,
-              "expected_return": 0.6489
-            },
-            {
-              "horse_number": 11,
-              "name": "フィフティシェビー",
-              "jockey_id": "01150",
-              "jockey_name": "騎手 #01150",
-              "mean_speed_mps": 15.6284815404,
-              "std_speed_mps": 0.3940772647,
-              "win_probability": 0.023,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 88.9,
-              "expected_return": 2.0447
-            },
-            {
-              "horse_number": 12,
-              "name": "ロードジャスティス",
-              "jockey_id": "01184",
-              "jockey_name": "騎手 #01184",
-              "mean_speed_mps": 16.0077435767,
-              "std_speed_mps": 0.3832512862,
-              "win_probability": 0.1322666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 69.8,
-              "expected_return": 9.2322133333
-            },
-            {
-              "horse_number": 7,
-              "name": "クリノアルバトロス",
-              "jockey_id": "01085",
-              "jockey_name": "騎手 #01085",
-              "mean_speed_mps": 16.0017618806,
-              "std_speed_mps": 0.3877536444,
-              "win_probability": 0.1371333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 9.1,
-              "expected_return": 1.2479133333
-            }
-          ],
-          "trio": [
-            {
-              "selection": [
-                2,
-                5,
-                12
-              ],
-              "probability": 0.1454666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                5,
-                7
-              ],
-              "probability": 0.1450666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                5,
-                13
-              ],
-              "probability": 0.1274,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                7,
-                12
-              ],
-              "probability": 0.0774,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                7,
-                13
-              ],
-              "probability": 0.0725333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                12,
-                13
-              ],
-              "probability": 0.0716666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                7,
-                12
-              ],
-              "probability": 0.063,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                12,
-                13
-              ],
-              "probability": 0.0566,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                7,
-                13
-              ],
-              "probability": 0.0562666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                5,
-                11
-              ],
-              "probability": 0.0334666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                12,
-                13
-              ],
-              "probability": 0.0310666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                11,
-                12
-              ],
-              "probability": 0.019,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                11,
-                13
-              ],
-              "probability": 0.0183333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                7,
-                11
-              ],
-              "probability": 0.0176,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                7,
-                11
-              ],
-              "probability": 0.0149333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                11,
-                12
-              ],
-              "probability": 0.0144,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                11,
-                13
-              ],
-              "probability": 0.0132,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                11,
-                12
-              ],
-              "probability": 0.0083333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                11,
-                13
-              ],
-              "probability": 0.0078,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                12,
-                13
-              ],
-              "probability": 0.0064666667,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "trifecta": [
-            {
-              "selection": [
-                5,
-                2,
-                12
-              ],
-              "probability": 0.0355333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                5,
-                7
-              ],
-              "probability": 0.031,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                2,
-                7
-              ],
-              "probability": 0.0304666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                5,
-                12
-              ],
-              "probability": 0.0302666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                2,
-                13
-              ],
-              "probability": 0.0268,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                12,
-                2
-              ],
-              "probability": 0.026,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                5,
-                13
-              ],
-              "probability": 0.0259333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                7,
-                2
-              ],
-              "probability": 0.0256,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                7,
-                5
-              ],
-              "probability": 0.0226666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                13,
-                2
-              ],
-              "probability": 0.0216,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                12,
-                5
-              ],
-              "probability": 0.0202666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                13,
-                5
-              ],
-              "probability": 0.019,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                12,
-                7
-              ],
-              "probability": 0.0189333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                5,
-                2
-              ],
-              "probability": 0.0182666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                5,
-                2
-              ],
-              "probability": 0.0180666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                5,
-                2
-              ],
-              "probability": 0.0178666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                2,
-                5
-              ],
-              "probability": 0.0170666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                13,
-                7
-              ],
-              "probability": 0.0162666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                13,
-                12
-              ],
-              "probability": 0.0162,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                7,
-                12
-              ],
-              "probability": 0.0161333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                2,
-                5
-              ],
-              "probability": 0.016,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                2,
-                5
-              ],
-              "probability": 0.0155333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                12,
-                13
-              ],
-              "probability": 0.015,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                7,
-                13
-              ],
-              "probability": 0.0142,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                12,
-                7
-              ],
-              "probability": 0.0140666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                5,
-                12
-              ],
-              "probability": 0.0132,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                7,
-                12
-              ],
-              "probability": 0.0131333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                13,
-                5,
-                7
-              ],
-              "probability": 0.0126666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                5,
-                7
-              ],
-              "probability": 0.0122,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                5,
-                13
-              ],
-              "probability": 0.0116666667,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
-          ],
-          "race_label": "2024/05/04 2東京5 12R 4歳以上2勝クラス",
-          "conditions": {
-            "venue": "東京",
-            "surface": "ダート",
-            "distance_m": 1600,
-            "track_condition": "稍"
-          },
-          "actual_winner_number": 13,
-          "actual_winner_name": "ラップスター",
-          "actual_winner_probability": 0.1442,
-          "predicted_winner_hit": false,
-          "actual_winner_probability_rank": 3,
-          "brier_score": 0.9292397511
-        },
-        {
-          "race_id": "20240428-2東京4-11",
-          "prediction_basis": "jockey",
-          "samples": 15000,
-          "entries": [
-            {
-              "horse_number": 1,
-              "name": "ニシノティアモ",
-              "jockey_id": "01075",
-              "jockey_name": "騎手 #01075",
-              "mean_speed_mps": 16.7822887588,
-              "std_speed_mps": 0.3886547174,
-              "win_probability": 0.2876666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 4.9,
-              "expected_return": 1.4095666667
-            },
-            {
-              "horse_number": 12,
-              "name": "シュネルラウフェン",
-              "jockey_id": "01092",
-              "jockey_name": "騎手 #01092",
-              "mean_speed_mps": 16.8565754968,
-              "std_speed_mps": 0.3879654617,
-              "win_probability": 0.3718666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 4.8,
-              "expected_return": 1.78496
-            },
-            {
-              "horse_number": 5,
-              "name": "コガネノソラ",
-              "jockey_id": "01150",
-              "jockey_name": "騎手 #01150",
-              "mean_speed_mps": 16.6116335943,
-              "std_speed_mps": 0.389655945,
-              "win_probability": 0.1562,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 7.2,
-              "expected_return": 1.12464
-            },
-            {
-              "horse_number": 4,
-              "name": "ミスティア",
-              "jockey_id": "01085",
-              "jockey_name": "騎手 #01085",
-              "mean_speed_mps": 16.6491459524,
-              "std_speed_mps": 0.3899890734,
-              "win_probability": 0.1842666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 19.5,
-              "expected_return": 3.5932
-            }
-          ],
-          "trio": [
-            {
-              "selection": [
-                1,
-                4,
-                12
-              ],
-              "probability": 0.3533333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                5,
-                12
-              ],
-              "probability": 0.306,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                5,
-                12
-              ],
-              "probability": 0.1924666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                4,
-                5
-              ],
-              "probability": 0.1482,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "trifecta": [
-            {
-              "selection": [
-                12,
-                1,
-                4
-              ],
-              "probability": 0.0838,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                1,
-                5
-              ],
-              "probability": 0.0774,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                12,
-                4
-              ],
-              "probability": 0.0724666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                4,
-                1
-              ],
-              "probability": 0.0651333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                12,
-                5
-              ],
-              "probability": 0.0638,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                5,
-                1
-              ],
-              "probability": 0.0573333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                4,
-                12
-              ],
-              "probability": 0.0482,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                4,
-                5
-              ],
-              "probability": 0.0446666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                12,
-                5,
-                4
-              ],
-              "probability": 0.0435333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                12,
-                1
-              ],
-              "probability": 0.0434666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                5,
-                12
-              ],
-              "probability": 0.0409333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                1,
-                12
-              ],
-              "probability": 0.0402666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                12,
-                1
-              ],
-              "probability": 0.0356,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                12,
-                5
-              ],
-              "probability": 0.0335333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                4,
-                5
-              ],
-              "probability": 0.0332,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                1,
-                12
-              ],
-              "probability": 0.0309333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                5,
-                4
-              ],
-              "probability": 0.0290666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                12,
-                4
-              ],
-              "probability": 0.027,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                1,
-                5
-              ],
-              "probability": 0.026,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                4,
-                12
-              ],
-              "probability": 0.0222666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                1,
-                4
-              ],
-              "probability": 0.0221333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                5,
-                12
-              ],
-              "probability": 0.0214666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                5,
-                1
-              ],
-              "probability": 0.0195333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                5,
-                4,
-                1
-              ],
-              "probability": 0.0182666667,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
-          ],
-          "race_label": "2024/04/28 2東京4 11R スイートピーS(L)",
-          "conditions": {
-            "venue": "東京",
-            "surface": "芝",
-            "distance_m": 1800,
-            "track_condition": "良"
-          },
-          "actual_winner_number": 5,
-          "actual_winner_name": "コガネノソラ",
-          "actual_winner_probability": 0.1562,
-          "predicted_winner_hit": false,
-          "actual_winner_probability_rank": 4,
-          "brier_score": 0.9669895733
-        },
-        {
-          "race_id": "20240428-2東京4-10",
-          "prediction_basis": "jockey",
-          "samples": 15000,
-          "entries": [
-            {
-              "horse_number": 11,
-              "name": "ブレイクフォース",
-              "jockey_id": "01075",
-              "jockey_name": "騎手 #01075",
-              "mean_speed_mps": 15.6129062412,
-              "std_speed_mps": 0.4020881766,
-              "win_probability": 0.1652,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 9.9,
-              "expected_return": 1.63548
-            },
-            {
-              "horse_number": 6,
-              "name": "テンカハル",
-              "jockey_id": "01092",
-              "jockey_name": "騎手 #01092",
-              "mean_speed_mps": 15.824021726,
-              "std_speed_mps": 0.4211352628,
-              "win_probability": 0.3593333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 8.1,
-              "expected_return": 2.9106
-            },
-            {
-              "horse_number": 2,
-              "name": "キタノヴィジョン",
-              "jockey_id": "01150",
-              "jockey_name": "騎手 #01150",
-              "mean_speed_mps": 15.4600445998,
-              "std_speed_mps": 0.4096015018,
-              "win_probability": 0.0953333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 25.5,
-              "expected_return": 2.431
-            },
-            {
-              "horse_number": 16,
-              "name": "メイショウフンジン",
-              "jockey_id": "01184",
-              "jockey_name": "騎手 #01184",
-              "mean_speed_mps": 15.0028628488,
-              "std_speed_mps": 0.4053425923,
-              "win_probability": 0.0090666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 13.5,
-              "expected_return": 0.1224
-            },
-            {
-              "horse_number": 4,
-              "name": "アルドーレ",
-              "jockey_id": "01085",
-              "jockey_name": "騎手 #01085",
-              "mean_speed_mps": 15.6798924845,
-              "std_speed_mps": 0.4241218511,
-              "win_probability": 0.2257333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 311.5,
-              "expected_return": 70.3159333333
-            },
-            {
-              "horse_number": 9,
-              "name": "レッドファーロ",
-              "jockey_id": "01140",
-              "jockey_name": "騎手 #01140",
-              "mean_speed_mps": 15.5472710721,
-              "std_speed_mps": 0.4235017421,
-              "win_probability": 0.1453333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 8.3,
-              "expected_return": 1.2062666667
-            }
-          ],
-          "trio": [
-            {
-              "selection": [
-                4,
-                6,
-                11
-              ],
-              "probability": 0.1759333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                6,
-                9
-              ],
-              "probability": 0.1482,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                9,
-                11
-              ],
-              "probability": 0.1154666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                4,
-                6
-              ],
-              "probability": 0.1072666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                6,
-                11
-              ],
-              "probability": 0.0857333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                9,
-                11
-              ],
-              "probability": 0.0726,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                6,
-                9
-              ],
-              "probability": 0.0696666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                4,
-                11
-              ],
-              "probability": 0.0531333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                4,
-                9
-              ],
-              "probability": 0.0428666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                9,
-                11
-              ],
-              "probability": 0.0382666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                6,
-                16
-              ],
-              "probability": 0.0192666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                11,
-                16
-              ],
-              "probability": 0.0146666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                9,
-                16
-              ],
-              "probability": 0.0130666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                6,
-                16
-              ],
-              "probability": 0.0089333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                11,
-                16
-              ],
-              "probability": 0.0081333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                9,
-                16
-              ],
-              "probability": 0.0071333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                4,
-                16
-              ],
-              "probability": 0.0062,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                9,
-                11,
-                16
-              ],
-              "probability": 0.0061333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                9,
-                16
-              ],
-              "probability": 0.0038,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                11,
-                16
-              ],
-              "probability": 0.0035333333,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "trifecta": [
-            {
-              "selection": [
-                6,
-                4,
-                11
-              ],
-              "probability": 0.0421333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                11,
-                4
-              ],
-              "probability": 0.037,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                4,
-                9
-              ],
-              "probability": 0.0360666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                6,
-                11
-              ],
-              "probability": 0.0304666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                9,
-                4
-              ],
-              "probability": 0.0294666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                4,
-                2
-              ],
-              "probability": 0.0294,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                11,
-                9
-              ],
-              "probability": 0.0278,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                9,
-                11
-              ],
-              "probability": 0.0264666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                6,
-                9
-              ],
-              "probability": 0.0246666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                11,
-                6
-              ],
-              "probability": 0.0244,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                11,
-                2
-              ],
-              "probability": 0.0238,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                6,
-                4
-              ],
-              "probability": 0.0232666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                6,
-                2
-              ],
-              "probability": 0.0221333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                2,
-                4
-              ],
-              "probability": 0.0210666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                9,
-                6,
-                4
-              ],
-              "probability": 0.0202666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                9,
-                6
-              ],
-              "probability": 0.0190666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                9,
-                4,
-                6
-              ],
-              "probability": 0.0186666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                4,
-                6
-              ],
-              "probability": 0.0186666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                2,
-                11
-              ],
-              "probability": 0.0186,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                6,
-                9
-              ],
-              "probability": 0.0185333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                2,
-                9
-              ],
-              "probability": 0.0183333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                9,
-                2
-              ],
-              "probability": 0.0177333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                9,
-                6,
-                11
-              ],
-              "probability": 0.0159333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                6,
-                2
-              ],
-              "probability": 0.0158666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                9,
-                11
-              ],
-              "probability": 0.0156666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                11,
-                9
-              ],
-              "probability": 0.0146666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                2,
-                6
-              ],
-              "probability": 0.0144666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                9,
-                6
-              ],
-              "probability": 0.0134666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                9,
-                11,
-                6
-              ],
-              "probability": 0.0132666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                11,
-                2
-              ],
-              "probability": 0.0122666667,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
-          ],
-          "race_label": "2024/04/28 2東京4 10R ブリリアントS(L)",
-          "conditions": {
-            "venue": "東京",
-            "surface": "ダート",
-            "distance_m": 2100,
-            "track_condition": "良"
-          },
-          "actual_winner_number": 16,
-          "actual_winner_name": "メイショウフンジン",
-          "actual_winner_probability": 0.0090666667,
-          "predicted_winner_hit": false,
-          "actual_winner_probability_rank": 6,
-          "brier_score": 1.2195261156
-        },
-        {
-          "race_id": "20240428-2東京4-2",
-          "prediction_basis": "jockey",
-          "samples": 15000,
-          "entries": [
-            {
-              "horse_number": 3,
-              "name": "クレイジーディス",
-              "jockey_id": "01092",
-              "jockey_name": "騎手 #01092",
-              "mean_speed_mps": 16.2594839502,
-              "std_speed_mps": 0.3736126259,
-              "win_probability": 0.2672666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 12.3,
-              "expected_return": 3.28738
-            },
-            {
-              "horse_number": 7,
-              "name": "オレンジブルボン",
-              "jockey_id": "01184",
-              "jockey_name": "騎手 #01184",
-              "mean_speed_mps": 15.9920742412,
-              "std_speed_mps": 0.3722839973,
-              "win_probability": 0.0894666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 23.9,
-              "expected_return": 2.1382533333
-            },
-            {
-              "horse_number": 8,
-              "name": "ミスファントム",
-              "jockey_id": "01085",
-              "jockey_name": "騎手 #01085",
-              "mean_speed_mps": 16.2204828489,
-              "std_speed_mps": 0.3777797374,
-              "win_probability": 0.2354666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 26.4,
-              "expected_return": 6.21632
-            },
-            {
-              "horse_number": 1,
-              "name": "ゼフィールエレ",
-              "jockey_id": "01140",
-              "jockey_name": "騎手 #01140",
-              "mean_speed_mps": 16.3815259334,
-              "std_speed_mps": 0.3747746737,
-              "win_probability": 0.4078,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 18.8,
-              "expected_return": 7.66664
-            }
-          ],
-          "trio": [
-            {
-              "selection": [
-                1,
-                3,
-                8
-              ],
-              "probability": 0.4848,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                3,
-                7
-              ],
-              "probability": 0.216,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                7,
-                8
-              ],
-              "probability": 0.1832,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                7,
-                8
-              ],
-              "probability": 0.116,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "trifecta": [
-            {
-              "selection": [
-                1,
-                3,
-                8
-              ],
-              "probability": 0.1074,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                8,
-                3
-              ],
-              "probability": 0.1044,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                1,
-                8
-              ],
-              "probability": 0.0806,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                1,
-                3
-              ],
-              "probability": 0.0731333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                3,
-                7
-              ],
-              "probability": 0.0647333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                8,
-                1
-              ],
-              "probability": 0.0620666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                3,
-                1
-              ],
-              "probability": 0.0572,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                8,
-                7
-              ],
-              "probability": 0.0554666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                1,
-                7
-              ],
-              "probability": 0.0526,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                1,
-                7
-              ],
-              "probability": 0.0395333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                7,
-                3
-              ],
-              "probability": 0.0380666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                7,
-                8
-              ],
-              "probability": 0.0377333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                8,
-                7
-              ],
-              "probability": 0.0290666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                3,
-                7
-              ],
-              "probability": 0.026,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                7,
-                1
-              ],
-              "probability": 0.0241333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                7,
-                1
-              ],
-              "probability": 0.0201333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                7,
-                3
-              ],
-              "probability": 0.0194666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                7,
-                8
-              ],
-              "probability": 0.0188,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                1,
-                3
-              ],
-              "probability": 0.0186,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                1,
-                8
-              ],
-              "probability": 0.0179333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                3,
-                1
-              ],
-              "probability": 0.0178666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                8,
-                1
-              ],
-              "probability": 0.0124,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                3,
-                8
-              ],
-              "probability": 0.0115333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                8,
-                3
-              ],
-              "probability": 0.0111333333,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
-          ],
-          "race_label": "2024/04/28 2東京4 2R 3歳未勝利",
-          "conditions": {
-            "venue": "東京",
-            "surface": "ダート",
-            "distance_m": 1400,
-            "track_condition": "良"
-          },
-          "actual_winner_number": 3,
-          "actual_winner_name": "クレイジーディス",
-          "actual_winner_probability": 0.2672666667,
-          "predicted_winner_hit": false,
-          "actual_winner_probability_rank": 2,
-          "brier_score": 0.7666478133
-        },
-        {
-          "race_id": "20240428-2東京4-1",
-          "prediction_basis": "jockey",
-          "samples": 15000,
-          "entries": [
-            {
-              "horse_number": 6,
-              "name": "ルーフオブヘヴン",
-              "jockey_id": "01092",
-              "jockey_name": "騎手 #01092",
-              "mean_speed_mps": 16.1412219404,
-              "std_speed_mps": 0.410349839,
-              "win_probability": 0.3310666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 7.7,
-              "expected_return": 2.5492133333
-            },
-            {
-              "horse_number": 2,
-              "name": "アルドール",
-              "jockey_id": "01150",
-              "jockey_name": "騎手 #01150",
-              "mean_speed_mps": 16.1014835285,
-              "std_speed_mps": 0.4128353623,
-              "win_probability": 0.2884,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 6.4,
-              "expected_return": 1.84576
-            },
-            {
-              "horse_number": 10,
-              "name": "セイウンウィズミー",
-              "jockey_id": "01184",
-              "jockey_name": "騎手 #01184",
-              "mean_speed_mps": 15.7780186577,
-              "std_speed_mps": 0.407973381,
-              "win_probability": 0.0866666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 13.8,
-              "expected_return": 1.196
+              "name": "ビーオンザカバー",
+              "jockey_id": "01170",
+              "jockey_name": "横山武史",
+              "mean_speed_mps": 15.3057898332,
+              "std_speed_mps": 1.8182651367,
+              "win_probability": 0.2641333333,
+              "model": "fallback",
+              "history_count": 0,
+              "decimal_odds": 12.8,
+              "expected_return": 3.3809066667
             },
             {
               "horse_number": 14,
-              "name": "ステラカフェ",
-              "jockey_id": "01140",
-              "jockey_name": "騎手 #01140",
-              "mean_speed_mps": 16.1001076566,
-              "std_speed_mps": 0.4098131496,
-              "win_probability": 0.2938666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 59.0,
-              "expected_return": 17.3381333333
-            }
-          ],
-          "trio": [
-            {
-              "selection": [
-                2,
-                6,
-                14
-              ],
-              "probability": 0.4982666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                10,
-                14
-              ],
-              "probability": 0.1794,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                6,
-                10
-              ],
-              "probability": 0.1669333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                10,
-                14
-              ],
-              "probability": 0.1554,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "trifecta": [
-            {
-              "selection": [
-                6,
-                14,
-                2
-              ],
-              "probability": 0.0907333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                2,
-                14
-              ],
-              "probability": 0.0894666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                14,
-                2,
-                6
-              ],
-              "probability": 0.0805333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                14,
-                6
-              ],
-              "probability": 0.0794666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                6,
-                14
-              ],
-              "probability": 0.0793333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                14,
-                6,
-                2
-              ],
-              "probability": 0.0787333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                14,
-                10
-              ],
-              "probability": 0.0502666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                14,
-                6,
-                10
-              ],
-              "probability": 0.0461333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                2,
-                10
-              ],
-              "probability": 0.0447333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                6,
-                10
-              ],
-              "probability": 0.0404666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                14,
-                10
-              ],
-              "probability": 0.0384666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                14,
-                2,
-                10
-              ],
-              "probability": 0.0376,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                10,
-                2
-              ],
-              "probability": 0.0286,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                6,
-                10,
-                14
-              ],
-              "probability": 0.0272666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                10,
-                14
-              ],
-              "probability": 0.0262,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                14,
-                10,
-                6
-              ],
-              "probability": 0.0255333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                14,
-                10,
-                2
-              ],
-              "probability": 0.0253333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                10,
-                6
-              ],
-              "probability": 0.0244666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                6,
-                14
-              ],
-              "probability": 0.0153333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                6,
-                2
-              ],
-              "probability": 0.0151333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                14,
-                6
-              ],
-              "probability": 0.0148666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                2,
-                14
-              ],
-              "probability": 0.0146666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                2,
-                6
-              ],
-              "probability": 0.0135333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                10,
-                14,
-                2
-              ],
-              "probability": 0.0131333333,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
-          ],
-          "race_label": "2024/04/28 2東京4 1R 3歳未勝利",
-          "conditions": {
-            "venue": "東京",
-            "surface": "ダート",
-            "distance_m": 1600,
-            "track_condition": "良"
-          },
-          "actual_winner_number": 2,
-          "actual_winner_name": "アルドール",
-          "actual_winner_probability": 0.2884,
-          "predicted_winner_hit": false,
-          "actual_winner_probability_rank": 3,
-          "brier_score": 0.7098484267
-        },
-        {
-          "race_id": "20240427-2東京3-10",
-          "prediction_basis": "jockey",
-          "samples": 15000,
-          "entries": [
-            {
-              "horse_number": 3,
-              "name": "アスクドゥポルテ",
-              "jockey_id": "01075",
-              "jockey_name": "騎手 #01075",
-              "mean_speed_mps": 16.5843218065,
-              "std_speed_mps": 0.373528887,
-              "win_probability": 0.2038,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 48.7,
-              "expected_return": 9.92506
-            },
-            {
-              "horse_number": 7,
-              "name": "モカフラワー",
-              "jockey_id": "01179",
-              "jockey_name": "騎手 #01179",
-              "mean_speed_mps": 16.5950539013,
-              "std_speed_mps": 0.3760568705,
-              "win_probability": 0.2133333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 174.0,
-              "expected_return": 37.12
-            },
-            {
-              "horse_number": 4,
-              "name": "アグラシアド",
+              "name": "ベストミーエヴァー",
               "jockey_id": "01092",
-              "jockey_name": "騎手 #01092",
-              "mean_speed_mps": 16.678193199,
-              "std_speed_mps": 0.3750433801,
-              "win_probability": 0.2872666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 16.5,
-              "expected_return": 4.7399
+              "jockey_name": "津村明秀",
+              "mean_speed_mps": 15.7836635313,
+              "std_speed_mps": 1.7210563758,
+              "win_probability": 0.3564,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 3.8,
+              "expected_return": 1.35432
             },
             {
-              "horse_number": 8,
-              "name": "マイネルケレリウス",
-              "jockey_id": "01150",
-              "jockey_name": "騎手 #01150",
-              "mean_speed_mps": 16.3852346871,
-              "std_speed_mps": 0.3758793675,
-              "win_probability": 0.0926666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 94.2,
-              "expected_return": 8.7292
-            },
-            {
-              "horse_number": 2,
-              "name": "ウインリブルマン",
-              "jockey_id": "01085",
-              "jockey_name": "騎手 #01085",
-              "mean_speed_mps": 16.5750734945,
-              "std_speed_mps": 0.3824633184,
-              "win_probability": 0.2029333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 28.8,
-              "expected_return": 5.84448
-            }
-          ],
-          "trio": [
-            {
-              "selection": [
-                3,
-                4,
-                7
-              ],
-              "probability": 0.1638666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                4,
-                7
-              ],
-              "probability": 0.1578,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                3,
-                4
-              ],
-              "probability": 0.1541333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                3,
-                7
-              ],
-              "probability": 0.1177333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                7,
-                8
-              ],
-              "probability": 0.0898666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                4,
-                8
-              ],
-              "probability": 0.0776,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                4,
-                8
-              ],
-              "probability": 0.0742666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                7,
-                8
-              ],
-              "probability": 0.0578666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                7,
-                8
-              ],
-              "probability": 0.0548,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                3,
-                8
-              ],
-              "probability": 0.0520666667,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "trifecta": [
-            {
-              "selection": [
-                4,
-                3,
-                2
-              ],
-              "probability": 0.0324666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                3,
-                7
-              ],
-              "probability": 0.0317333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                7,
-                2
-              ],
-              "probability": 0.0304666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                2,
-                7
-              ],
-              "probability": 0.0302666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                7,
-                3
-              ],
-              "probability": 0.0296666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                4,
-                3
-              ],
-              "probability": 0.0278,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                2,
-                3
-              ],
-              "probability": 0.0276666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                4,
-                3
-              ],
-              "probability": 0.0272666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                4,
-                7
-              ],
-              "probability": 0.0269333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                4,
-                2
-              ],
-              "probability": 0.0267333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                4,
-                7
-              ],
-              "probability": 0.0245333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                7,
-                4
-              ],
-              "probability": 0.024,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                7,
-                4
-              ],
-              "probability": 0.0238,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                3,
-                4
-              ],
-              "probability": 0.0237333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                3,
-                4
-              ],
-              "probability": 0.0228,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                4,
-                2
-              ],
-              "probability": 0.0225333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                2,
-                4
-              ],
-              "probability": 0.022,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                7,
-                3
-              ],
-              "probability": 0.0219333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                7,
-                8
-              ],
-              "probability": 0.0219333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                2,
-                4
-              ],
-              "probability": 0.0214,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                3,
-                8
-              ],
-              "probability": 0.0204666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                7,
-                2
-              ],
-              "probability": 0.0202666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                3,
-                2
-              ],
-              "probability": 0.0195333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                2,
-                3,
-                7
-              ],
-              "probability": 0.0190666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                2,
-                7
-              ],
-              "probability": 0.0189333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                2,
-                8
-              ],
-              "probability": 0.0188,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                4,
-                8
-              ],
-              "probability": 0.0182666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                2,
-                3
-              ],
-              "probability": 0.018,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                3,
-                4,
-                8
-              ],
-              "probability": 0.0172666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                4,
-                8,
-                7
-              ],
-              "probability": 0.0166666667,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
-          ],
-          "race_label": "2024/04/27 2東京3 10R 府中市70周年記念(3勝クラス)",
-          "conditions": {
-            "venue": "東京",
-            "surface": "芝",
-            "distance_m": 2000,
-            "track_condition": "良"
-          },
-          "actual_winner_number": 8,
-          "actual_winner_name": "マイネルケレリウス",
-          "actual_winner_probability": 0.0926666667,
-          "predicted_winner_hit": false,
-          "actual_winner_probability_rank": 5,
-          "brier_score": 1.0340034044
-        },
-        {
-          "race_id": "20240427-2東京3-7",
-          "prediction_basis": "jockey",
-          "samples": 15000,
-          "entries": [
-            {
-              "horse_number": 11,
-              "name": "ヒシルリアン",
-              "jockey_id": "01075",
-              "jockey_name": "騎手 #01075",
-              "mean_speed_mps": 15.8453989687,
-              "std_speed_mps": 0.423644709,
-              "win_probability": 0.1956666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 13.2,
-              "expected_return": 2.5828
-            },
-            {
-              "horse_number": 7,
-              "name": "トレチーメ",
-              "jockey_id": "01179",
-              "jockey_name": "騎手 #01179",
-              "mean_speed_mps": 16.0155206318,
-              "std_speed_mps": 0.4439550061,
-              "win_probability": 0.3489333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 4.3,
-              "expected_return": 1.5004133333
-            },
-            {
-              "horse_number": 8,
-              "name": "カムランベイ",
-              "jockey_id": "01092",
-              "jockey_name": "騎手 #01092",
-              "mean_speed_mps": 15.821307646,
-              "std_speed_mps": 0.4283716245,
-              "win_probability": 0.1820666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 13.3,
-              "expected_return": 2.4214866667
-            },
-            {
-              "horse_number": 9,
-              "name": "ベネロングポイント",
-              "jockey_id": "01184",
-              "jockey_name": "騎手 #01184",
-              "mean_speed_mps": 15.6681249822,
-              "std_speed_mps": 0.4509419414,
-              "win_probability": 0.1120666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 3.6,
-              "expected_return": 0.40344
-            },
-            {
-              "horse_number": 1,
-              "name": "マンダリンボレロ",
-              "jockey_id": "01085",
-              "jockey_name": "騎手 #01085",
-              "mean_speed_mps": 15.7913523703,
-              "std_speed_mps": 0.4240812189,
-              "win_probability": 0.1612666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 48.7,
-              "expected_return": 7.8536866667
+              "horse_number": 16,
+              "name": "カフジエメンタール",
+              "jockey_id": "01157",
+              "jockey_name": "鮫島克駿",
+              "mean_speed_mps": 15.8417615595,
+              "std_speed_mps": 1.748939421,
+              "win_probability": 0.3794666667,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 7.0,
+              "expected_return": 2.6562666667
             }
           ],
           "trio": [
             {
               "selection": [
                 7,
-                8,
-                11
-              ],
-              "probability": 0.1742,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                7,
-                11
-              ],
-              "probability": 0.1559333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                7,
-                8
-              ],
-              "probability": 0.1396,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                9,
-                11
-              ],
-              "probability": 0.1045333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                8,
-                9
-              ],
-              "probability": 0.0946666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                7,
-                9
-              ],
-              "probability": 0.0871333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                8,
-                11
-              ],
-              "probability": 0.0863333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                9,
-                11
-              ],
-              "probability": 0.0578,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                9,
-                11
-              ],
-              "probability": 0.0508666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                8,
-                9
-              ],
-              "probability": 0.0489333333,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "trifecta": [
-            {
-              "selection": [
-                7,
-                11,
-                8
-              ],
-              "probability": 0.0408666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                11,
-                1
-              ],
-              "probability": 0.0384,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                8,
-                11
-              ],
-              "probability": 0.0361333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                1,
-                11
-              ],
-              "probability": 0.0348666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                8,
-                1
-              ],
-              "probability": 0.0332,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                1,
-                8
-              ],
-              "probability": 0.0315333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                7,
-                8
-              ],
-              "probability": 0.0273333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                7,
-                11
-              ],
-              "probability": 0.0269333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                11,
-                9
-              ],
-              "probability": 0.0266,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                7,
-                1
-              ],
-              "probability": 0.0248666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                7,
-                1
-              ],
-              "probability": 0.0234,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                8,
-                9
-              ],
-              "probability": 0.0223333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                8,
-                7
-              ],
-              "probability": 0.0216,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                9,
-                8
-              ],
-              "probability": 0.0216,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                9,
-                11
-              ],
-              "probability": 0.0216,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                7,
-                11
-              ],
-              "probability": 0.0216,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                11,
-                7
-              ],
-              "probability": 0.0213333333,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                1,
-                9
-              ],
-              "probability": 0.021,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                7,
-                9,
-                1
-              ],
-              "probability": 0.0208,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                7,
-                9
-              ],
-              "probability": 0.019,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                7,
-                8
-              ],
-              "probability": 0.0188,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                11,
-                7
-              ],
-              "probability": 0.0184,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                1,
-                7
-              ],
-              "probability": 0.0178,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                8,
-                1
-              ],
-              "probability": 0.0172,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                8,
-                7
-              ],
-              "probability": 0.0168666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                7,
-                9
-              ],
-              "probability": 0.0164,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                1,
-                7
-              ],
-              "probability": 0.0158,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                11,
-                1,
-                8
-              ],
-              "probability": 0.0156,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                1,
-                7,
-                9
-              ],
-              "probability": 0.0144666667,
-              "decimal_odds": null,
-              "expected_return": null
-            },
-            {
-              "selection": [
-                8,
-                1,
-                11
-              ],
-              "probability": 0.0139333333,
-              "decimal_odds": null,
-              "expected_return": null
-            }
-          ],
-          "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
-          ],
-          "race_label": "2024/04/27 2東京3 7R 4歳以上1勝クラス",
-          "conditions": {
-            "venue": "東京",
-            "surface": "ダート",
-            "distance_m": 1600,
-            "track_condition": "稍"
-          },
-          "actual_winner_number": 7,
-          "actual_winner_name": "トレチーメ",
-          "actual_winner_probability": 0.3489333333,
-          "predicted_winner_hit": true,
-          "actual_winner_probability_rank": 1,
-          "brier_score": 0.5338873956
-        },
-        {
-          "race_id": "20240427-2東京3-6",
-          "prediction_basis": "jockey",
-          "samples": 15000,
-          "entries": [
-            {
-              "horse_number": 2,
-              "name": "ワイノナオミ",
-              "jockey_id": "01075",
-              "jockey_name": "騎手 #01075",
-              "mean_speed_mps": 16.9804670457,
-              "std_speed_mps": 0.3456556996,
-              "win_probability": 0.3333333333,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 39.7,
-              "expected_return": 13.2333333333
-            },
-            {
-              "horse_number": 3,
-              "name": "ジュントネフ",
-              "jockey_id": "01077",
-              "jockey_name": "騎手 #01077",
-              "mean_speed_mps": 16.868400994,
-              "std_speed_mps": 0.4089281536,
-              "win_probability": 0.2474666667,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 25.5,
-              "expected_return": 6.3104
-            },
-            {
-              "horse_number": 1,
-              "name": "ダノンキラウェア",
-              "jockey_id": "01092",
-              "jockey_name": "騎手 #01092",
-              "mean_speed_mps": 17.0469806204,
-              "std_speed_mps": 0.3417478417,
-              "win_probability": 0.4192,
-              "model": "gp",
-              "history_count": 40,
-              "decimal_odds": 1.5,
-              "expected_return": 0.6288
-            }
-          ],
-          "trio": [
-            {
-              "selection": [
-                1,
-                2,
-                3
+                14,
+                16
               ],
               "probability": 1.0,
               "decimal_odds": null,
@@ -9620,19 +5631,506 @@
           "trifecta": [
             {
               "selection": [
-                1,
-                2,
-                3
+                16,
+                14,
+                7
               ],
-              "probability": 0.2528666667,
+              "probability": 0.2203333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                14,
+                16,
+                7
+              ],
+              "probability": 0.2028,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                16,
+                7,
+                14
+              ],
+              "probability": 0.1591333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                14,
+                7,
+                16
+              ],
+              "probability": 0.1536,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                7,
+                16,
+                14
+              ],
+              "probability": 0.1338,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                7,
+                14,
+                16
+              ],
+              "probability": 0.1303333333,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "warnings": [
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
+          ],
+          "race_label": "2026/10/18 4東京7 12R 甲斐路S(3勝クラス)",
+          "conditions": {
+            "venue": "東京",
+            "surface": "芝",
+            "distance_m": 1800,
+            "track_condition": "良"
+          },
+          "actual_winner_number": 14,
+          "actual_winner_name": "ベストミーエヴァー",
+          "actual_winner_probability": 0.3564,
+          "predicted_winner_hit": false,
+          "actual_winner_probability_rank": 2,
+          "brier_score": 0.6279823289
+        },
+        {
+          "race_id": "20261018-4東京7-11",
+          "prediction_basis": "jockey",
+          "samples": 15000,
+          "entries": [
+            {
+              "horse_number": 9,
+              "name": "クールミラボー",
+              "jockey_id": "01170",
+              "jockey_name": "横山武史",
+              "mean_speed_mps": 14.7309471292,
+              "std_speed_mps": 1.3975807658,
+              "win_probability": 0.1982666667,
+              "model": "fallback",
+              "history_count": 0,
+              "decimal_odds": 4.6,
+              "expected_return": 0.9120266667
+            },
+            {
+              "horse_number": 6,
+              "name": "ハピ",
+              "jockey_id": "01088",
+              "jockey_name": "川田将雅",
+              "mean_speed_mps": 15.0048756465,
+              "std_speed_mps": 1.2813158298,
+              "win_probability": 0.2506666667,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 3.9,
+              "expected_return": 0.9776
+            },
+            {
+              "horse_number": 3,
+              "name": "ルシュヴァルドール",
+              "jockey_id": "01092",
+              "jockey_name": "津村明秀",
+              "mean_speed_mps": 15.1801660559,
+              "std_speed_mps": 1.2752910862,
+              "win_probability": 0.2958,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 9.8,
+              "expected_return": 2.89884
+            },
+            {
+              "horse_number": 2,
+              "name": "メイプルリッジ",
+              "jockey_id": "01157",
+              "jockey_name": "鮫島克駿",
+              "mean_speed_mps": 15.0422757883,
+              "std_speed_mps": 1.2871155694,
+              "win_probability": 0.2552666667,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 15.1,
+              "expected_return": 3.8545266667
+            }
+          ],
+          "trio": [
+            {
+              "selection": [
+                2,
+                3,
+                6
+              ],
+              "probability": 0.3302666667,
               "decimal_odds": null,
               "expected_return": null
             },
             {
               "selection": [
                 2,
-                1,
+                3,
+                9
+              ],
+              "probability": 0.2472,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                3,
+                6,
+                9
+              ],
+              "probability": 0.2307333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                2,
+                6,
+                9
+              ],
+              "probability": 0.1918,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "trifecta": [
+            {
+              "selection": [
+                3,
+                2,
+                6
+              ],
+              "probability": 0.0594666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                3,
+                6,
+                2
+              ],
+              "probability": 0.0594,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                2,
+                3,
+                6
+              ],
+              "probability": 0.0562666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                6,
+                3,
+                2
+              ],
+              "probability": 0.0534666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                6,
+                2,
                 3
+              ],
+              "probability": 0.0519333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                2,
+                6,
+                3
+              ],
+              "probability": 0.0497333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                3,
+                2,
+                9
+              ],
+              "probability": 0.0489333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                3,
+                6,
+                9
+              ],
+              "probability": 0.0456,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                6,
+                3,
+                9
+              ],
+              "probability": 0.0444,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                3,
+                9,
+                2
+              ],
+              "probability": 0.0435333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                2,
+                3,
+                9
+              ],
+              "probability": 0.0429333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                3,
+                9,
+                6
+              ],
+              "probability": 0.0388666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                2,
+                9,
+                3
+              ],
+              "probability": 0.0381333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                3,
+                6
+              ],
+              "probability": 0.0377333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                3,
+                2
+              ],
+              "probability": 0.0376,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                2,
+                6,
+                9
+              ],
+              "probability": 0.0366666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                2,
+                3
+              ],
+              "probability": 0.0360666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                6,
+                2,
+                9
+              ],
+              "probability": 0.0359333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                6,
+                9,
+                3
+              ],
+              "probability": 0.0337333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                2,
+                9,
+                6
+              ],
+              "probability": 0.0315333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                6,
+                9,
+                2
+              ],
+              "probability": 0.0312,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                6,
+                3
+              ],
+              "probability": 0.0304,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                2,
+                6
+              ],
+              "probability": 0.0297333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                6,
+                2
+              ],
+              "probability": 0.0267333333,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "warnings": [
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
+          ],
+          "race_label": "2026/10/18 4東京7 11R ブラジルC(L)",
+          "conditions": {
+            "venue": "東京",
+            "surface": "ダート",
+            "distance_m": 2100,
+            "track_condition": "良"
+          },
+          "actual_winner_number": 9,
+          "actual_winner_name": "クールミラボー",
+          "actual_winner_probability": 0.1982666667,
+          "predicted_winner_hit": false,
+          "actual_winner_probability_rank": 4,
+          "brier_score": 0.8582688267
+        },
+        {
+          "race_id": "20261018-4東京7-6",
+          "prediction_basis": "jockey",
+          "samples": 15000,
+          "entries": [
+            {
+              "horse_number": 6,
+              "name": "ルースソラール",
+              "jockey_id": "01170",
+              "jockey_name": "横山武史",
+              "mean_speed_mps": 15.5342498366,
+              "std_speed_mps": 1.873948959,
+              "win_probability": 0.2587333333,
+              "model": "fallback",
+              "history_count": 0,
+              "decimal_odds": 4.7,
+              "expected_return": 1.2160466667
+            },
+            {
+              "horse_number": 5,
+              "name": "タクティシアン",
+              "jockey_id": "01088",
+              "jockey_name": "川田将雅",
+              "mean_speed_mps": 16.0526366619,
+              "std_speed_mps": 1.7995711806,
+              "win_probability": 0.3756666667,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 3.5,
+              "expected_return": 1.3148333333
+            },
+            {
+              "horse_number": 7,
+              "name": "ボーデコール",
+              "jockey_id": "01092",
+              "jockey_name": "津村明秀",
+              "mean_speed_mps": 16.0258196048,
+              "std_speed_mps": 1.7800243926,
+              "win_probability": 0.3656,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 2.0,
+              "expected_return": 0.7312
+            }
+          ],
+          "trio": [
+            {
+              "selection": [
+                5,
+                6,
+                7
+              ],
+              "probability": 1.0,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "trifecta": [
+            {
+              "selection": [
+                5,
+                7,
+                6
               ],
               "probability": 0.2140666667,
               "decimal_odds": null,
@@ -9640,19 +6138,587 @@
             },
             {
               "selection": [
-                1,
-                3,
-                2
+                7,
+                5,
+                6
               ],
-              "probability": 0.1663333333,
+              "probability": 0.205,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                5,
+                6,
+                7
+              ],
+              "probability": 0.1616,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                7,
+                6,
+                5
+              ],
+              "probability": 0.1606,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                6,
+                7,
+                5
+              ],
+              "probability": 0.1301333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                6,
+                5,
+                7
+              ],
+              "probability": 0.1286,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "warnings": [
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
+          ],
+          "race_label": "2026/10/18 4東京7 6R 2歳1勝クラス",
+          "conditions": {
+            "venue": "東京",
+            "surface": "芝",
+            "distance_m": 1400,
+            "track_condition": "良"
+          },
+          "actual_winner_number": 7,
+          "actual_winner_name": "ボーデコール",
+          "actual_winner_probability": 0.3656,
+          "predicted_winner_hit": false,
+          "actual_winner_probability_rank": 2,
+          "brier_score": 0.6105317422
+        },
+        {
+          "race_id": "20261018-4東京7-5",
+          "prediction_basis": "jockey",
+          "samples": 15000,
+          "entries": [
+            {
+              "horse_number": 1,
+              "name": "スイープラディウス",
+              "jockey_id": "01088",
+              "jockey_name": "川田将雅",
+              "mean_speed_mps": 15.6125211456,
+              "std_speed_mps": 1.2883873625,
+              "win_probability": 0.3158,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 4.0,
+              "expected_return": 1.2632
+            },
+            {
+              "horse_number": 4,
+              "name": "ユメノカケラ",
+              "jockey_id": "01092",
+              "jockey_name": "津村明秀",
+              "mean_speed_mps": 15.787811555,
+              "std_speed_mps": 1.2823958417,
+              "win_probability": 0.3642,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 1.5,
+              "expected_return": 0.5463
+            },
+            {
+              "horse_number": 8,
+              "name": "マジックパール",
+              "jockey_id": "01157",
+              "jockey_name": "鮫島克駿",
+              "mean_speed_mps": 15.6499212874,
+              "std_speed_mps": 1.2941554116,
+              "win_probability": 0.32,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 17.7,
+              "expected_return": 5.664
+            }
+          ],
+          "trio": [
+            {
+              "selection": [
+                1,
+                4,
+                8
+              ],
+              "probability": 1.0,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "trifecta": [
+            {
+              "selection": [
+                4,
+                8,
+                1
+              ],
+              "probability": 0.1847333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                4,
+                1,
+                8
+              ],
+              "probability": 0.1794666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                8,
+                4,
+                1
+              ],
+              "probability": 0.1714,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                1,
+                4,
+                8
+              ],
+              "probability": 0.1678666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                8,
+                1,
+                4
+              ],
+              "probability": 0.1486,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                1,
+                8,
+                4
+              ],
+              "probability": 0.1479333333,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "warnings": [
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
+          ],
+          "race_label": "2026/10/18 4東京7 5R 2歳新馬",
+          "conditions": {
+            "venue": "東京",
+            "surface": "芝",
+            "distance_m": 2000,
+            "track_condition": "良"
+          },
+          "actual_winner_number": 4,
+          "actual_winner_name": "ユメノカケラ",
+          "actual_winner_probability": 0.3642,
+          "predicted_winner_hit": true,
+          "actual_winner_probability_rank": 1,
+          "brier_score": 0.60637128
+        },
+        {
+          "race_id": "20261018-4東京7-3",
+          "prediction_basis": "jockey",
+          "samples": 15000,
+          "entries": [
+            {
+              "horse_number": 1,
+              "name": "シドニーハーバー",
+              "jockey_id": "01170",
+              "jockey_name": "横山武史",
+              "mean_speed_mps": 15.4188376371,
+              "std_speed_mps": 1.8770995745,
+              "win_probability": 0.2629333333,
+              "model": "fallback",
+              "history_count": 0,
+              "decimal_odds": 1.8,
+              "expected_return": 0.47328
+            },
+            {
+              "horse_number": 7,
+              "name": "アウアリイ",
+              "jockey_id": "01092",
+              "jockey_name": "津村明秀",
+              "mean_speed_mps": 15.8967113352,
+              "std_speed_mps": 1.783101162,
+              "win_probability": 0.3554,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 3.0,
+              "expected_return": 1.0662
+            },
+            {
+              "horse_number": 10,
+              "name": "アマリス",
+              "jockey_id": "01157",
+              "jockey_name": "鮫島克駿",
+              "mean_speed_mps": 15.9548093634,
+              "std_speed_mps": 1.8100286748,
+              "win_probability": 0.3816666667,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 217.8,
+              "expected_return": 83.127
+            }
+          ],
+          "trio": [
+            {
+              "selection": [
+                1,
+                7,
+                10
+              ],
+              "probability": 1.0,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "trifecta": [
+            {
+              "selection": [
+                10,
+                7,
+                1
+              ],
+              "probability": 0.2160666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                7,
+                10,
+                1
+              ],
+              "probability": 0.207,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                10,
+                1,
+                7
+              ],
+              "probability": 0.1656,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                7,
+                1,
+                10
+              ],
+              "probability": 0.1484,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                1,
+                7,
+                10
+              ],
+              "probability": 0.1326,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                1,
+                10,
+                7
+              ],
+              "probability": 0.1303333333,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "warnings": [
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
+          ],
+          "race_label": "2026/10/18 4東京7 3R 2歳未勝利",
+          "conditions": {
+            "venue": "東京",
+            "surface": "芝",
+            "distance_m": 1400,
+            "track_condition": "良"
+          },
+          "actual_winner_number": 1,
+          "actual_winner_name": "シドニーハーバー",
+          "actual_winner_probability": 0.2629333333,
+          "predicted_winner_hit": false,
+          "actual_winner_probability_rank": 3,
+          "brier_score": 0.8152458756
+        },
+        {
+          "race_id": "20261018-4東京7-2",
+          "prediction_basis": "jockey",
+          "samples": 15000,
+          "entries": [
+            {
+              "horse_number": 9,
+              "name": "ティアラード",
+              "jockey_id": "01170",
+              "jockey_name": "横山武史",
+              "mean_speed_mps": 15.405579076,
+              "std_speed_mps": 1.8243887452,
+              "win_probability": 0.2668666667,
+              "model": "fallback",
+              "history_count": 0,
+              "decimal_odds": 2.1,
+              "expected_return": 0.56042
+            },
+            {
+              "horse_number": 3,
+              "name": "エピックジャーニー",
+              "jockey_id": "01088",
+              "jockey_name": "川田将雅",
+              "mean_speed_mps": 15.9239659013,
+              "std_speed_mps": 1.7479033231,
+              "win_probability": 0.3718666667,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 2.5,
+              "expected_return": 0.9296666667
+            },
+            {
+              "horse_number": 10,
+              "name": "ヴェントリナ",
+              "jockey_id": "01092",
+              "jockey_name": "津村明秀",
+              "mean_speed_mps": 15.8971488442,
+              "std_speed_mps": 1.7277721005,
+              "win_probability": 0.3612666667,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 3.5,
+              "expected_return": 1.2644333333
+            }
+          ],
+          "trio": [
+            {
+              "selection": [
+                3,
+                9,
+                10
+              ],
+              "probability": 1.0,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "trifecta": [
+            {
+              "selection": [
+                3,
+                10,
+                9
+              ],
+              "probability": 0.209,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                10,
+                3,
+                9
+              ],
+              "probability": 0.2051333333,
               "decimal_odds": null,
               "expected_return": null
             },
             {
               "selection": [
                 3,
-                1,
-                2
+                9,
+                10
+              ],
+              "probability": 0.1628666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                10,
+                9,
+                3
+              ],
+              "probability": 0.1561333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                10,
+                3
+              ],
+              "probability": 0.1368,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                3,
+                10
+              ],
+              "probability": 0.1300666667,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "warnings": [
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
+          ],
+          "race_label": "2026/10/18 4東京7 2R 2歳未勝利",
+          "conditions": {
+            "venue": "東京",
+            "surface": "芝",
+            "distance_m": 1600,
+            "track_condition": "良"
+          },
+          "actual_winner_number": 9,
+          "actual_winner_name": "ティアラード",
+          "actual_winner_probability": 0.2668666667,
+          "predicted_winner_hit": false,
+          "actual_winner_probability_rank": 3,
+          "brier_score": 0.8062829067
+        },
+        {
+          "race_id": "20261018-4東京7-1",
+          "prediction_basis": "jockey",
+          "samples": 15000,
+          "entries": [
+            {
+              "horse_number": 10,
+              "name": "ツーハーツ",
+              "jockey_id": "01170",
+              "jockey_name": "横山武史",
+              "mean_speed_mps": 11.1544503634,
+              "std_speed_mps": 1.7982115084,
+              "win_probability": 0.2696666667,
+              "model": "fallback",
+              "history_count": 0,
+              "decimal_odds": 5.7,
+              "expected_return": 1.5371
+            },
+            {
+              "horse_number": 3,
+              "name": "コナパームス",
+              "jockey_id": "01088",
+              "jockey_name": "川田将雅",
+              "mean_speed_mps": 11.5432576505,
+              "std_speed_mps": 1.709155253,
+              "win_probability": 0.3519333333,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 1.9,
+              "expected_return": 0.6686733333
+            },
+            {
+              "horse_number": 11,
+              "name": "レッドレヴェリー",
+              "jockey_id": "01157",
+              "jockey_name": "鮫島克駿",
+              "mean_speed_mps": 11.6387592463,
+              "std_speed_mps": 1.7001639054,
+              "win_probability": 0.3784,
+              "model": "fallback",
+              "history_count": 2,
+              "decimal_odds": 15.5,
+              "expected_return": 5.8652
+            }
+          ],
+          "trio": [
+            {
+              "selection": [
+                3,
+                10,
+                11
+              ],
+              "probability": 1.0,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "trifecta": [
+            {
+              "selection": [
+                11,
+                3,
+                10
+              ],
+              "probability": 0.2105333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                3,
+                11,
+                10
+              ],
+              "probability": 0.1993333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                11,
+                10,
+                3
+              ],
+              "probability": 0.1678666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                3,
+                10,
+                11
+              ],
+              "probability": 0.1526,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                10,
+                11,
+                3
               ],
               "probability": 0.1350666667,
               "decimal_odds": null,
@@ -9660,41 +6726,443 @@
             },
             {
               "selection": [
-                2,
+                10,
+                3,
+                11
+              ],
+              "probability": 0.1346,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "warnings": [
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
+          ],
+          "race_label": "2026/10/18 4東京7 1R 2歳未勝利",
+          "conditions": {
+            "venue": "東京",
+            "surface": "ダート",
+            "distance_m": 1400,
+            "track_condition": "良"
+          },
+          "actual_winner_number": 11,
+          "actual_winner_name": "レッドレヴェリー",
+          "actual_winner_probability": 0.3784,
+          "predicted_winner_hit": true,
+          "actual_winner_probability_rank": 1,
+          "brier_score": 0.5829637422
+        },
+        {
+          "race_id": "20261018-4新潟2-11",
+          "prediction_basis": "jockey",
+          "samples": 15000,
+          "entries": [
+            {
+              "horse_number": 1,
+              "name": "ウインデイジー",
+              "jockey_id": "01091",
+              "jockey_name": "丹内祐次",
+              "mean_speed_mps": 15.3030304943,
+              "std_speed_mps": 1.196929163,
+              "win_probability": 0.3338666667,
+              "model": "fallback",
+              "history_count": 1,
+              "decimal_odds": 10.2,
+              "expected_return": 3.40544
+            },
+            {
+              "horse_number": 4,
+              "name": "ヴェルミセル",
+              "jockey_id": "01178",
+              "jockey_name": "斎藤新",
+              "mean_speed_mps": 15.4598803892,
+              "std_speed_mps": 0.9042566569,
+              "win_probability": 0.3607333333,
+              "model": "gp",
+              "history_count": 3,
+              "decimal_odds": 16.6,
+              "expected_return": 5.9881733333
+            },
+            {
+              "horse_number": 3,
+              "name": "シャドウメテオ",
+              "jockey_id": "01122",
+              "jockey_name": "三浦皇成",
+              "mean_speed_mps": 15.3439737551,
+              "std_speed_mps": 0.9128405182,
+              "win_probability": 0.3054,
+              "model": "gp",
+              "history_count": 4,
+              "decimal_odds": 2.8,
+              "expected_return": 0.85512
+            }
+          ],
+          "trio": [
+            {
+              "selection": [
+                1,
+                3,
+                4
+              ],
+              "probability": 1.0,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "trifecta": [
+            {
+              "selection": [
+                4,
                 3,
                 1
               ],
-              "probability": 0.1192666667,
+              "probability": 0.2051333333,
               "decimal_odds": null,
               "expected_return": null
             },
             {
               "selection": [
                 3,
-                2,
+                4,
                 1
               ],
-              "probability": 0.1124,
+              "probability": 0.1818666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                1,
+                4,
+                3
+              ],
+              "probability": 0.1778,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                1,
+                3,
+                4
+              ],
+              "probability": 0.1560666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                4,
+                1,
+                3
+              ],
+              "probability": 0.1556,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                3,
+                1,
+                4
+              ],
+              "probability": 0.1235333333,
               "decimal_odds": null,
               "expected_return": null
             }
           ],
           "warnings": [
-            "予測は娯楽・研究用途です。利益を保証しません。"
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
           ],
-          "race_label": "2024/04/27 2東京3 6R 3歳1勝クラス",
+          "race_label": "2026/10/18 4新潟2 11R 新潟牝馬S(L)",
           "conditions": {
-            "venue": "東京",
+            "venue": "新潟",
+            "surface": "芝",
+            "distance_m": 2200,
+            "track_condition": "良"
+          },
+          "actual_winner_number": 3,
+          "actual_winner_name": "シャドウメテオ",
+          "actual_winner_probability": 0.3054,
+          "predicted_winner_hit": false,
+          "actual_winner_probability_rank": 3,
+          "brier_score": 0.7240646489
+        },
+        {
+          "race_id": "20261018-4新潟2-9",
+          "prediction_basis": "jockey",
+          "samples": 15000,
+          "entries": [
+            {
+              "horse_number": 13,
+              "name": "マイネルクオリア",
+              "jockey_id": "01091",
+              "jockey_name": "丹内祐次",
+              "mean_speed_mps": 15.610225057,
+              "std_speed_mps": 1.1650839854,
+              "win_probability": 0.3094,
+              "model": "fallback",
+              "history_count": 1,
+              "decimal_odds": 18.0,
+              "expected_return": 5.5692
+            },
+            {
+              "horse_number": 6,
+              "name": "ショウグンマサムネ",
+              "jockey_id": "01178",
+              "jockey_name": "斎藤新",
+              "mean_speed_mps": 15.8748805093,
+              "std_speed_mps": 0.8525173899,
+              "win_probability": 0.3890666667,
+              "model": "gp",
+              "history_count": 3,
+              "decimal_odds": 4.2,
+              "expected_return": 1.63408
+            },
+            {
+              "horse_number": 1,
+              "name": "アナザーフェイス",
+              "jockey_id": "01122",
+              "jockey_name": "三浦皇成",
+              "mean_speed_mps": 15.7139899319,
+              "std_speed_mps": 0.86827663,
+              "win_probability": 0.3015333333,
+              "model": "gp",
+              "history_count": 4,
+              "decimal_odds": 2.4,
+              "expected_return": 0.72368
+            }
+          ],
+          "trio": [
+            {
+              "selection": [
+                1,
+                6,
+                13
+              ],
+              "probability": 1.0,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "trifecta": [
+            {
+              "selection": [
+                6,
+                1,
+                13
+              ],
+              "probability": 0.2252666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                1,
+                6,
+                13
+              ],
+              "probability": 0.1869333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                13,
+                6,
+                1
+              ],
+              "probability": 0.1706666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                6,
+                13,
+                1
+              ],
+              "probability": 0.1638,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                13,
+                1,
+                6
+              ],
+              "probability": 0.1387333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                1,
+                13,
+                6
+              ],
+              "probability": 0.1146,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "warnings": [
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
+          ],
+          "race_label": "2026/10/18 4新潟2 9R 松浜特別(1勝クラス)",
+          "conditions": {
+            "venue": "新潟",
+            "surface": "芝",
+            "distance_m": 2000,
+            "track_condition": "良"
+          },
+          "actual_winner_number": 1,
+          "actual_winner_name": "アナザーフェイス",
+          "actual_winner_probability": 0.3015333333,
+          "predicted_winner_hit": false,
+          "actual_winner_probability_rank": 3,
+          "brier_score": 0.7349569156
+        },
+        {
+          "race_id": "20261018-4新潟2-5",
+          "prediction_basis": "jockey",
+          "samples": 15000,
+          "entries": [
+            {
+              "horse_number": 9,
+              "name": "ストルワート",
+              "jockey_id": "01091",
+              "jockey_name": "丹内祐次",
+              "mean_speed_mps": 16.2246141825,
+              "std_speed_mps": 1.1289574698,
+              "win_probability": 0.2874,
+              "model": "fallback",
+              "history_count": 1,
+              "decimal_odds": 12.2,
+              "expected_return": 3.50628
+            },
+            {
+              "horse_number": 11,
+              "name": "ワンダフルワールド",
+              "jockey_id": "01178",
+              "jockey_name": "斎藤新",
+              "mean_speed_mps": 16.6147833247,
+              "std_speed_mps": 0.7905854698,
+              "win_probability": 0.417,
+              "model": "gp",
+              "history_count": 3,
+              "decimal_odds": 3.5,
+              "expected_return": 1.4595
+            },
+            {
+              "horse_number": 14,
+              "name": "シヴィリティ",
+              "jockey_id": "01122",
+              "jockey_name": "三浦皇成",
+              "mean_speed_mps": 16.3850069933,
+              "std_speed_mps": 0.8174332217,
+              "win_probability": 0.2956,
+              "model": "gp",
+              "history_count": 4,
+              "decimal_odds": 5.8,
+              "expected_return": 1.71448
+            }
+          ],
+          "trio": [
+            {
+              "selection": [
+                9,
+                11,
+                14
+              ],
+              "probability": 1.0,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "trifecta": [
+            {
+              "selection": [
+                11,
+                14,
+                9
+              ],
+              "probability": 0.2507333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                14,
+                11,
+                9
+              ],
+              "probability": 0.192,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                11,
+                9,
+                14
+              ],
+              "probability": 0.1662666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                11,
+                14
+              ],
+              "probability": 0.1628666667,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                9,
+                14,
+                11
+              ],
+              "probability": 0.1245333333,
+              "decimal_odds": null,
+              "expected_return": null
+            },
+            {
+              "selection": [
+                14,
+                9,
+                11
+              ],
+              "probability": 0.1036,
+              "decimal_odds": null,
+              "expected_return": null
+            }
+          ],
+          "warnings": [
+            "予測は娯楽・研究用途です。利益を保証しません。",
+            "過去3走未満の馬には縮約フォールバックを使用しています。"
+          ],
+          "race_label": "2026/10/18 4新潟2 5R 2歳新馬",
+          "conditions": {
+            "venue": "新潟",
             "surface": "芝",
             "distance_m": 1600,
             "track_condition": "良"
           },
-          "actual_winner_number": 1,
-          "actual_winner_name": "ダノンキラウェア",
-          "actual_winner_probability": 0.4192,
+          "actual_winner_number": 11,
+          "actual_winner_name": "ワンダフルワールド",
+          "actual_winner_probability": 0.417,
           "predicted_winner_hit": true,
           "actual_winner_probability_rank": 1,
-          "brier_score": 0.5096795022
+          "brier_score": 0.50986712
         }
       ]
     }

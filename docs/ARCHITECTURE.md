@@ -14,4 +14,4 @@
 
 ## 静的検証デモ
 
-`scripts/generate_demo.py` は `data/UMA_DB.csv` と `data/Jockey_DB_EL.csv` の日付末尾から最大10レースを検証用に取り分けます。各レースの予測時には、そのレース日より前の履歴だけを使います。GUIの検証レース数は、この時系列末尾から何レースを集計するかを変更します。指標は1位的中率と多クラスBrier scoreです。
+`scripts/generate_demo.py` は `data/UMA_DB.csv` と `data/Jockey_DB.csv` の日付末尾から最大10レースを検証用に取り分けます。各レースの予測時には、そのレース日より前の履歴だけを使います。GUIの検証レース数は、この時系列末尾から何レースを集計するかを変更します。指標は1位的中率と多クラスBrier scoreです。

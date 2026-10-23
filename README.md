@@ -56,7 +56,7 @@ python src/makeCSV.py --type 3 --number 20 --upperbound 1000
 
 `POST /api/predict` の完全な入力例は `web/demo-race.json` にあります。オッズは `{"bet_type":"trifecta","selection":[1,2,3],"decimal_odds":72.5}` のように券種と買い目を明示します。
 
-`prediction_basis` は `horse`（馬基準）または `jockey`（ジョッキー基準）です。後者では各出走馬に `jockey_id` が必要です。静的デモは `data/UMA_DB.csv` と `data/Jockey_DB_EL.csv` から `scripts/generate_demo.py` で生成されます。ジョッキーCSVには騎手名対応表がないため、画面では騎手IDを表示します。
+`prediction_basis` は `horse`（馬基準）または `jockey`（ジョッキー基準）です。後者では各出走馬に `jockey_id` が必要です。静的デモは `data/UMA_DB.csv` と `data/Jockey_DB.csv` から `scripts/generate_demo.py` で生成されます。`Jockey_DB.csv` の `騎手` 列がある場合は画面にも騎手名を表示し、空欄の場合だけ騎手IDへフォールバックします。
 
 ## GitHub Pages
 

@@ -11,7 +11,7 @@ ROOT = Path(__file__).parent.parent
 
 @pytest.mark.parametrize(
     ("filename", "basis"),
-    [("UMA_DB.csv", "horse"), ("Jockey_DB_EL.csv", "jockey")],
+    [("UMA_DB.csv", "horse"), ("Jockey_DB.csv", "jockey")],
 )
 def test_csv_validation_mode_is_chronological_and_uses_requested_basis(filename, basis):
     mode = build_validation_mode(ROOT / "data" / filename, basis, max_races=2, samples=2_000)

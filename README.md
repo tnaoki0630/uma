@@ -26,12 +26,15 @@ docker compose up --build
 Pythonで直接起動する場合:
 
 ```bash
-python -m venv .venv
+python3.13 -m venv .venv
 source .venv/bin/activate
-pip install -e '.[dev]'
+python -m pip install --upgrade pip
+python -m pip install -e '.[dev]'
 uvicorn uma_api.main:app --reload
 pytest -q
 ```
+
+Python 3.13系を使用します（`.python-version`、CI、Dockerで統一）。仮想環境を終了する場合は `deactivate`、作り直す場合は `.venv` を削除して上記手順を再実行してください。
 
 ## CSVデータの生成
 

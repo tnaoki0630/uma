@@ -26,16 +26,37 @@ docker compose up --build
 Pythonで直接起動する場合:
 
 ```bash
-python -m venv .venv
+python3.13 -m venv .venv
 source .venv/bin/activate
-pip install -e '.[dev]'
+python -m pip install --upgrade pip
+python -m pip install -e '.[dev]'
 uvicorn uma_api.main:app --reload
 pytest -q
 ```
 
+Python 3.13系を使用します（`.python-version`、CI、Dockerで統一）。仮想環境を終了する場合は `deactivate`、作り直す場合は `.venv` を削除して上記手順を再実行してください。
+
+## CSVデータの生成
+
+既存の指定レース方式はそのまま利用できます。
+
+```bash
+# 指定レースの出走騎手から Jockey_DB_EL.csv を生成
+python src/makeCSV.py --type 2 --upperbound 1000
+```
+
+JRA騎手リーディングの上位から取得する場合は、新しい `--type 3` を使います。
+
+```bash
+# リーディング上位20騎手、各騎手最大1000走を Jockey_DB.csv へ保存
+python src/makeCSV.py --type 3 --number 20 --upperbound 1000
+```
+
+`--upperbound -1` は各騎手の全ページを対象にします。結果ページ間には既定で1秒の待機を入れ、`--interval 2.0` のように変更できます。HTTP 400が返った場合はアクセスが一時的に制限されている可能性があるため、実行を止めて時間を空けてください。大量アクセスになるため、対象サイトの利用規約を確認し、まず小さい `--number` と `--upperbound` で実行してください。スクレイピング機能だけを導入する場合は `pip install -e '.[scrape]'` を利用できます。
+
 `POST /api/predict` の完全な入力例は `web/demo-race.json` にあります。オッズは `{"bet_type":"trifecta","selection":[1,2,3],"decimal_odds":72.5}` のように券種と買い目を明示します。
 
-`prediction_basis` は `horse`（馬基準）または `jockey`（ジョッキー基準）です。後者では各出走馬に `jockey_id` が必要です。静的デモは `data/UMA_DB.csv` と `data/Jockey_DB_EL.csv` から `scripts/generate_demo.py` で生成されます。ジョッキーCSVには騎手名対応表がないため、画面では騎手IDを表示します。
+`prediction_basis` は `horse`（馬基準）または `jockey`（ジョッキー基準）です。後者では各出走馬に `jockey_id` が必要です。静的デモは `data/UMA_DB.csv` と `data/Jockey_DB.csv` から `scripts/generate_demo.py` で生成されます。`Jockey_DB.csv` の `騎手` 列がある場合は画面にも騎手名を表示し、空欄の場合だけ騎手IDへフォールバックします。
 
 ## GitHub Pages
 

@@ -3,68 +3,181 @@ from bs4 import BeautifulSoup
 import csv
 import re
 import argparse
+import time
+from datetime import date
+from io import StringIO
 import pandas as pd
 from pandas import plotting
 
+JOCKEY_HITCHART_URL = (
+    "https://db.sp.netkeiba.com/"
+    "?pid=api_get_leading&input=UTF-8&output=jsonp&limit=100"
+    f"&category=jockey&page=1&show=leading_detail&bel=&year={date.today().year}&sort_key=win"
+)
+HORSE_HITCHART_URL = (
+    "https://db.sp.netkeiba.com/"
+    "?pid=api_get_horse_ranking3&input=UTF-8&output=jsonp"
+    "&limit=100&page=1&hr=ninki&sort=daily"
+)
+HTTP_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (compatible; UmaResearch/1.0)",
+    "Accept-Language": "ja,en;q=0.8",
+}
+
+
 ###
-def scrape_hitchart(url):
+def extract_hitchart_ids(html, entity_type="horse"):
+    """Extract unique horse or jockey IDs from a ranking page, preserving order."""
+    if entity_type not in {"horse", "jockey"}:
+        raise ValueError("entity_type must be 'horse' or 'jockey'")
+    if isinstance(html, bytes):
+        soup = BeautifulSoup(html, 'html.parser', from_encoding='EUC-JP')
+    else:
+        soup = BeautifulSoup(html, 'html.parser')
+    patterns = {
+        "horse": [r'/horse/(?:result/)?(\d{10})(?:/|$)', r'\b(\d{10})\b'],
+        "jockey": [
+            r'/jockey/(?:result/recent/)?(\d{5})(?:/|$)',
+            r'[?&]id=(\d{5})(?:&|$)',
+        ],
+    }
+    ids = []
+    seen = set()
+    for anchor in soup.find_all('a', href=True):
+        href = anchor.get('href', '')
+        match = next((re.search(pattern, href) for pattern in patterns[entity_type]
+                      if re.search(pattern, href)), None)
+        if match and match.group(1) not in seen:
+            seen.add(match.group(1))
+            ids.append(match.group(1))
+    # The current horse ranking endpoint returns HTML inside a JSONP string, so
+    # links are escaped and are not represented as anchor nodes until JavaScript runs.
+    raw_html = html.decode("utf-8", errors="replace") if isinstance(html, bytes) else str(html)
+    normalized_html = raw_html.replace(r"\/", "/")
+    for pattern in patterns[entity_type]:
+        for value in re.findall(pattern, normalized_html):
+            if value not in seen:
+                seen.add(value)
+                ids.append(value)
+    return [int(value) for value in ids] if entity_type == "horse" else ids
+
+
+def scrape_hitchart(url, entity_type="horse"):
     # HTTP GETリクエストを送信してHTMLを取得
-    response = requests.get(url)
+    response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
 
     # エラーハンドリング
     if response.status_code != 200:
         print(f"Error: {response.status_code}")
         return None
-    
-    # エンコーディングを取得
-    # detected_encoding = chardet.detect(response.content)['encoding']
-    detected_encoding = 'EUC-JP'
 
-    # BeautifulSoupを使ってHTMLを解析
-    soup = BeautifulSoup(response.content, 'html.parser', from_encoding=detected_encoding)
-
-    # 成績表のデータを取得（この例では表のデータがtableタグ内にあると仮定）
-    tables = soup.find_all('table')
-
-    # テーブルが見つからない場合
-    if not tables:
-        print("Table not found")
+    ids = extract_hitchart_ids(response.content, entity_type)
+    if not ids:
+        print("Entity links not found")
         return None
+    return ids
 
-    # initialize
-    arr = []
-    # loop for table
-    for table in tables:
-        # テーブルの各行を取得
-        rows = table.find_all('tr')
 
-        # 行ごとにデータを配列に追加
-        for row in rows:
-            ## 各セルのデータを取得
-            cells = row.find_all('td')
-            #row_data = [cell.get_text(strip=True) for cell in cells]
-            ## <a> タグの href 属性の値を取得
-            for cell in cells:
-                ## 空の行は無視する
-                if cell:
-                    anchor_tag = cell.find('a')
-                    if anchor_tag:
-                        href_value = anchor_tag.get('href')
-                        # IDを抽出
-                        match = re.search(r'\b\d{10}\b', href_value)
-                        if match:
-                            arr.append(int(match.group()))
-    return arr
+def read_result_table(url):
+    """Fetch the first result table using the headers required by netkeiba."""
+    response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
+    response.raise_for_status()
+    response.encoding = "EUC-JP"
+    tables = pd.read_html(StringIO(response.text))
+    if not tables:
+        raise ValueError(f"Result table not found: {url}")
+    return tables[0]
+
+
+def extract_jockey_name(html):
+    """Extract a jockey's display name from a jockey result page."""
+    soup = BeautifulSoup(html, "html.parser")
+    if soup.title:
+        title = soup.title.get_text(" ", strip=True)
+        if "の騎手成績" in title:
+            return title.split("の騎手成績", 1)[0].strip()
+    headings = soup.select(".db_head_name h1, h1")
+    for heading in headings:
+        name = heading.get_text(" ", strip=True).split("(", 1)[0].strip()
+        if name:
+            return name
+    return None
+
+
+def collect_jockey_results(
+    ids,
+    upperbound=1000,
+    read_html=None,
+    jockey_names=None,
+    request_interval=1.0,
+):
+    """Collect recent-result tables for jockey IDs with pagination safeguards."""
+    jockey_names = jockey_names or {}
+    jockey_frames = []
+    request_count = 0
+    for jockey_id in ids:
+        jockey_name = jockey_names.get(str(jockey_id).zfill(5))
+        pages = []
+        seen_pages = set()
+        page = 1
+        while True:
+            url = f"https://db.netkeiba.com/jockey/result/recent/{jockey_id}/?page={page}"
+            try:
+                if read_html is None:
+                    if request_count and request_interval > 0:
+                        time.sleep(request_interval)
+                    response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
+                    request_count += 1
+                    if response.status_code == 400:
+                        raise RuntimeError(
+                            "netkeiba returned HTTP 400. Access may be temporarily restricted; "
+                            "stop requests and retry later."
+                        )
+                    response.raise_for_status()
+                    response.encoding = 'EUC-JP'
+                    jockey_name = jockey_name or extract_jockey_name(response.text)
+                    tables = pd.read_html(StringIO(response.text))
+                else:
+                    tables = read_html(url, encoding='euc-jp')
+                frame = tables[0]
+            except (requests.RequestException, ValueError, IndexError):
+                break
+            if frame.empty:
+                break
+            fingerprint = tuple(map(str, frame.iloc[0].tolist()))
+            if fingerprint in seen_pages:
+                print(f"Warning: repeated page for jockey {jockey_id}; stop at page {page}")
+                break
+            seen_pages.add(fingerprint)
+            frame.insert(0, 'ID', str(jockey_id).zfill(5))
+            if jockey_name:
+                frame['騎手'] = jockey_name
+            elif '騎手' not in frame.columns:
+                frame['騎手'] = pd.NA
+            pages.append(frame)
+            if upperbound > 0 and sum(len(item) for item in pages) >= upperbound:
+                break
+            page += 1
+        if not pages:
+            print(f"Warning: no result table for jockey {jockey_id}")
+            continue
+        jockey_frame = pd.concat(pages, ignore_index=True)
+        if upperbound > 0:
+            jockey_frame = jockey_frame.head(upperbound)
+        jockey_frames.append(jockey_frame)
+    if not jockey_frames:
+        raise RuntimeError("No jockey result tables were collected")
+    return pd.concat(jockey_frames, ignore_index=True)
 ###
 def scrape_entrylist(url, BOOL_Jockey=False):
     # HTTP GETリクエストを送信してHTMLを取得
-    response = requests.get(url)
+    response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
 
     # エラーハンドリング
     if response.status_code != 200:
         print(f"Error: {response.status_code}")
         return None
-    
+
     # エンコーディングを取得
     # detected_encoding = chardet.detect(response.content)['encoding']
     detected_encoding = 'EUC-JP'
@@ -151,13 +264,13 @@ def scrape_grades(url, cols):
 ###
 def scrape_pedigree(url):
     # HTTP GETリクエストを送信してHTMLを取得
-    response = requests.get(url)
+    response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
 
     # エラーハンドリング
     if response.status_code != 200:
         print(f"Error: {response.status_code}")
         return None
-    
+
     # エンコーディングを取得
     # detected_encoding = chardet.detect(response.content)['encoding']
     detected_encoding = 'EUC-JP'
@@ -240,10 +353,10 @@ def strtime2fltsec(arr):
     for time_str in arr:
         # ":" で文字列を分割して分と秒に分ける
         minutes, seconds = map(float, time_str.split(':'))
-        
+
         # 分を秒に変換して合算
         total_seconds = minutes * 60 + seconds
-        
+
         result.append(total_seconds)
     return result
 ###
@@ -278,10 +391,11 @@ if __name__ == "__main__":
     ## コマンド引数関連
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     ## 作成するcsvの種類
-    parser.add_argument("-t", "--type", nargs=1, type=int, choices=range(3), help="\
+    parser.add_argument("-t", "--type", nargs=1, type=int, choices=range(4), help="\
                         TYPE = 0: EntryList (default) \n\
                         TYPE = 1: DataBase\n\
-                        TYPE = 2: Jockey\n\
+                        TYPE = 2: Jockey from EntryList\n\
+                        TYPE = 3: Jockey DataBase from Hitchart\n\
                         ", default=[0])
     ## 学習に使用するテーブル数
     parser.add_argument("-n", "--number", nargs=1, type=int, help="NUMBER \\in Z (default: 20)", default=[20])
@@ -290,6 +404,8 @@ if __name__ == "__main__":
                         UPPERBOUND \\in Z (default: 1000)\n\
                         (UPPERBOUND = -1: all)\n\
                         ", default=[1000])
+    parser.add_argument("--interval", type=float, default=1.0,
+                        help="Seconds to wait between result-page requests (default: 1.0)")
     ## 引数の取得
     args = parser.parse_args()
 
@@ -306,7 +422,7 @@ if __name__ == "__main__":
         # 1つめはヘッダー込みでデータフレームを作成
         url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
         # pandasでスクレイピング
-        df_all = pd.read_html(url, encoding='euc-jp')[0]
+        df_all = read_result_table(url)
         # うまIDを追加
         varlist_all = list(df_all)
         varlist_all.insert(0, 'ID')
@@ -316,9 +432,10 @@ if __name__ == "__main__":
             url = f"https://db.netkeiba.com/horse/result/{id}"
             # pandasでスクレイピング
             try:
-                df1_all = pd.read_html(url, encoding='euc-jp')[0]
-            except ValueError:
+                df1_all = read_result_table(url)
+            except (requests.RequestException, ValueError, IndexError):
                 print("Table not found")
+                continue
             # うまIDを追加
             df1_all['ID'] = id
             # 要素を入れ替え
@@ -327,7 +444,7 @@ if __name__ == "__main__":
             df_all = pd.concat([df_all, df1_all], ignore_index=True)
         #CSV出力
         df_all.to_csv('data/UMA_DB_EL.csv', index = False)
-    
+
         ## 血統情報
         arr_ped = []
         for id in ids:
@@ -358,7 +475,7 @@ if __name__ == "__main__":
     # DataBase
     if args.type[0] == 1:
         # ヒットチャートのページから馬ごとのURLを取得
-        ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
+        ids = scrape_hitchart(HORSE_HITCHART_URL)
         if not all(ids):
             print("Error at scrape_hitchart")
             exit()
@@ -369,7 +486,7 @@ if __name__ == "__main__":
         # 1つめはヘッダー込みでデータフレームを作成
         url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
         # pandasでスクレイピング
-        df_all = pd.read_html(url, encoding='euc-jp')[0]
+        df_all = read_result_table(url)
         # うまIDを追加
         varlist_all = list(df_all)
         varlist_all.insert(0, 'ID')
@@ -380,9 +497,10 @@ if __name__ == "__main__":
             url = f"https://db.netkeiba.com/horse/result/{id}"
             # pandasでスクレイピング
             try:
-                df1_all = pd.read_html(url, encoding='euc-jp')[0]
-            except ValueError:
+                df1_all = read_result_table(url)
+            except (requests.RequestException, ValueError, IndexError):
                 print("Table not found")
+                continue
             # うまIDを追加
             df1_all['ID'] = id
             # 要素を入れ替え
@@ -430,39 +548,25 @@ if __name__ == "__main__":
         if not all(ids):
             print("Error at scrape_entrylist")
             exit()
-        
-        iter = 0
-        for id in ids:
-            iter+=1
-            page = 0
-            while True:
-                page += 1
-                url = f"https://db.netkeiba.com//?pid=jockey_detail&id={id}&page={page}"
-                try:
-                    df1 = pd.read_html(url, encoding='euc-jp')[0]
-                except ValueError:
-                    print("table not found")
-                    break
-                # ジョッキーIDを追加
-                varlist = list(df1)
-                varlist.insert(0, 'ID')
-                df1['ID'] = id
-                # 要素を入れ替え
-                df1 = df1[varlist]
-                if page == 1:
-                    df = df1
-                else:
-                    # データフレームを結合
-                    df = pd.concat([df, df1], ignore_index=True)
-                # 指定したデータ数を超えたらbreak(upperbound に負値が入ってる場合はbreakせず、read_htmlに失敗するまで続行)
-                if len(df) > args.upperbound[0] and args.upperbound[0] > 0:
-                    break
-            if iter == 1:
-                df_all = df
-            else:
-                df_all = pd.concat([df_all, df], ignore_index=True)
+
+        df_all = collect_jockey_results(
+            ids, args.upperbound[0], request_interval=max(0.0, args.interval)
+        )
         # CSV出力
         df_all.to_csv('data/Jockey_DB_EL.csv', index = False)
+
+    # Jockey DataBase from Hitchart
+    if args.type[0] == 3:
+        ids = scrape_hitchart(JOCKEY_HITCHART_URL, "jockey")
+        if not ids:
+            print("Error at scrape_hitchart for jockeys")
+            exit()
+        # リーディング上位から取得する騎手数
+        N = min(len(ids), max(1, args.number[0]))
+        df_all = collect_jockey_results(
+            ids[:N], args.upperbound[0], request_interval=max(0.0, args.interval)
+        )
+        df_all.to_csv('data/Jockey_DB.csv', index=False)
 
     # Z_data = data[2]
     # #訓練用データと検証用データに分ける

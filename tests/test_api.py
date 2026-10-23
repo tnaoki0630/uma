@@ -22,4 +22,4 @@ def test_static_csv_demo_catalog_is_served():
     assert response.status_code == 200
     catalog = response.json()
     assert catalog["modes"]["horse"]["source"] == "UMA_DB.csv"
-    assert catalog["modes"]["jockey"]["source"] == "Jockey_DB_EL.csv"
+    assert catalog["modes"]["jockey"]["source"] == "Jockey_DB.csv"

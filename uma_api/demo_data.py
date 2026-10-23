@@ -135,13 +135,16 @@ def build_validation_mode(
             else:
                 display_name = row.get("馬名") or f"馬番 {horse_number}"
                 jockey_id = subject_id
+            jockey_name = None
+            if basis == "jockey":
+                jockey_name = row.get("騎手") or f"騎手 #{subject_id}"
             entrants.append(
                 Entrant(
                     horse_id=subject_id if basis == "horse" else f"{key}-{horse_number}",
                     horse_number=horse_number,
                     name=display_name,
                     jockey_id=jockey_id,
-                    jockey_name=f"騎手 #{subject_id}" if basis == "jockey" else None,
+                    jockey_name=jockey_name,
                     history=histories,
                 )
             )
@@ -206,9 +209,9 @@ def build_validation_mode(
 
 def build_demo_catalog(data_dir: Path, max_races: int = 10) -> dict:
     return {
-        "generated_from": ["UMA_DB.csv", "Jockey_DB_EL.csv"],
+        "generated_from": ["UMA_DB.csv", "Jockey_DB.csv"],
         "modes": {
             "horse": build_validation_mode(data_dir / "UMA_DB.csv", "horse", max_races),
-            "jockey": build_validation_mode(data_dir / "Jockey_DB_EL.csv", "jockey", max_races),
+            "jockey": build_validation_mode(data_dir / "Jockey_DB.csv", "jockey", max_races),
         },
     }

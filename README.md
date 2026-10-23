@@ -52,7 +52,7 @@ JRA騎手リーディングの上位から取得する場合は、新しい `--t
 python src/makeCSV.py --type 3 --number 20 --upperbound 1000
 ```
 
-`--upperbound -1` は各騎手の全ページを対象にします。大量アクセスになるため、対象サイトの利用規約を確認し、まず小さい `--number` と `--upperbound` で実行してください。スクレイピング機能だけを導入する場合は `pip install -e '.[scrape]'` を利用できます。
+`--upperbound -1` は各騎手の全ページを対象にします。結果ページ間には既定で1秒の待機を入れ、`--interval 2.0` のように変更できます。HTTP 400が返った場合はアクセスが一時的に制限されている可能性があるため、実行を止めて時間を空けてください。大量アクセスになるため、対象サイトの利用規約を確認し、まず小さい `--number` と `--upperbound` で実行してください。スクレイピング機能だけを導入する場合は `pip install -e '.[scrape]'` を利用できます。
 
 `POST /api/predict` の完全な入力例は `web/demo-race.json` にあります。オッズは `{"bet_type":"trifecta","selection":[1,2,3],"decimal_odds":72.5}` のように券種と買い目を明示します。
 

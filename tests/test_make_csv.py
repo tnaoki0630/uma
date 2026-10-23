@@ -23,6 +23,13 @@ def test_extract_hitchart_ids_handles_escaped_jsonp_horse_links():
     assert extract_hitchart_ids(html, "horse") == [2023107089, 2023107005]
 
 
+def test_extract_hitchart_ids_handles_escaped_jsonp_jockey_links():
+    html = r'''("<a href=\"https:\/\/db.sp.netkeiba.com\/jockey\/05339\/\">A<\/a>"
+               "<a href=\"https:\/\/db.sp.netkeiba.com\/jockey\/01174\/\">B<\/a>")'''
+
+    assert extract_hitchart_ids(html, "jockey") == ["05339", "01174"]
+
+
 def test_extract_jockey_name_uses_result_page_title():
     html = "<html><head><title>Ｃ．ルメールの騎手成績｜競馬データベース</title></head></html>"
 

@@ -3,11 +3,17 @@ from bs4 import BeautifulSoup
 import csv
 import re
 import argparse
+import time
+from datetime import date
 from io import StringIO
 import pandas as pd
 from pandas import plotting
 
-JOCKEY_HITCHART_URL = "https://db.netkeiba.com/jockey/jockey_leading_jra.html"
+JOCKEY_HITCHART_URL = (
+    "https://db.sp.netkeiba.com/"
+    "?pid=api_get_leading&input=UTF-8&output=jsonp&limit=100"
+    f"&category=jockey&page=1&show=leading_detail&bel=&year={date.today().year}&sort_key=win"
+)
 HORSE_HITCHART_URL = (
     "https://db.sp.netkeiba.com/"
     "?pid=api_get_horse_ranking3&input=UTF-8&output=jsonp"
@@ -98,10 +104,17 @@ def extract_jockey_name(html):
     return None
 
 
-def collect_jockey_results(ids, upperbound=1000, read_html=None, jockey_names=None):
+def collect_jockey_results(
+    ids,
+    upperbound=1000,
+    read_html=None,
+    jockey_names=None,
+    request_interval=1.0,
+):
     """Collect recent-result tables for jockey IDs with pagination safeguards."""
     jockey_names = jockey_names or {}
     jockey_frames = []
+    request_count = 0
     for jockey_id in ids:
         jockey_name = jockey_names.get(str(jockey_id).zfill(5))
         pages = []
@@ -111,7 +124,15 @@ def collect_jockey_results(ids, upperbound=1000, read_html=None, jockey_names=No
             url = f"https://db.netkeiba.com/jockey/result/recent/{jockey_id}/?page={page}"
             try:
                 if read_html is None:
+                    if request_count and request_interval > 0:
+                        time.sleep(request_interval)
                     response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
+                    request_count += 1
+                    if response.status_code == 400:
+                        raise RuntimeError(
+                            "netkeiba returned HTTP 400. Access may be temporarily restricted; "
+                            "stop requests and retry later."
+                        )
                     response.raise_for_status()
                     response.encoding = 'EUC-JP'
                     jockey_name = jockey_name or extract_jockey_name(response.text)
@@ -383,6 +404,8 @@ if __name__ == "__main__":
                         UPPERBOUND \\in Z (default: 1000)\n\
                         (UPPERBOUND = -1: all)\n\
                         ", default=[1000])
+    parser.add_argument("--interval", type=float, default=1.0,
+                        help="Seconds to wait between result-page requests (default: 1.0)")
     ## 引数の取得
     args = parser.parse_args()
 
@@ -526,7 +549,9 @@ if __name__ == "__main__":
             print("Error at scrape_entrylist")
             exit()
 
-        df_all = collect_jockey_results(ids, args.upperbound[0])
+        df_all = collect_jockey_results(
+            ids, args.upperbound[0], request_interval=max(0.0, args.interval)
+        )
         # CSV出力
         df_all.to_csv('data/Jockey_DB_EL.csv', index = False)
 
@@ -538,7 +563,9 @@ if __name__ == "__main__":
             exit()
         # リーディング上位から取得する騎手数
         N = min(len(ids), max(1, args.number[0]))
-        df_all = collect_jockey_results(ids[:N], args.upperbound[0])
+        df_all = collect_jockey_results(
+            ids[:N], args.upperbound[0], request_interval=max(0.0, args.interval)
+        )
         df_all.to_csv('data/Jockey_DB.csv', index=False)
 
     # Z_data = data[2]

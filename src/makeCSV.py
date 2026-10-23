@@ -86,7 +86,28 @@ def read_result_table(url):
     tables = pd.read_html(StringIO(response.text))
     if not tables:
         raise ValueError(f"Result table not found: {url}")
-    return tables[0]
+    frame = tables[0]
+    horse_name = extract_horse_name(response.text)
+    if horse_name and "/horse/result/" in url:
+        frame["馬名"] = horse_name
+    return frame
+
+
+def extract_horse_name(html):
+    """Extract a horse's display name from a horse result page."""
+    soup = BeautifulSoup(html, "html.parser")
+    if soup.title:
+        title = soup.title.get_text(" ", strip=True)
+        for marker in ("の競走成績", "のプロフィール", " | 競走馬データ"):
+            if marker in title:
+                name = title.split(marker, 1)[0].strip()
+                return re.sub(r"\s+\([^)]*\)$", "", name)
+    headings = soup.select(".db_head_name h1, h1")
+    for heading in headings:
+        name = heading.get_text(" ", strip=True).split("(", 1)[0].strip()
+        if name:
+            return name
+    return None
 
 
 def extract_jockey_name(html):

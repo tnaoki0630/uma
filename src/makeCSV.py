@@ -83,10 +83,27 @@ def read_result_table(url):
     return tables[0]
 
 
-def collect_jockey_results(ids, upperbound=1000, read_html=None):
+def extract_jockey_name(html):
+    """Extract a jockey's display name from a jockey result page."""
+    soup = BeautifulSoup(html, "html.parser")
+    if soup.title:
+        title = soup.title.get_text(" ", strip=True)
+        if "の騎手成績" in title:
+            return title.split("の騎手成績", 1)[0].strip()
+    headings = soup.select(".db_head_name h1, h1")
+    for heading in headings:
+        name = heading.get_text(" ", strip=True).split("(", 1)[0].strip()
+        if name:
+            return name
+    return None
+
+
+def collect_jockey_results(ids, upperbound=1000, read_html=None, jockey_names=None):
     """Collect recent-result tables for jockey IDs with pagination safeguards."""
+    jockey_names = jockey_names or {}
     jockey_frames = []
     for jockey_id in ids:
+        jockey_name = jockey_names.get(str(jockey_id).zfill(5))
         pages = []
         seen_pages = set()
         page = 1
@@ -97,6 +114,7 @@ def collect_jockey_results(ids, upperbound=1000, read_html=None):
                     response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
                     response.raise_for_status()
                     response.encoding = 'EUC-JP'
+                    jockey_name = jockey_name or extract_jockey_name(response.text)
                     tables = pd.read_html(StringIO(response.text))
                 else:
                     tables = read_html(url, encoding='euc-jp')
@@ -111,6 +129,10 @@ def collect_jockey_results(ids, upperbound=1000, read_html=None):
                 break
             seen_pages.add(fingerprint)
             frame.insert(0, 'ID', str(jockey_id).zfill(5))
+            if jockey_name:
+                frame['騎手'] = jockey_name
+            elif '騎手' not in frame.columns:
+                frame['騎手'] = pd.NA
             pages.append(frame)
             if upperbound > 0 and sum(len(item) for item in pages) >= upperbound:
                 break

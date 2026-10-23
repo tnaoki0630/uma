@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.makeCSV import collect_jockey_results, extract_hitchart_ids
+from src.makeCSV import collect_jockey_results, extract_hitchart_ids, extract_jockey_name
 
 
 def test_extract_hitchart_ids_handles_horses_and_jockeys_without_duplicates():
@@ -23,6 +23,12 @@ def test_extract_hitchart_ids_handles_escaped_jsonp_horse_links():
     assert extract_hitchart_ids(html, "horse") == [2023107089, 2023107005]
 
 
+def test_extract_jockey_name_uses_result_page_title():
+    html = "<html><head><title>Ｃ．ルメールの騎手成績｜競馬データベース</title></head></html>"
+
+    assert extract_jockey_name(html) == "Ｃ．ルメール"
+
+
 def test_collect_jockey_results_preserves_ids_and_applies_strict_upperbound():
     calls = []
 
@@ -33,8 +39,14 @@ def test_collect_jockey_results_preserves_ids_and_applies_strict_upperbound():
             raise ValueError("end")
         return [pd.DataFrame({"日付": [f"2024/01/0{page}", f"2024/01/0{page}"], "着 順": [1, 2]})]
 
-    result = collect_jockey_results(["01234"], upperbound=3, read_html=fake_read_html)
+    result = collect_jockey_results(
+        ["01234"],
+        upperbound=3,
+        read_html=fake_read_html,
+        jockey_names={"01234": "テスト騎手"},
+    )
     assert result["ID"].tolist() == ["01234", "01234", "01234"]
+    assert result["騎手"].tolist() == ["テスト騎手", "テスト騎手", "テスト騎手"]
     assert len(calls) == 2
     assert calls[0][0].endswith("/01234/?page=1")
 

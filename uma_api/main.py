@@ -29,6 +29,11 @@ def demo():
     return json.loads((Path(__file__).parent.parent / "web" / "demo-race.json").read_text())
 
 
+@app.get("/api/demo-catalog")
+def demo_catalog():
+    return json.loads((Path(__file__).parent.parent / "web" / "demo-catalog.json").read_text())
+
+
 @app.post("/api/predict", response_model=PredictionResponse)
 def prediction(request: PredictionRequest):
     return predict(request)

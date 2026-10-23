@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from uma_api.demo_data import build_demo_catalog
 from uma_api.schemas import PredictionRequest
 from uma_api.service import predict
 
@@ -22,4 +23,7 @@ def stable_numbers(value):
 
 (root / "web" / "demo-result.json").write_text(
     json.dumps(stable_numbers(result.model_dump(mode="json")), ensure_ascii=False, indent=2) + "\n"
+)
+(root / "web" / "demo-catalog.json").write_text(
+    json.dumps(build_demo_catalog(root / "data"), ensure_ascii=False, indent=2) + "\n"
 )

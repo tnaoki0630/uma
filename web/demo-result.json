@@ -1,10 +1,13 @@
 {
   "race_id": "demo-tokyo-11r",
+  "prediction_basis": "horse",
   "samples": 30000,
   "entries": [
     {
       "horse_number": 1,
       "name": "アオバスター",
+      "jockey_id": null,
+      "jockey_name": null,
       "mean_speed_mps": 17.1830796458,
       "std_speed_mps": 0.7151964434,
       "win_probability": 0.1114666667,
@@ -16,6 +19,8 @@
     {
       "horse_number": 2,
       "name": "コメットライン",
+      "jockey_id": null,
+      "jockey_name": null,
       "mean_speed_mps": 17.73506743,
       "std_speed_mps": 0.7308652987,
       "win_probability": 0.3411,
@@ -27,6 +32,8 @@
     {
       "horse_number": 3,
       "name": "ミドリノカゼ",
+      "jockey_id": null,
+      "jockey_name": null,
       "mean_speed_mps": 16.9806992199,
       "std_speed_mps": 0.8960422766,
       "win_probability": 0.1053333333,
@@ -38,6 +45,8 @@
     {
       "horse_number": 4,
       "name": "ルナアーチ",
+      "jockey_id": null,
+      "jockey_name": null,
       "mean_speed_mps": 17.4153268018,
       "std_speed_mps": 0.7318031795,
       "win_probability": 0.1887,
@@ -49,6 +58,8 @@
     {
       "horse_number": 5,
       "name": "サクラノート",
+      "jockey_id": null,
+      "jockey_name": null,
       "mean_speed_mps": 16.9133740249,
       "std_speed_mps": 1.0736945148,
       "win_probability": 0.1344,
@@ -60,6 +71,8 @@
     {
       "horse_number": 6,
       "name": "オリオンベル",
+      "jockey_id": null,
+      "jockey_name": null,
       "mean_speed_mps": 17.2010971796,
       "std_speed_mps": 0.7308652987,
       "win_probability": 0.119,

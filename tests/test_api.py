@@ -15,3 +15,11 @@ def test_health_and_demo_prediction():
     assert abs(sum(item["win_probability"] for item in body["entries"]) - 1) < 1e-9
     assert body["trio"]
     assert body["trifecta"]
+
+
+def test_static_csv_demo_catalog_is_served():
+    response = client.get("/api/demo-catalog")
+    assert response.status_code == 200
+    catalog = response.json()
+    assert catalog["modes"]["horse"]["source"] == "UMA_DB.csv"
+    assert catalog["modes"]["jockey"]["source"] == "Jockey_DB_EL.csv"

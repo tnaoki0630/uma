@@ -8,6 +8,11 @@ import pandas as pd
 from pandas import plotting
 
 JOCKEY_HITCHART_URL = "https://db.netkeiba.com/jockey/jockey_leading_jra.html"
+HORSE_HITCHART_URL = (
+    "https://db.sp.netkeiba.com/"
+    "?pid=api_get_horse_ranking3&input=UTF-8&output=jsonp"
+    "&limit=100&page=1&hr=ninki&sort=daily"
+)
 HTTP_HEADERS = {
     "User-Agent": "Mozilla/5.0 (compatible; UmaResearch/1.0)",
     "Accept-Language": "ja,en;q=0.8",
@@ -19,7 +24,10 @@ def extract_hitchart_ids(html, entity_type="horse"):
     """Extract unique horse or jockey IDs from a ranking page, preserving order."""
     if entity_type not in {"horse", "jockey"}:
         raise ValueError("entity_type must be 'horse' or 'jockey'")
-    soup = BeautifulSoup(html, 'html.parser', from_encoding='EUC-JP')
+    if isinstance(html, bytes):
+        soup = BeautifulSoup(html, 'html.parser', from_encoding='EUC-JP')
+    else:
+        soup = BeautifulSoup(html, 'html.parser')
     patterns = {
         "horse": [r'/horse/(?:result/)?(\d{10})(?:/|$)', r'\b(\d{10})\b'],
         "jockey": [
@@ -36,6 +44,15 @@ def extract_hitchart_ids(html, entity_type="horse"):
         if match and match.group(1) not in seen:
             seen.add(match.group(1))
             ids.append(match.group(1))
+    # The current horse ranking endpoint returns HTML inside a JSONP string, so
+    # links are escaped and are not represented as anchor nodes until JavaScript runs.
+    raw_html = html.decode("utf-8", errors="replace") if isinstance(html, bytes) else str(html)
+    normalized_html = raw_html.replace(r"\/", "/")
+    for pattern in patterns[entity_type]:
+        for value in re.findall(pattern, normalized_html):
+            if value not in seen:
+                seen.add(value)
+                ids.append(value)
     return [int(value) for value in ids] if entity_type == "horse" else ids
 
 
@@ -48,22 +65,22 @@ def scrape_hitchart(url, entity_type="horse"):
         print(f"Error: {response.status_code}")
         return None
 
-    # エンコーディングを取得
-    # detected_encoding = chardet.detect(response.content)['encoding']
-    detected_encoding = 'EUC-JP'
-
-    # BeautifulSoupを使ってHTMLを解析
-    soup = BeautifulSoup(response.content, 'html.parser', from_encoding=detected_encoding)
-
-    # 成績表のデータを取得（この例では表のデータがtableタグ内にあると仮定）
-    tables = soup.find_all('table')
-
-    # テーブルが見つからない場合
-    if not tables:
-        print("Table not found")
+    ids = extract_hitchart_ids(response.content, entity_type)
+    if not ids:
+        print("Entity links not found")
         return None
+    return ids
 
-    return extract_hitchart_ids(response.content, entity_type)
+
+def read_result_table(url):
+    """Fetch the first result table using the headers required by netkeiba."""
+    response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
+    response.raise_for_status()
+    response.encoding = "EUC-JP"
+    tables = pd.read_html(StringIO(response.text))
+    if not tables:
+        raise ValueError(f"Result table not found: {url}")
+    return tables[0]
 
 
 def collect_jockey_results(ids, upperbound=1000, read_html=None):
@@ -111,7 +128,7 @@ def collect_jockey_results(ids, upperbound=1000, read_html=None):
 ###
 def scrape_entrylist(url, BOOL_Jockey=False):
     # HTTP GETリクエストを送信してHTMLを取得
-    response = requests.get(url)
+    response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
 
     # エラーハンドリング
     if response.status_code != 200:
@@ -204,7 +221,7 @@ def scrape_grades(url, cols):
 ###
 def scrape_pedigree(url):
     # HTTP GETリクエストを送信してHTMLを取得
-    response = requests.get(url)
+    response = requests.get(url, headers=HTTP_HEADERS, timeout=30)
 
     # エラーハンドリング
     if response.status_code != 200:
@@ -360,7 +377,7 @@ if __name__ == "__main__":
         # 1つめはヘッダー込みでデータフレームを作成
         url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
         # pandasでスクレイピング
-        df_all = pd.read_html(url, encoding='euc-jp')[0]
+        df_all = read_result_table(url)
         # うまIDを追加
         varlist_all = list(df_all)
         varlist_all.insert(0, 'ID')
@@ -370,9 +387,10 @@ if __name__ == "__main__":
             url = f"https://db.netkeiba.com/horse/result/{id}"
             # pandasでスクレイピング
             try:
-                df1_all = pd.read_html(url, encoding='euc-jp')[0]
-            except ValueError:
+                df1_all = read_result_table(url)
+            except (requests.RequestException, ValueError, IndexError):
                 print("Table not found")
+                continue
             # うまIDを追加
             df1_all['ID'] = id
             # 要素を入れ替え
@@ -412,7 +430,7 @@ if __name__ == "__main__":
     # DataBase
     if args.type[0] == 1:
         # ヒットチャートのページから馬ごとのURLを取得
-        ids = scrape_hitchart("https://db.netkeiba.com/?pid=horse_hitchart")
+        ids = scrape_hitchart(HORSE_HITCHART_URL)
         if not all(ids):
             print("Error at scrape_hitchart")
             exit()
@@ -423,7 +441,7 @@ if __name__ == "__main__":
         # 1つめはヘッダー込みでデータフレームを作成
         url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
         # pandasでスクレイピング
-        df_all = pd.read_html(url, encoding='euc-jp')[0]
+        df_all = read_result_table(url)
         # うまIDを追加
         varlist_all = list(df_all)
         varlist_all.insert(0, 'ID')
@@ -434,9 +452,10 @@ if __name__ == "__main__":
             url = f"https://db.netkeiba.com/horse/result/{id}"
             # pandasでスクレイピング
             try:
-                df1_all = pd.read_html(url, encoding='euc-jp')[0]
-            except ValueError:
+                df1_all = read_result_table(url)
+            except (requests.RequestException, ValueError, IndexError):
                 print("Table not found")
+                continue
             # うまIDを追加
             df1_all['ID'] = id
             # 要素を入れ替え

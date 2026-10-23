@@ -16,6 +16,13 @@ def test_extract_hitchart_ids_handles_horses_and_jockeys_without_duplicates():
     assert extract_hitchart_ids(html, "jockey") == ["05339", "01075"]
 
 
+def test_extract_hitchart_ids_handles_escaped_jsonp_horse_links():
+    html = r'''("<a href=\"https:\/\/db.sp.netkeiba.com\/horse\/2023107089\/\">A<\/a>"
+               "<a href=\"https:\/\/db.sp.netkeiba.com\/horse\/2023107005\/\">B<\/a>")'''
+
+    assert extract_hitchart_ids(html, "horse") == [2023107089, 2023107005]
+
+
 def test_collect_jockey_results_preserves_ids_and_applies_strict_upperbound():
     calls = []
 

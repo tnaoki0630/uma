@@ -4,6 +4,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 Surface = Literal["芝", "ダート", "障害"]
+PredictionBasis = Literal["horse", "jockey"]
 
 
 class RaceConditions(BaseModel):
@@ -23,6 +24,8 @@ class Entrant(BaseModel):
     horse_id: str = Field(min_length=1)
     horse_number: int = Field(ge=1, le=99)
     name: str = Field(min_length=1)
+    jockey_id: str | None = None
+    jockey_name: str | None = None
     history: list[Run] = Field(default_factory=list)
 
 
@@ -34,6 +37,7 @@ class Odds(BaseModel):
 
 class PredictionRequest(BaseModel):
     race_id: str
+    prediction_basis: PredictionBasis = "horse"
     prediction_at: datetime
     conditions: RaceConditions
     entrants: list[Entrant] = Field(min_length=3, max_length=18)
@@ -46,6 +50,10 @@ class PredictionRequest(BaseModel):
         numbers = [entrant.horse_number for entrant in self.entrants]
         if len(numbers) != len(set(numbers)):
             raise ValueError("horse_number must be unique")
+        if self.prediction_basis == "jockey" and any(
+            not entrant.jockey_id for entrant in self.entrants
+        ):
+            raise ValueError("jockey_id is required when prediction_basis is jockey")
         valid = set(numbers)
         expected = {"win": 1, "trio": 3, "trifecta": 3}
         for odds in self.odds:
@@ -59,6 +67,8 @@ class PredictionRequest(BaseModel):
 class EntryPrediction(BaseModel):
     horse_number: int
     name: str
+    jockey_id: str | None = None
+    jockey_name: str | None = None
     mean_speed_mps: float
     std_speed_mps: float
     win_probability: float
@@ -77,6 +87,7 @@ class CombinationPrediction(BaseModel):
 
 class PredictionResponse(BaseModel):
     race_id: str
+    prediction_basis: PredictionBasis
     samples: int
     entries: list[EntryPrediction]
     trio: list[CombinationPrediction]

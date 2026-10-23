@@ -14,11 +14,14 @@
   </header>
   <main>
     <section class="race-card">
-      <div><p class="label">選択レース</p><select id="raceSelect" aria-label="レース選択"><option>東京 11R デモレース</option></select></div>
+      <div><p class="label">予測基準</p><select id="basisSelect" aria-label="予測基準"><option value="horse">馬基準</option><option value="jockey">ジョッキー基準</option></select></div>
+      <div><p class="label">検証レース数</p><input id="validationCount" type="number" min="1" value="3" aria-label="検証レース数"></div>
+      <div class="race-picker"><p class="label">検証レース</p><select id="raceSelect" aria-label="レース選択"></select></div>
       <div class="conditions" id="conditions"></div>
       <button id="predictButton">確率を計算</button>
     </section>
-    <section class="summary"><p class="label">モデルの見方</p><p>レース条件の基準速度に、各馬の過去走から推定した残差を重ねています。帯は予測の不確実性です。</p></section>
+    <section class="metrics" id="metrics" aria-live="polite"></section>
+    <section class="summary"><p class="label">モデルの見方</p><p id="modelCopy">レース条件の基準速度に、各馬の過去走から推定した残差を重ねています。帯は予測の不確実性です。</p></section>
     <nav class="tabs" aria-label="券種"><button class="active" data-tab="win">単勝</button><button data-tab="trio">三連複</button><button data-tab="trifecta">三連単</button></nav>
     <section id="results" aria-live="polite"><div class="empty">「確率を計算」を押してください</div></section>
     <section id="warnings" class="warnings"></section>

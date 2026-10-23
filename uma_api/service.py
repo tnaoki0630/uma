@@ -40,6 +40,8 @@ def predict(request: PredictionRequest) -> PredictionResponse:
             EntryPrediction(
                 horse_number=item["horse_number"],
                 name=item["name"],
+                jockey_id=request.entrants[index].jockey_id,
+                jockey_name=request.entrants[index].jockey_name,
                 mean_speed_mps=item["mean"],
                 std_speed_mps=item["std"],
                 win_probability=float(win[index]),
@@ -58,6 +60,7 @@ def predict(request: PredictionRequest) -> PredictionResponse:
         warnings.append("券種別オッズがないため期待回収率は表示しません。")
     return PredictionResponse(
         race_id=request.race_id,
+        prediction_basis=request.prediction_basis,
         samples=request.samples,
         entries=entries,
         trio=combinations(trio, "trio"),

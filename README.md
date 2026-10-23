@@ -5,11 +5,13 @@
 ## 主な機能
 
 - 全馬共通のレース条件別基準速度＋馬別残差ガウス過程
+- 馬基準／ジョッキー基準の切り替え
 - 過去3走未満では母集団へ縮約するフォールバック
 - 同じ着順シミュレーションから単勝・三連複・三連単確率を整合的に集計
 - 対応する券種・買い目の実オッズがある場合だけ期待回収率を表示
 - `prediction_at` より前の履歴だけで学習し、時点リークを防止
 - APIなしでもGitHub Pages上のサンプルを操作可能
+- CSV末尾の検証レース数をGUIで変更し、的中率とBrier scoreを比較
 
 詳細は [設計と確率](docs/ARCHITECTURE.md) と [データ取得ポリシー](docs/DATA_POLICY.md) を参照してください。
 
@@ -32,6 +34,8 @@ pytest -q
 ```
 
 `POST /api/predict` の完全な入力例は `web/demo-race.json` にあります。オッズは `{"bet_type":"trifecta","selection":[1,2,3],"decimal_odds":72.5}` のように券種と買い目を明示します。
+
+`prediction_basis` は `horse`（馬基準）または `jockey`（ジョッキー基準）です。後者では各出走馬に `jockey_id` が必要です。静的デモは `data/UMA_DB.csv` と `data/Jockey_DB_EL.csv` から `scripts/generate_demo.py` で生成されます。ジョッキーCSVには騎手名対応表がないため、画面では騎手IDを表示します。
 
 ## GitHub Pages
 

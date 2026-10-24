@@ -507,7 +507,11 @@ if __name__ == "__main__":
         # 1つめはヘッダー込みでデータフレームを作成
         url = f"https://db.netkeiba.com/horse/result/{ids[0]}"
         # pandasでスクレイピング
+        if args.interval > 0:
+            time.sleep(args.interval)
         df_all = read_result_table(url)
+        if args.upperbound[0] > 0:
+            df_all = df_all.head(args.upperbound[0])
         # うまIDを追加
         varlist_all = list(df_all)
         varlist_all.insert(0, 'ID')
@@ -518,10 +522,14 @@ if __name__ == "__main__":
             url = f"https://db.netkeiba.com/horse/result/{id}"
             # pandasでスクレイピング
             try:
+                if args.interval > 0:
+                    time.sleep(args.interval)
                 df1_all = read_result_table(url)
             except (requests.RequestException, ValueError, IndexError):
                 print("Table not found")
                 continue
+            if args.upperbound[0] > 0:
+                df1_all = df1_all.head(args.upperbound[0])
             # うまIDを追加
             df1_all['ID'] = id
             # 要素を入れ替え
@@ -539,6 +547,8 @@ if __name__ == "__main__":
         for id in ids[:N]:
             url = f"https://db.netkeiba.com/horse/ped/{id}"
             # BeautifulSoupでスクレイピング
+            if args.interval > 0:
+                time.sleep(args.interval)
             ped = scrape_pedigree(url)
             arr_ped.append(ped)
         # 列名リスト(いいやり方が思いつかなかったのでベタ書き。二分木の深さ優先探索アルゴリズムに近い気がするので、その辺の技術を流用すればもっとスッキリさせれる気がする)

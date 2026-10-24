@@ -65,7 +65,18 @@ def _run(row: dict[str, str]) -> Run | None:
 
 def _read_rows(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8-sig", newline="") as source:
-        return list(csv.DictReader(source))
+        rows = list(csv.DictReader(source))
+
+    # Scraping can append an already collected result when a request is retried.
+    # Preserve the source order while preventing duplicate histories/entrants.
+    unique_rows = []
+    seen = set()
+    for row in rows:
+        fingerprint = tuple(row.items())
+        if fingerprint not in seen:
+            seen.add(fingerprint)
+            unique_rows.append(row)
+    return unique_rows
 
 
 def _race_key(row: dict[str, str]) -> tuple[str, str, str]:
@@ -109,7 +120,13 @@ def build_validation_mode(
         if len({item[1] for item in usable}) >= 3 and any(item[2] == 1 for item in usable):
             candidates.append((key, usable))
     candidates.sort(
-        key=lambda item: (_date(item[0][0]), item[0][1], float(item[0][2])), reverse=True
+        key=lambda item: (
+            _date(item[0][0]),
+            len({horse_number for _, horse_number, _ in item[1]}),
+            item[0][1],
+            float(item[0][2]),
+        ),
+        reverse=True,
     )
 
     validation_races = []

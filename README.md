@@ -36,6 +36,8 @@ pytest -q
 
 Python 3.13系を使用します（`.python-version`、CI、Dockerで統一）。仮想環境を終了する場合は `deactivate`、作り直す場合は `.venv` を削除して上記手順を再実行してください。
 
+依存関係が更新された場合は、既存の仮想環境でも `python -m pip install -e '.[dev]'` を再実行してください。
+
 ## CSVデータの生成
 
 既存の指定レース方式はそのまま利用できます。
@@ -53,6 +55,8 @@ python src/makeCSV.py --type 3 --number 20 --upperbound 1000
 ```
 
 `--upperbound -1` は各騎手の全ページを対象にします。結果ページ間には既定で1秒の待機を入れ、`--interval 2.0` のように変更できます。HTTP 400が返った場合はアクセスが一時的に制限されている可能性があるため、実行を止めて時間を空けてください。大量アクセスになるため、対象サイトの利用規約を確認し、まず小さい `--number` と `--upperbound` で実行してください。スクレイピング機能だけを導入する場合は `pip install -e '.[scrape]'` を利用できます。
+
+`--type 1` でも `--upperbound` は各馬の最大戦績数、`--interval` は成績・血統ページ間の待機秒数として適用されます。
 
 `POST /api/predict` の完全な入力例は `web/demo-race.json` にあります。オッズは `{"bet_type":"trifecta","selection":[1,2,3],"decimal_odds":72.5}` のように券種と買い目を明示します。
 

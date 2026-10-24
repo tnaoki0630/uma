@@ -20,6 +20,13 @@
       <div class="conditions" id="conditions"></div>
       <button id="predictButton">確率を計算</button>
     </section>
+    <section class="entry-card" aria-labelledby="entryTitle">
+      <div class="section-heading">
+        <div><p class="label">RACE ENTRIES</p><h2 id="entryTitle">出馬表</h2></div>
+        <div class="entry-actions"><span id="entryCount"></span><button id="entryToggle" type="button" aria-expanded="true" aria-controls="entryList">閉じる</button></div>
+      </div>
+      <div id="entryList" class="entry-list"></div>
+    </section>
     <section class="metrics" id="metrics" aria-live="polite"></section>
     <section class="summary"><p class="label">モデルの見方</p><p id="modelCopy">レース条件の基準速度に、各馬の過去走から推定した残差を重ねています。帯は予測の不確実性です。</p></section>
     <nav class="tabs" aria-label="券種"><button class="active" data-tab="win">単勝</button><button data-tab="trio">三連複</button><button data-tab="trifecta">三連単</button></nav>

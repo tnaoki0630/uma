@@ -152,9 +152,9 @@ def build_validation_mode(
             else:
                 display_name = row.get("馬名") or f"馬番 {horse_number}"
                 jockey_id = subject_id
-            jockey_name = None
-            if basis == "jockey":
-                jockey_name = row.get("騎手") or f"騎手 #{subject_id}"
+            jockey_name = row.get("騎手") or None
+            if basis == "jockey" and not jockey_name:
+                jockey_name = f"騎手 #{subject_id}"
             entrants.append(
                 Entrant(
                     horse_id=subject_id if basis == "horse" else f"{key}-{horse_number}",

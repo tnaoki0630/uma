@@ -26,6 +26,11 @@ def test_csv_validation_mode_is_chronological_and_uses_requested_basis(filename,
             for race in mode["races"]
             for entry in race["entries"]
         )
+        assert all(
+            entry["jockey_name"]
+            for race in mode["races"]
+            for entry in race["entries"]
+        )
 
 
 def test_jockey_basis_requires_jockey_ids():

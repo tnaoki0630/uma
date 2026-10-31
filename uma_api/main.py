@@ -34,6 +34,11 @@ def demo_catalog():
     return json.loads((Path(__file__).parent.parent / "web" / "demo-catalog.json").read_text())
 
 
+@app.get("/api/g1-demo-catalog")
+def g1_demo_catalog():
+    return json.loads((Path(__file__).parent.parent / "web" / "g1-demo-catalog.json").read_text())
+
+
 @app.post("/api/predict", response_model=PredictionResponse)
 def prediction(request: PredictionRequest):
     return predict(request)

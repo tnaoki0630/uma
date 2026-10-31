@@ -23,3 +23,13 @@ def test_static_csv_demo_catalog_is_served():
     catalog = response.json()
     assert catalog["modes"]["horse"]["source"] == "UMA_DB.csv"
     assert catalog["modes"]["jockey"]["source"] == "Jockey_DB.csv"
+
+
+def test_g1_holdout_catalog_is_served():
+    response = client.get("/api/g1-demo-catalog")
+    assert response.status_code == 200
+    catalog = response.json()
+    assert catalog["split"]["validation_year"] == 2025
+    assert catalog["split"]["history_rule"] == "occurred_at < target_race_date"
+    assert catalog["modes"]["horse"]["races"]
+    assert catalog["modes"]["jockey"]["races"]

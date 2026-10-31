@@ -1,26 +1,30 @@
-const state={tab:"win",catalog:null,result:null};
+const state={tab:"win",datasets:null,result:null};
 const api=(window.UMA_CONFIG?.API_BASE_URL||"").replace(/\/$/,"");
 const $=selector=>document.querySelector(selector);
 const pct=value=>`${(value*100).toFixed(value<.01?2:1)}%`;
-function currentMode(){return state.catalog.modes[$("#basisSelect").value]}
+function currentDataset(){return state.datasets[$("#datasetSelect").value]}
+function currentMode(){return currentDataset().modes[$("#basisSelect").value]}
 function selectedRaces(){const mode=currentMode();const count=Math.max(1,Math.min(Number($("#validationCount").value)||1,mode.max_validation_races));return mode.races.slice(0,count)}
 function currentRace(){return selectedRaces()[Number($("#raceSelect").value)||0]}
 
 async function loadCatalog(){
-  const urls=api?[`${api}/api/demo-catalog`,"demo-catalog.json"]:["demo-catalog.json"];
-  for(const url of urls){try{const response=await fetch(url);if(response.ok){state.catalog=await response.json();break}}catch{}}
-  if(!state.catalog)throw new Error("CSV検証データを読み込めませんでした");
+  async function load(urls){for(const url of urls){try{const response=await fetch(url);if(response.ok)return await response.json()}catch{}}return null}
+  const standard=await load(api?[`${api}/api/demo-catalog`,"demo-catalog.json"]:["demo-catalog.json"]);
+  const g1=await load(api?[`${api}/api/g1-demo-catalog`,"g1-demo-catalog.json"]:["g1-demo-catalog.json"]);
+  if(!standard||!g1)throw new Error("CSV検証データを読み込めませんでした");
+  state.datasets={standard,g1};
   $("#status").textContent=api?"API接続中":"CSV静的デモ";updateMode();
 }
 function updateMode(){
   const mode=currentMode();const count=$("#validationCount");count.max=mode.max_validation_races;count.value=Math.min(Number(count.value)||3,mode.max_validation_races);
-  $("#modelCopy").textContent=mode.basis==="horse"?"レース条件の基準速度に、各馬の過去走から推定した残差を重ねています。":"レース条件の基準速度に、各ジョッキーの過去騎乗から推定した残差を重ねています。出馬表には各馬の騎手名を表示します。";
+  const datasetCopy=$("#datasetSelect").value==="g1"?" 2021〜2024年を参照期間、2025年をウォークフォワード検証として、対象日より前だけを使用します。":"";
+  $("#modelCopy").textContent=(mode.basis==="horse"?"レース条件の基準速度に、各馬の過去走から推定した残差を重ねています。":"レース条件の基準速度に、各ジョッキーの過去騎乗から推定した残差を重ねています。出馬表には各馬の騎手名を表示します。")+datasetCopy;
   refreshRaceOptions();
 }
 function refreshRaceOptions(){
   const races=selectedRaces();const select=$("#raceSelect");const previous=Math.min(Number(select.value)||0,races.length-1);
   select.innerHTML=races.map((race,index)=>`<option value="${index}">${race.race_label}</option>`).join("");select.value=String(Math.max(0,previous));
-  updateRaceHeader();renderEntryList();renderMetrics();state.result=null;$("#results").innerHTML='<div class="empty">「確率を計算」を押してください</div>';
+  updateRaceHeader();renderEntryList();renderMetrics();state.result=null;$("#results").innerHTML='<div class="empty">「確率を計算」を押してください</div>';$("#warnings").innerHTML="";
 }
 function updateRaceHeader(){const race=currentRace();if(!race)return;const c=race.conditions;$("#conditions").innerHTML=[c.venue,c.surface,`${c.distance_m}m`,c.track_condition,`実勝馬 ${race.actual_winner_number}番`].map(value=>`<span class="chip">${value}</span>`).join("")}
 function renderEntryList(){
@@ -43,10 +47,11 @@ function render(){
   if(!state.result)return;let html="";
   if(state.tab==="win")html=[...state.result.entries].sort((a,b)=>b.win_probability-a.win_probability).map(entry=>row(entry.horse_number,entry.name,entry.win_probability,`${entry.jockey_name?entry.jockey_name+" · ":""}${entry.mean_speed_mps.toFixed(2)} ± ${entry.std_speed_mps.toFixed(2)} m/s · ${entry.model==="gp"?"GP":"補完"}`,entry.expected_return,entry.horse_number===state.result.actual_winner_number)).join("");
   else html=state.result[state.tab].slice(0,20).map((item,index)=>row(index+1,item.selection.join(" – "),item.probability,item.decimal_odds?`オッズ ${item.decimal_odds.toFixed(1)}倍`:"券種別オッズ未入力",item.expected_return)).join("");
-  $("#results").innerHTML=html;$("#warnings").innerHTML=[`出典: ${currentMode().source}（時系列末尾を検証に使用）`,...state.result.warnings].map(value=>`<p>※ ${value}</p>`).join("");
+  const sourceNote=$("#datasetSelect").value==="g1"?`出典: ${currentMode().source}（対象日より前の履歴のみ使用）`:`出典: ${currentMode().source}（時系列末尾を検証に使用）`;
+  $("#results").innerHTML=html;$("#warnings").innerHTML=[sourceNote,...state.result.warnings].map(value=>`<p>※ ${value}</p>`).join("");
 }
 function predict(){const button=$("#predictButton");button.disabled=true;button.textContent="計算中…";state.result=currentRace();render();button.disabled=false;button.textContent="確率を計算"}
 document.querySelectorAll(".tabs button").forEach(button=>button.addEventListener("click",()=>{document.querySelector(".tabs .active").classList.remove("active");button.classList.add("active");state.tab=button.dataset.tab;render()}));
-$("#basisSelect").addEventListener("change",updateMode);$("#validationCount").addEventListener("change",refreshRaceOptions);$("#raceSelect").addEventListener("change",()=>{updateRaceHeader();renderEntryList();state.result=null;$("#results").innerHTML='<div class="empty">「確率を計算」を押してください</div>'});$("#predictButton").addEventListener("click",predict);
+$("#datasetSelect").addEventListener("change",updateMode);$("#basisSelect").addEventListener("change",updateMode);$("#validationCount").addEventListener("change",refreshRaceOptions);$("#raceSelect").addEventListener("change",()=>{updateRaceHeader();renderEntryList();state.result=null;$("#results").innerHTML='<div class="empty">「確率を計算」を押してください</div>';$("#warnings").innerHTML=""});$("#predictButton").addEventListener("click",predict);
 $("#entryToggle").addEventListener("click",()=>{const button=$("#entryToggle");const expanded=button.getAttribute("aria-expanded")==="true";button.setAttribute("aria-expanded",String(!expanded));button.textContent=expanded?"表示":"閉じる";$("#entryList").hidden=expanded});
 loadCatalog().catch(error=>$("#results").textContent=error.message);

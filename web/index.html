@@ -14,6 +14,7 @@
   </header>
   <main>
     <section class="race-card">
+      <div><p class="label">検証データ</p><select id="datasetSelect" aria-label="検証データ"><option value="standard">通常CSV</option><option value="g1">G1 2025独立検証</option></select></div>
       <div><p class="label">予測基準</p><select id="basisSelect" aria-label="予測基準"><option value="horse">馬基準</option><option value="jockey">ジョッキー基準</option></select></div>
       <div><p class="label">検証レース数</p><input id="validationCount" type="number" min="1" value="3" aria-label="検証レース数"></div>
       <div class="race-picker"><p class="label">検証レース</p><select id="raceSelect" aria-label="レース選択"></select></div>

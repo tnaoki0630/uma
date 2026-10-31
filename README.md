@@ -12,6 +12,7 @@
 - `prediction_at` より前の履歴だけで学習し、時点リークを防止
 - APIなしでもGitHub Pages上のサンプルを操作可能
 - CSV末尾の検証レース数をGUIで変更し、的中率とBrier scoreを比較
+- 協力者提供のG1データを2021〜2024年の参照期間／2025年のウォークフォワード検証として選択可能
 
 詳細は [設計と確率](docs/ARCHITECTURE.md) と [データ取得ポリシー](docs/DATA_POLICY.md) を参照してください。
 
@@ -61,6 +62,20 @@ python src/makeCSV.py --type 3 --number 20 --upperbound 1000
 `POST /api/predict` の完全な入力例は `web/demo-race.json` にあります。オッズは `{"bet_type":"trifecta","selection":[1,2,3],"decimal_odds":72.5}` のように券種と買い目を明示します。
 
 `prediction_basis` は `horse`（馬基準）または `jockey`（ジョッキー基準）です。後者では各出走馬に `jockey_id` が必要です。静的デモは `data/UMA_DB.csv` と `data/Jockey_DB.csv` から `scripts/generate_demo.py` で生成されます。`Jockey_DB.csv` の `騎手` 列がある場合は画面にも騎手名を表示し、空欄の場合だけ騎手IDへフォールバックします。
+
+## G1協力データの連携
+
+静的画面の「検証データ」で **G1 2025独立検証** を選ぶと、協力者提供データから作成した検証カタログへ切り替わります。馬基準は `horse_history.csv`、ジョッキー基準は `jockey_history.csv` を使い、どちらも対象レース開催日の開始時点より前の履歴だけを最大40走使用します。2025年内も各レース時点までのデータだけで再学習するウォークフォワード方式です。
+
+元データは約1.4GBで重複も多いためGitには置かず、出馬表・結果・加工サマリーと、静的デモ用に計算済みの軽量カタログだけを保存します。元フォルダを再取得した場合は次で再生成できます。
+
+```bash
+python scripts/generate_g1_demo.py \
+  --source /path/to/UMA_DB_G1_20210504-20260903 \
+  --validation-year 2025
+```
+
+`same_race_history.csv` はタイム列がなく、現在の速度モデルへ数学的に同じ形で投入できないため、今回は特徴量に使っていません。将来、校正用の階層事前分布として利用する場合も、2025年の結果を2025年以前の予測へ混ぜない実装が必要です。詳細は `data/g1/README.md` を参照してください。
 
 ## GitHub Pages
 

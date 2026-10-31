@@ -55,7 +55,8 @@ def predict(request: PredictionRequest) -> PredictionResponse:
         )
     warnings = ["予測は娯楽・研究用途です。利益を保証しません。"]
     if any(entry.model == "fallback" for entry in entries):
-        warnings.append("過去3走未満の馬には縮約フォールバックを使用しています。")
+        subject = "馬" if request.prediction_basis == "horse" else "ジョッキー"
+        warnings.append(f"過去3走未満の{subject}には縮約フォールバックを使用しています。")
     if not request.odds:
         warnings.append("券種別オッズがないため期待回収率は表示しません。")
     return PredictionResponse(
